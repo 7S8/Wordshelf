@@ -130,7 +130,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .dd-btn .dd-val{display:inline-flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dd-btn>svg{width:14px;height:14px;flex:none;fill:none;stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
 .dd-btn[aria-expanded="true"]>svg{transform:rotate(180deg)}
-.dd-pop{position:fixed;z-index:30;min-width:240px;max-width:min(340px,calc(100vw - 32px));max-height:min(420px,70vh);overflow:auto;
+.dd-pop{position:fixed;z-index:30;min-width:240px;max-width:min(400px,calc(100vw - 32px));max-height:min(420px,70vh);overflow:auto;
   background:var(--raised);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 18px 40px -16px rgba(0,0,0,.45);padding:6px;display:grid;gap:2px;overscroll-behavior:contain}
 
 .dd-head{display:none}
@@ -168,6 +168,14 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .dd-opt[aria-selected="true"] .tlabel{font-weight:700}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;min-width:0}
+.mtxt{flex:1;min-width:0}
+@media (min-width:641px){.mrow{width:350px}}
+.mtxt b{font-size:16px}
+.mtag{flex:none;font-size:11.5px;font-weight:700;letter-spacing:.03em;padding:3px 9px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.mtag.t-gemini,.mtag.t-qwen{background:color-mix(in srgb,var(--a1) 16%,transparent);color:var(--a1)}
+.mtag.t-claude{background:color-mix(in srgb,var(--c2) 14%,transparent);color:var(--c2)}
+.mtag.t-account{background:var(--accent-soft);color:var(--accent)}
 .modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
 .dd-btn .modeicon{width:22px;height:22px;border-radius:6px;font-size:11px}
 .dd-scrim{position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.35);display:none}
@@ -1415,10 +1423,10 @@ function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
 
 const DOT={auto:null,light:"#f4f6f5",dark:"#1c282b",paper:"#e3d3b8",ocean:"#0f5f7a",forest:"#2f5d3a",rose:"#e59bb3",contrast:"#000000"};
 const THEME_NOTE={auto:"Follows your device",light:"Clean and bright",dark:"Easy on the eyes",paper:"Warm, like a notebook",ocean:"Deep blue",forest:"Dark green and gold",rose:"Soft pink",contrast:"Maximum readability"};
-const MODE_INFO={gemini:["G","#2f6fe4","Gemini","Free Google key · reads handwriting"],qwen:["Q","#6a46d8","Qwen","Free OpenRouter key · reads handwriting"],
-  account:["C","#c46a3c","Claude account","Opens Wordshelf on claude.ai · no key"],claude:["C","#a14e2a","Claude API","Paid key · most accurate"],free:["B","#5b6b71","Basic","No key · typed or printed text only"]};
-makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{const m=MODE_INFO[o.value];
-  return `<span class="modeicon" style="--mc:${m[1]}">${m[0]}</span>`+(short?`${esc(m[2])}`:`<span><b>${esc(m[2])}</b><small>${esc(m[3])}</small></span>`)}});
+const MODE_INFO={gemini:["Free","Gemini","Reads handwriting. Needs a free Google key."],qwen:["Free","Qwen","Reads handwriting. Needs a free OpenRouter key."],
+  account:["Account","Claude account","Opens Wordshelf on claude.ai with your Claude login."],claude:["Paid","Claude API","Most accurate. Needs a paid Anthropic key."],free:["No key","Basic","Typed or printed text only. Works right away."]};
+makeDropdown($("#modeSel"),{title:"Reading mode",item:(o,short)=>{const m=MODE_INFO[o.value];
+  return short?esc(m[1]):`<span class="mrow"><span class="mtxt"><b>${esc(m[1])}</b><small>${esc(m[2])}</small></span><span class="mtag t-${o.value}">${esc(m[0])}</span></span>`}});
 makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
 
 /* Theme: a "Theme" pill in the top bar with a list of themes, each with a soft gradient dot */
