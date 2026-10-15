@@ -273,6 +273,12 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 body::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);z-index:6;pointer-events:none;opacity:0;transition:opacity .15s;
   background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 html.stuck body::before{opacity:1}
+/* phones: the pinned toolbar slides away while you scroll down and comes back when you scroll up */
+@media (max-width:640px){
+  .shelfbar{transition:transform .22s ease}
+  html.bar-away .shelfbar{transform:translateY(calc(-100% - env(safe-area-inset-top,0px) - 2px))}
+}
+@media (prefers-reduced-motion:reduce){.shelfbar{transition:none}}
 .tools{display:flex;gap:8px;align-items:center}
 .search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:0 14px;min-height:40px;color:var(--muted)}
 .search input{flex:1;min-width:0;border:0;background:transparent;padding:8px 0;outline:none;color:var(--ink)}
@@ -1664,8 +1670,14 @@ $("#clearWrap").addEventListener("click",e=>{
   if(changed) store.set(words);
 })();
 // cover the status-bar strip only once the toolbar is pinned (not over the sky at the top of the page)
-{const bar=document.querySelector(".shelfbar");const onScroll=()=>{const t=parseFloat(getComputedStyle(bar).top)||0;
-  document.documentElement.classList.toggle("stuck",bar.getBoundingClientRect().top<=t+1&&scrollY>0)};
+{const bar=document.querySelector(".shelfbar"),root=document.documentElement;let lastY=scrollY;
+ const phone=matchMedia("(max-width:640px)");
+ const onScroll=()=>{const t=parseFloat(getComputedStyle(bar).top)||0;
+  const stuck=bar.getBoundingClientRect().top<=t+1&&scrollY>0; root.classList.toggle("stuck",stuck);
+  const dy=scrollY-lastY; if(Math.abs(dy)<8&&stuck) return; lastY=scrollY;
+  // hide only while reading down the list; never while typing in search or with a menu open
+  const busy=bar.contains(document.activeElement)&&document.activeElement.matches("input")||document.querySelector(".dd-pop:not([hidden])");
+  root.classList.toggle("bar-away",phone.matches&&stuck&&dy>0&&scrollY>bar.offsetTop+120&&!busy)};
  addEventListener("scroll",onScroll,{passive:true});addEventListener("resize",onScroll);onScroll()}
 render();
 setTimeout(()=>loadCefr().catch(()=>{}),300);
