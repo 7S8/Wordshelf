@@ -110,9 +110,9 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
 .logo{font-size:30px;line-height:1;flex:none;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
-.intro{display:grid;gap:10px}
-.intro h1{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.08;max-width:22ch}
-.intro p{margin:0;color:var(--muted);max-width:60ch}
+.intro{display:grid;gap:8px;padding-block:4px}
+.intro h1{font-size:clamp(24px,3.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.12;max-width:30ch}
+.intro p{margin:0;color:var(--muted);max-width:78ch}
 .ladder{display:flex;gap:4px;align-items:center;font-family:var(--mono);font-size:11.5px;font-weight:500;flex-wrap:wrap}
 .ladder span{padding:2px 8px;border-radius:999px;color:var(--lv);background:color-mix(in srgb,var(--lv) 14%,transparent)}
 .ladder em{font-style:normal;color:var(--muted);margin-left:6px;font-family:var(--body);font-size:13px}
@@ -215,7 +215,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .btn:hover{border-color:var(--ink)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.primary:hover{filter:brightness(1.07)}
-.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn:disabled{opacity:.6;cursor:not-allowed;filter:none}
+.btn.primary:disabled{background:var(--sunk);border-color:var(--line);color:var(--muted);opacity:1}
 .btn.small{padding:5px 12px;font-size:14px;min-height:34px}
 .btn.block{width:100%}
 .manual{display:flex;gap:8px;min-width:0}
@@ -323,7 +324,7 @@ footer p{margin:8px 0 0}
 
 @media (max-width:640px){
   .panel{padding:14px}
-  .intro h1{font-size:26px}
+  .intro h1{font-size:23px}
   .appbar .pick span.lbl{display:none}
   .tools .pick{padding-left:10px}
   .tools .pick select{max-width:96px}
