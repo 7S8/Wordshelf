@@ -102,6 +102,7 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .links a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--ink)}
 .links a:hover{border-color:var(--ink)}
 .links a svg{width:14px;height:14px}
+.linkish{border:0;background:none;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer}
 .del{border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 6px;margin-left:auto;align-self:center}
 .del:hover{color:var(--c2)}
 .empty{text-align:center;color:var(--muted);padding:32px 16px;border:1px dashed var(--line);border-radius:var(--r)}
@@ -239,9 +240,9 @@ function card(w,i){
   const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
   return `<article class="card" style="--lv:var(${lv.v})">
     <div class="card-top"><div style="min-width:0"><h3>${esc(w.word)}</h3>
-      <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${esc(w.ipa)}</span>`:""}</div></div>
+      <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${esc(w.ipa)}</span>`:""}${w.est?`<span title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`:""}</div></div>
       <button class="icon-btn" data-say="${i}" aria-label="Pronounce ${esc(w.word)}" title="Pronounce">${speakIcon}</button></div>
-    ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found. Check the spelling.</p>`}
+    ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
     ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
     ${exs?`<ul class="ex">${exs}</ul>`:""}
     <div class="links">
@@ -276,7 +277,7 @@ function addWords(items){
   const clean=(Array.isArray(items)?items:[]).filter(x=>x&&typeof x.word==="string"&&x.word.trim()).map(x=>({
     word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),
     level:LEVELS.some(l=>l.id===String(x.level).toUpperCase())?String(x.level).toUpperCase():"",
-    definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
+    est:!!x.est,suggest:String(x.suggest||""),definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
   let base=words.filter(w=>!w.example);
   let added=0;
   for(const w of clean){
@@ -397,47 +398,93 @@ function extractWords(text){
   }
   return out;
 }
+let ocrWorker=null, ocrLog=()=>{};
+async function getOcrWorker(onProgress){
+  await loadTesseract();
+  ocrWorker||=Tesseract.createWorker("eng",1,{logger:m=>ocrLog(m)});
+  ocrLog=onProgress; return ocrWorker;
+}
 async function ocrImages(files){
-  setStatus(spin("Loading text recognition… (first time takes a few seconds)"));
-  try{ await loadTesseract() }catch{ setStatus("Couldn't load text recognition. Check your internet connection.",true); return null }
+  setStatus(spin("Loading text recognition… (only slow the first time)"));
+  let worker;
+  try{ worker=await getOcrWorker(()=>{}) }catch{ ocrWorker=null; setStatus("Couldn't load text recognition. Check your internet connection.",true); return null }
   let text="";
   for(let i=0;i<files.length;i++){
-    try{
-      const {data}=await Tesseract.recognize(files[i],"eng",{logger:m=>{
-        if(m.status==="recognizing text") setStatus(spin(`Reading image ${i+1} of ${files.length}… ${Math.round(m.progress*100)}%`));
-      }});
-      text+="\n"+data.text;
-    }catch{ setStatus(`Couldn't read image ${i+1}. Try a clearer screenshot.`,true); return null }
+    ocrLog=m=>{ if(m.status==="recognizing text") setStatus(spin(`Reading image ${i+1} of ${files.length}… ${Math.round(m.progress*100)}%`)) };
+    try{ const {data}=await worker.recognize(files[i]); text+="\n"+data.text }
+    catch{ setStatus(`Couldn't read image ${i+1}. Try a clearer screenshot.`,true); return null }
   }
   return text;
 }
+// fetch with a time limit so one slow word can't hold up the whole list
+async function getJSON(url,ms=6000){
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),ms);
+  try{ const r=await fetch(url,{signal:ctl.signal}); return r.ok?await r.json():null }catch{ return null }finally{ clearTimeout(t) }
+}
+const cache=(()=>{let c={};try{c=JSON.parse(localStorage.getItem("wordshelf.cache"))||{}}catch{}
+  return {get:k=>c[k],set(k,v){c[k]=v;try{localStorage.setItem("wordshelf.cache",JSON.stringify(c))}catch{}}}})();
 async function dictLookup(word){
-  try{
-    const r=await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(word));
-    if(!r.ok) return null;
-    const d=await r.json(); const e=d[0]; if(!e) return null;
-    const ipa=e.phonetic||(e.phonetics||[]).map(p=>p.text).find(Boolean)||"";
-    const m=e.meanings?.[0]; const def=m?.definitions?.[0]?.definition||"";
-    const examples=[];
-    for(const mm of e.meanings||[]) for(const dd of mm.definitions||[]) if(dd.example&&examples.length<2) examples.push(dd.example.replace(/^./,c=>c.toUpperCase()));
-    return {pos:m?.partOfSpeech||"",ipa,definition:def,examples};
-  }catch{ return null }
+  const d=await getJSON("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(word));
+  const e=Array.isArray(d)?d[0]:null; if(!e) return null;
+  const ipa=e.phonetic||(e.phonetics||[]).map(p=>p.text).find(Boolean)||"";
+  const m=e.meanings?.[0]; const def=m?.definitions?.[0]?.definition||"";
+  const examples=[];
+  for(const mm of e.meanings||[]) for(const dd of mm.definitions||[]) if(dd.example&&examples.length<2) examples.push(dd.example.replace(/^./,c=>c.toUpperCase()));
+  return {pos:m?.partOfSpeech||"",ipa,definition:def,examples};
+}
+// Datamuse: word frequency (per million words) and a WordNet definition, used when the CEFR lists and dictionary have nothing
+const POS={n:"noun",v:"verb",adj:"adjective",adv:"adverb"};
+async function museLookup(word){
+  const d=await getJSON("https://api.datamuse.com/words?md=dpf&max=1&sp="+encodeURIComponent(word),5000);
+  const e=Array.isArray(d)&&d[0]&&d[0].word.toLowerCase()===word?d[0]:null; if(!e) return null;
+  const f=parseFloat((e.tags||[]).find(t=>t.startsWith("f:"))?.slice(2))||0;
+  const [p,def]=(e.defs?.[0]||"").split("\t");
+  return {freq:f,pos:POS[p]||POS[(e.tags||[]).find(t=>POS[t])]||"",definition:def?def.replace(/^./,c=>c.toUpperCase())+".":""};
+}
+async function suggest(word){
+  const d=await getJSON("https://api.datamuse.com/sug?max=1&s="+encodeURIComponent(word),4000);
+  const w=Array.isArray(d)&&d[0]?.word; return w&&w.toLowerCase()!==word?w:"";
+}
+const ORDER=["A1","A2","B1","B2","C1","C2"];
+const hardest=ls=>ls.reduce((a,b)=>ORDER.indexOf(b)>ORDER.indexOf(a)?b:a);
+// A word missing from the CEFR-J A1–B2 list and the C1/C2 list is at least C1: common ones C1, rare ones C2
+const levelFromFreq=f=>f>=4?"C1":"C2";
+async function singleLevel(map,w,muse){
+  const l=cefrLevel(map,w); if(l) return {level:l,est:false};
+  const m=muse!==undefined?muse:await museLookup(w);
+  return m?{level:levelFromFreq(m.freq),est:true}:{level:"",est:false};
+}
+async function lookupOne(map,w){
+  const hit=cache.get(w); if(hit) return hit;
+  const words=w.split(" ");
+  const [d,m]=await Promise.all([dictLookup(w),museLookup(w)]);
+  let level=cefrLevel(map,w), est=false;
+  if(!level&&words.length>1){
+    // a phrase is rated by its hardest word ("sovereign debt" → level of "sovereign")
+    const parts=await Promise.all(words.filter(x=>!STOP.has(x)).map(x=>singleLevel(map,x)));
+    const got=parts.filter(p=>p.level);
+    if(got.length){level=hardest(got.map(p=>p.level));est=true}
+  }else if(!level){ const r=await singleLevel(map,w,m); level=r.level; est=r.est }
+  const item={word:w,level,est,pos:d?.pos||m?.pos||(words.length>1?"phrase":""),ipa:d?.ipa||"",
+    definition:d?.definition||m?.definition||"",examples:d?.examples||[],note:""};
+  if(!item.definition){ item.suggest=await suggest(w) } else cache.set(w,item);
+  return item;
 }
 async function freeLookup(list){
-  list=[...new Set(list.map(w=>w.trim().toLowerCase()).filter(Boolean))].slice(0,150);
+  list=[...new Set(list.map(w=>w.trim().toLowerCase().replace(/\s+/g," ")).filter(Boolean))].slice(0,150);
   if(!list.length) return null;
   setStatus(spin("Loading the CEFR word list…"));
   let map; try{ map=await loadCefr() }catch{ setStatus("Couldn't load the CEFR word list. Check your connection and try again.",true); return null }
   const items=new Array(list.length); let done=0, next=0;
+  setStatus(spin(`Looking up words… 0 of ${list.length}`));
   async function worker(){
     while(next<list.length){
-      const i=next++, w=list[i];
-      const d=await dictLookup(w);
-      items[i]={word:w,level:cefrLevel(map,w),pos:d?.pos||"",ipa:d?.ipa||"",definition:d?.definition||"",examples:d?.examples||[],note:""};
+      const i=next++;
+      items[i]=await lookupOne(map,list[i]);
       setStatus(spin(`Looking up words… ${++done} of ${list.length}`));
     }
   }
-  await Promise.all([worker(),worker(),worker(),worker()]);
+  await Promise.all(Array.from({length:6},worker));
   return {items};
 }
 
@@ -472,6 +519,7 @@ $("#reviewGo").addEventListener("click",async()=>{
 
 /* Images */
 function addFiles(list){
+  if(mode==="free") getOcrWorker(()=>{}).catch(()=>{ocrWorker=null});
   for(const f of list){ if(!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) continue; pending.push({file:f,url:URL.createObjectURL(f)}) }
   drawThumbs();
 }
@@ -541,6 +589,9 @@ $("#search").addEventListener("input",e=>{query=e.target.value;render()});
 $("#shelf").addEventListener("click",e=>{
   const s=e.target.closest("[data-say]");
   if(s){try{const u=new SpeechSynthesisUtterance(words[s.dataset.say].word);u.lang="en-GB";speechSynthesis.cancel();speechSynthesis.speak(u)}catch{} return}
+  const fx=e.target.closest("[data-fix]");
+  if(fx){const old=words[fx.dataset.fix];words.splice(+fx.dataset.fix,1);store.set(words);render();
+    $("#manual").value=old.suggest;$("#manualForm").requestSubmit();return}
   const d=e.target.closest("[data-del]");
   if(d){words.splice(+d.dataset.del,1);store.set(words);render()}
 });
@@ -556,6 +607,7 @@ $("#clearWrap").addEventListener("click",e=>{
 });
 
 render();
+setTimeout(()=>loadCefr().catch(()=>{}),300);
 </script>
 </body>
 </html>
