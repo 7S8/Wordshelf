@@ -240,7 +240,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 /* banners */
 .banner{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r-sm);font-size:15px}
 .banner #fillConfirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%}
-.banner #fillConfirm[hidden]{display:none}
+.banner #fillConfirm[hidden],.banner #fillPhone[hidden]{display:none}
+.banner #fillPhone{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%}
 
 /* shelf toolbar: sticky while you scroll the words */
 .shelfbar>*{min-width:0}
@@ -448,6 +449,8 @@ footer p{margin:8px 0 0}
   <div class="banner" id="fillBar" hidden>
     <span id="fillText"></span>
     <button class="btn small primary" id="fillGo" type="button">Write missing sentences</button>
+    <span id="fillPhone" hidden>On a phone, sentences are written with a free Gemini key (the offline model is too big for phones).
+      <button class="btn small primary" id="fillGemini" type="button">Add a free Gemini key</button></span>
     <span id="fillConfirm" hidden>To write them without a key, download a small AI model (Qwen, about 500 MB, only once). After that, sentences are written automatically.
       <button class="btn small primary" id="fillYes" type="button">Download and write</button>
       <button class="btn small" id="fillNo" type="button">Not now</button></span>
@@ -545,10 +548,11 @@ const searchIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const speakIcon='<svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 
 const trashIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+const uniqueExamples=list=>{const seen=new Set();return (list||[]).filter(e=>{const k=String(e).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();if(!k||seen.has(k))return false;seen.add(k);return true})};
 function card(w,i){
   const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED;
   const q=encodeURIComponent(w.word);
-  const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
+  const exs=uniqueExamples(w.examples).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
   const meta=[w.pos&&`<span>${esc(w.pos)}</span>`,w.ipa&&`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`,w.ipaUs&&`<span>US ${esc(w.ipaUs)}</span>`,
     w.est&&`<span class="est" title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`].filter(Boolean).join("");
   return `<article class="card" style="--lv:var(${lv.v})">
@@ -1313,6 +1317,8 @@ async function fillFromWiktionary(){
   setStatus(n?`Found example sentences for ${n} word${n===1?"":"s"}.`:"");
   return n;
 }
+// The offline sentence model needs a lot of memory: phones and tablets can't load it
+const canRunLocal=!/iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)&&!(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent))&&(navigator.deviceMemory||8)>=4;
 async function autoFill(){
   if(filling||!needSentences().length) return;
   if(needSentences().some(w=>!wikiTried.has(w.word))){
@@ -1322,15 +1328,18 @@ async function autoFill(){
   }
   if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
   let local=false; try{local=localStorage.getItem("wordshelf.localModel")==="1"}catch{}
-  if(local) return fillMissing(true);
+  if(local&&canRunLocal) return fillMissing(true);
+  if(!canRunLocal){ $("#fillPhone").hidden=false; return }
   $("#fillConfirm").hidden=false;   // first time without a key: ask once before the download
 }
 $("#fillGo").addEventListener("click",async()=>{
   if(needSentences().some(w=>!wikiTried.has(w.word))){ await autoFill(); return }
   if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
+  if(!canRunLocal){ $("#fillPhone").hidden=false; return }
   $("#fillConfirm").hidden=false;   // no key saved: offer the on-device model
 });
 $("#fillYes").addEventListener("click",()=>fillMissing(true));
+$("#fillGemini").addEventListener("click",()=>{ setMode("gemini"); $("#keybox").open=true; $("#keybox").scrollIntoView({behavior:"smooth",block:"center"}); setTimeout(()=>$("#apiKey").focus(),400) });
 $("#fillNo").addEventListener("click",()=>{$("#fillConfirm").hidden=true});
 
 // fetch JSON with a time limit so one slow request can't hold everything up
@@ -1362,17 +1371,32 @@ async function translateWithKey(provider,list){
   const res=provider==="gemini"?await askGemini(key,prompt,[]):provider==="qwen"?await askQwen(key,prompt,[]):await askClaudeText(key,prompt);
   return res?.items||null;
 }
+// Scripts that a correct translation must use (MyMemory sometimes answers in the wrong language)
+const SCRIPT={ru:/[\u0400-\u04FF]/,uk:/[\u0400-\u04FF]/,be:/[\u0400-\u04FF]/,bg:/[\u0400-\u04FF]/,sr:/[\u0400-\u04FF]/,mk:/[\u0400-\u04FF]/,kk:/[\u0400-\u04FF]/,ky:/[\u0400-\u04FF]/,tg:/[\u0400-\u04FF]/,mn:/[\u0400-\u04FF]/,tt:/[\u0400-\u04FF]/,
+  el:/[\u0370-\u03FF]/,ar:/[\u0600-\u06FF]/,fa:/[\u0600-\u06FF]/,ur:/[\u0600-\u06FF]/,ps:/[\u0600-\u06FF]/,he:/[\u0590-\u05FF]/,yi:/[\u0590-\u05FF]/,hi:/[\u0900-\u097F]/,mr:/[\u0900-\u097F]/,ne:/[\u0900-\u097F]/,
+  bn:/[\u0980-\u09FF]/,ta:/[\u0B80-\u0BFF]/,te:/[\u0C00-\u0C7F]/,kn:/[\u0C80-\u0CFF]/,ml:/[\u0D00-\u0D7F]/,th:/[\u0E00-\u0E7F]/,ka:/[\u10A0-\u10FF]/,hy:/[\u0530-\u058F]/,
+  "zh-CN":/[\u4E00-\u9FFF]/,"zh-TW":/[\u4E00-\u9FFF]/,ja:/[\u3040-\u30FF\u4E00-\u9FFF]/,ko:/[\uAC00-\uD7AF]/,am:/[\u1200-\u137F]/,km:/[\u1780-\u17FF]/,lo:/[\u0E80-\u0EFF]/,my:/[\u1000-\u109F]/,si:/[\u0D80-\u0DFF]/};
+function cleanTranslation(t,target){
+  t=String(t||"").trim().replace(/^["“«]|["”»]$/g,"").replace(/[.。]+$/,"").trim();
+  if(!t||/MYMEMORY WARNING|INVALID|QUERY LENGTH/i.test(t)) return "";
+  if(SCRIPT[target]&&!SCRIPT[target].test(t)) return "";              // wrong alphabet, e.g. "PAMIATKA" for Russian
+  if(t.length>3&&t===t.toUpperCase()&&t!==t.toLowerCase()) t=t.toLowerCase();   // SHOUTING → normal
+  return t;
+}
 async function translateFree(list){
   const out=[]; let i=0, done=0, stop="";
   async function worker(){
     while(i<list.length&&!stop){
       const w=list[i++];
       // bare "curb" comes back as the noun (kerb); "to curb" gives the verb
-      const q=/verb/i.test(w.pos||"")&&!/^to /i.test(w.word)?"to "+w.word:w.word;
+      // translate the dictionary form ("workflows" → "workflow"); verbs as "to …" so "curb" isn't read as a noun
+      const base=(await dictEntry(w.word.toLowerCase()).catch(()=>null))?.form||w.word;
+      const q=/verb/i.test(w.pos||"")&&!/^to /i.test(base)?"to "+base:base;
       const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|${encodeURIComponent(lang)}`,8000);
       if(d?.quotaFinished||d?.responseStatus==429){stop="limit";break}
       const t=d?.responseData?.translatedText;
-      if(t&&t.toLowerCase()!==q.toLowerCase()&&!/MYMEMORY WARNING|INVALID/i.test(t)) out.push({word:w.word,translation:t.replace(/^(to|zu|à|a|para)\s+/i,""),src:"free"});
+      const c=cleanTranslation(t,lang).replace(/^(to|zu|à|a|para)\s+/i,"");
+      if(c&&c.toLowerCase()!==q.toLowerCase()) out.push({word:w.word,translation:c,src:"free"});
       setStatus(spin(`Translating into ${langName(lang)}… ${++done} of ${list.length}`));
     }
   }
@@ -1605,6 +1629,15 @@ $("#clearWrap").addEventListener("click",e=>{
   if(e.target.id==="clearNo") resetClear();
 });
 
+// tidy saved data: drop repeated examples and free translations in the wrong alphabet (they get redone)
+(()=>{ let changed=false;
+  for(const w of words){
+    const u=uniqueExamples(w.examples); if(u.length!==(w.examples||[]).length){w.examples=u;changed=true}
+    for(const [l,t] of Object.entries(w.tr||{})){ if(w.trSrc?.[l]==="ai") continue; const c=cleanTranslation(t,l);
+      if(c!==t){ if(c) w.tr[l]=c; else delete w.tr[l]; changed=true } }
+  }
+  if(changed) store.set(words);
+})();
 render();
 setTimeout(()=>loadCefr().catch(()=>{}),300);
 // Fill in example sentences for saved words that don't have any yet
