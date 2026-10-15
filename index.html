@@ -97,9 +97,9 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .dd-btn .dd-val{display:inline-flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dd-btn>svg{width:14px;height:14px;flex:none;fill:none;stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
 .dd-btn[aria-expanded="true"]>svg{transform:rotate(180deg)}
-.dd-pop{position:absolute;top:calc(100% + 8px);right:0;z-index:30;min-width:240px;max-width:min(340px,calc(100vw - 32px));max-height:min(420px,70vh);overflow:auto;
+.dd-pop{position:fixed;z-index:30;min-width:240px;max-width:min(340px,calc(100vw - 32px));max-height:min(420px,70vh);overflow:auto;
   background:var(--raised);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 18px 40px -16px rgba(0,0,0,.45);padding:6px;display:grid;gap:2px;overscroll-behavior:contain}
-.dd-pop.left{right:auto;left:0}
+
 .dd-head{display:none}
 .dd-search{position:sticky;top:-6px;margin:-6px -6px 4px;padding:8px;background:var(--raised);border-bottom:1px solid var(--line);z-index:1}
 .dd-search input{width:100%;border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:8px 14px;color:var(--ink)}
@@ -127,23 +127,19 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .taa{font-family:var(--display);font-weight:800;font-size:17px;line-height:1;color:var(--ti)}
 .tdot{width:22px;height:8px;border-radius:999px;background:var(--ta)}
 .tname{font-weight:700;font-size:13.5px;color:var(--ti)}
-.dots{display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--line);background:var(--surface);border-radius:999px}
-.dot{width:20px;height:20px;border-radius:50%;border:0;padding:0;cursor:pointer;background:var(--dot);box-shadow:inset 0 0 0 1px rgba(127,127,127,.45);transition:transform .15s,box-shadow .15s}
-.dot:hover{transform:scale(1.15)}
-.dot.hc{box-shadow:inset 0 0 0 2.5px #ffe14d}
-.dot.auto{background:linear-gradient(160deg,#f4f6f5 15%,#7d8a8f 50%,#1c282b 85%)}
-
-.dot[aria-checked="true"]{box-shadow:inset 0 0 0 1px rgba(127,127,127,.45),0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
-.dot.hc[aria-checked="true"]{box-shadow:inset 0 0 0 2.5px #ffe14d,0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
-.dot:focus-visible{outline:none;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--focus)}
-@media (max-width:400px){.dots{gap:5px;padding:5px 7px}.dot{width:17px;height:17px}}
+.modebtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center;overflow:hidden;position:relative;transition:border-color .15s,background .2s}
+.modebtn:hover{border-color:var(--ink)}
+.modebtn .i{position:absolute;width:20px;height:20px;transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}
+.modebtn .moon{transform:translateY(26px) rotate(-40deg);opacity:0}
+.modebtn.dark .sun{transform:translateY(-26px) rotate(40deg);opacity:0}
+.modebtn.dark .moon{transform:none;opacity:1}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
 .modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
 .dd-btn .modeicon{width:22px;height:22px;border-radius:6px;font-size:11px}
 .dd-scrim{position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.35);display:none}
 @media (max-width:640px){
-  .dd-pop,.dd-pop.left{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-width:none;min-width:0;max-height:78vh;max-height:78dvh;border-radius:20px 20px 0 0;
+  .dd-pop,.dd-pop.left{position:fixed;left:0!important;right:0!important;bottom:0;top:auto!important;width:auto;max-width:none;min-width:0;max-height:78vh;max-height:78dvh;border-radius:20px 20px 0 0;
     padding:8px 10px calc(28px + env(safe-area-inset-bottom,0px));animation:sheet .2s ease-out;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
   .dd-head{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 8px;font-family:var(--display);font-weight:700;font-size:17px}
   .dd-head::before{content:"";position:absolute;left:50%;top:6px;width:38px;height:4px;margin-left:-19px;border-radius:4px;background:var(--line)}
@@ -319,7 +315,10 @@ footer p{margin:8px 0 0}
 <div class="wrap">
   <header class="appbar">
     <div class="brand"><span class="logo" aria-hidden="true"><svg width="36" height="36" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#14232b"/><g><rect x="9" y="21" width="7" height="28" rx="1.6" fill="#5fcf8f"/><rect x="17" y="15" width="6" height="34" rx="1.6" fill="#a3d65f"/><rect x="24" y="19" width="8" height="30" rx="1.6" fill="#4fc3e8"/><rect x="33" y="13" width="6" height="36" rx="1.6" fill="#86a4ff"/><rect x="40" y="22" width="7" height="27" rx="1.6" fill="#bf93f5"/><rect x="50" y="18" width="6.5" height="31" rx="1.6" fill="#f283b6" transform="rotate(-14 56.5 49)"/></g><g fill="#14232b" opacity=".28"><rect x="9" y="25" width="7" height="2"/><rect x="9" y="43" width="7" height="2"/><rect x="17" y="19" width="6" height="2"/><rect x="17" y="43" width="6" height="2"/><rect x="24" y="23" width="8" height="1.6"/><rect x="24" y="26" width="8" height="1.6"/><rect x="24" y="44" width="8" height="1.6"/><rect x="33" y="17" width="6" height="2"/><rect x="33" y="43" width="6" height="2"/><rect x="40" y="26" width="7" height="2"/><rect x="40" y="43" width="7" height="2"/></g><rect x="6" y="49" width="52" height="4" rx="2" fill="#e4ecec"/></svg></span>Wordshelf</div>
-    <div class="dots" id="themeDots" role="radiogroup" aria-label="Theme"></div>
+    <button type="button" class="modebtn" id="themeToggle" aria-label="Switch to dark theme" title="Switch theme">
+      <svg class="i sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+      <svg class="i moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+    </button>
     <select id="theme" class="vh" tabindex="-1" aria-hidden="true">
         <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
         <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">High contrast</option>
@@ -1344,7 +1343,7 @@ function makeDropdown(sel,{item,title,search,align,grid}){
   const btn=document.createElement("button"); btn.type="button"; btn.className="dd-btn";
   btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false"); btn.setAttribute("aria-label",sel.getAttribute("aria-label")||title);
   const pop=document.createElement("div"); pop.className="dd-pop"+(align==="left"?" left":""); pop.hidden=true; pop.setAttribute("role","listbox");
-  wrap.append(btn,pop);
+  wrap.append(btn); document.body.append(pop);   // menus live in <body> so sticky bars and overlays can't trap them
   const refresh=()=>{const o=sel.selectedOptions[0]; if(o) btn.innerHTML=`<span class="dd-val">${item(o,true)}</span>${chevron}`};
   function build(q=""){
     const ql=q.trim().toLowerCase();
@@ -1353,7 +1352,10 @@ function makeDropdown(sel,{item,title,search,align,grid}){
   }
   pop.innerHTML=`<div class="dd-head">${esc(title)}<button type="button" class="btn small dd-close">Done</button></div>${search?`<div class="dd-search"><input type="search" placeholder="Search" aria-label="Search ${esc(title)}"></div>`:""}<div class="dd-list${grid?" dd-grid":""}"></div>`;
   const dd={
-    open(){ openDd?.close(); build(); pop.hidden=false; btn.setAttribute("aria-expanded","true"); scrim.classList.add("on"); openDd=dd;
+    open(){ openDd?.close(); build();
+      if(matchMedia("(min-width:641px)").matches){ const r=wrap.getBoundingClientRect(); pop.style.top=(r.bottom+8)+"px";
+        pop.style.right=(document.documentElement.clientWidth-r.right)+"px"; pop.style.left="auto"; }
+      pop.hidden=false; btn.setAttribute("aria-expanded","true"); scrim.classList.add("on"); openDd=dd;
       const cur=pop.querySelector('[aria-selected="true"]'); cur?.scrollIntoView({block:"nearest"});
       (search&&matchMedia("(min-width:641px)").matches?pop.querySelector(".dd-search input"):cur||pop.querySelector(".dd-opt"))?.focus({preventScroll:true}) },
     close(){ pop.hidden=true; btn.setAttribute("aria-expanded","false"); scrim.classList.remove("on"); if(openDd===dd) openDd=null; const si=pop.querySelector(".dd-search input"); if(si) si.value="" },
@@ -1374,7 +1376,9 @@ function makeDropdown(sel,{item,title,search,align,grid}){
   sel.addEventListener("change",refresh);
   refresh(); dropdowns.push(dd); return dd;
 }
-document.addEventListener("click",e=>{ if(openDd&&!e.target.closest(".pick")&&!e.target.closest(".dd-scrim")) openDd.close() });
+document.addEventListener("click",e=>{ if(openDd&&!e.target.closest(".pick")&&!e.target.closest(".dd-pop")&&!e.target.closest(".dd-scrim")) openDd.close() });
+addEventListener("scroll",()=>{ if(openDd&&matchMedia("(min-width:641px)").matches) openDd.close() },{passive:true});
+addEventListener("resize",()=>openDd?.close());
 function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
 
 const DOT={auto:null,light:"#f4f6f5",dark:"#1c282b",paper:"#e3d3b8",ocean:"#0f5f7a",forest:"#2f5d3a",rose:"#e59bb3",contrast:"#000000"};
@@ -1385,23 +1389,16 @@ makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{c
   return `<span class="modeicon" style="--mc:${m[1]}">${m[0]}</span>`+(short?`${esc(m[2])}`:`<span><b>${esc(m[2])}</b><small>${esc(m[3])}</small></span>`)}});
 makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
 
-/* Themes: a row of color dots in the top bar */
-function drawDots(){
-  const cur=$("#theme").value;
-  $("#themeDots").innerHTML=[...$("#theme").options].map(o=>`<button type="button" class="dot${o.value==="auto"?" auto":""}${o.value==="contrast"?" hc":""}" role="radio" aria-checked="${o.value===cur}" data-t="${o.value}" title="${esc(o.textContent)} · ${esc(THEME_NOTE[o.value])}" aria-label="${esc(o.textContent)} theme"${DOT[o.value]?` style="--dot:${DOT[o.value]}"`:""}></button>`).join("");
-}
-$("#themeDots").addEventListener("click",e=>{const d=e.target.closest("[data-t]");if(d){applyTheme(d.dataset.t)}});
-$("#themeDots").addEventListener("keydown",e=>{
-  if(!["ArrowRight","ArrowLeft"].includes(e.key)) return; e.preventDefault();
-  const ds=[...$("#themeDots").children], i=ds.indexOf(document.activeElement), n=ds[(i+(e.key==="ArrowRight"?1:ds.length-1))%ds.length];
-  n.focus(); applyTheme(n.dataset.t);
-});
+/* Theme: one sun/moon button. Until it's pressed the page follows the device; afterwards it remembers light or dark */
+const isDark=()=>{const t=$("#theme").value; return t==="auto"?matchMedia("(prefers-color-scheme: dark)").matches:t!=="light"};
+function drawToggle(){ const d=isDark(); $("#themeToggle").classList.toggle("dark",d); $("#themeToggle").setAttribute("aria-label",d?"Switch to light theme":"Switch to dark theme") }
+$("#themeToggle").addEventListener("click",()=>applyTheme(isDark()?"light":"dark"));
 
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
-  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; drawDots();
-  document.querySelector(`#themeDots [data-t="${t}"]`)?.focus?.({preventScroll:true});
+  if(!["auto","light","dark"].includes(t)) t=["paper","rose"].includes(t)?"light":"dark";  // older saved themes
+  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; drawToggle();
   try{localStorage.setItem(THEME_KEY,t)}catch{}
   requestAnimationFrame(()=>{let m=document.querySelector('meta[name="theme-color"]');
     if(!m){m=document.createElement("meta");m.name="theme-color";document.head.append(m)}
