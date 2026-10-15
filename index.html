@@ -306,6 +306,15 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .del{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;align-self:flex-start}
 .del:hover{color:var(--danger);background:var(--sunk)}
 .del svg{width:16px;height:16px}
+.mynote{display:grid;gap:6px}
+.mynote-add{justify-self:start;border:1px dashed var(--line);background:none;color:var(--muted);border-radius:999px;padding:5px 12px;font-size:13.5px;font-weight:700;cursor:pointer}
+.mynote-add:hover{color:var(--ink);border-color:var(--ink)}
+.mynote-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mynote-edit{border:0;background:none;color:var(--accent);font-weight:700;font-size:12.5px;cursor:pointer;text-transform:none;letter-spacing:0}
+.mynote-text{margin:0;white-space:pre-wrap;background:color-mix(in srgb,#f3d38a 22%,var(--surface));border-left:3px solid color-mix(in srgb,#e0a83e 70%,transparent);border-radius:6px;padding:7px 10px;font-size:15px}
+.mynote-input{width:100%;resize:vertical;min-height:70px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);padding:8px 10px;color:var(--ink);font-size:15px;line-height:1.45}
+.mynote-actions{display:flex;justify-content:space-between;align-items:center}
+.mynote-saved{font-size:12.5px;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:32px 16px;border:1px dashed var(--line);border-radius:var(--r)}
 
 .printpanel{display:grid;gap:10px}
@@ -469,7 +478,7 @@ footer p{margin:8px 0 0}
       <label><input type="checkbox" id="ppDef" checked> definitions</label>
       <label><input type="checkbox" id="ppEx" checked> example sentences</label>
       <label><input type="checkbox" id="ppIpa" checked> pronunciation</label>
-      <label><input type="checkbox" id="ppNote" checked> my notes</label>
+      <label><input type="checkbox" id="ppNote" checked> notes</label>
       <label><input type="checkbox" id="ppBreak"> each level on a new page</label></div>
     <div class="pp-row"><button class="btn small primary" id="ppGo" type="button">Print <span id="ppCount"></span></button>
       <button class="btn small" id="ppClose" type="button">Close</button>
@@ -484,7 +493,7 @@ footer p{margin:8px 0 0}
     <div class="credit-sig">Nuramatova Sakinat Ibnuabasovna</div>
     <div class="credit-note">© 2026 Wordshelf · All rights reserved · Not affiliated with Cambridge English or the Council of Europe</div>
     <details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details>
-    <span class="ver">Version 15 Oct · 16:35</span>
+    <span class="ver">Version 15 Oct · 16:50</span>
   </footer>
 </div>
 
@@ -550,6 +559,9 @@ function card(w,i){
     ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
     ${w.note?`<p class="note">From your list: <b>${esc(w.note)}</b></p>`:""}
     ${exs?`<ul class="ex">${exs}</ul>`:`<p class="note">No example sentence yet.</p>`}
+    <div class="mynote" data-note="${i}">${w.myNote
+      ? `<div class="mynote-head">My notes<button type="button" class="mynote-edit" data-note-edit="${i}" aria-label="Edit my notes for ${esc(w.word)}">Edit</button></div><p class="mynote-text">${esc(w.myNote)}</p>`
+      : `<button type="button" class="mynote-add" data-note-edit="${i}">+ Add my notes</button>`}</div>
     <div class="card-foot"><div class="links">
       <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}UK clips</a>
       <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}US clips</a>
@@ -569,7 +581,7 @@ function render(){
   $("#chips").innerHTML=`<button class="chip" data-f="all" aria-pressed="${filter==="all"}">All <i>${words.length}</i></button>`+
     GROUPS.filter(l=>l.id||counts[""]).map(l=>`<button class="chip" data-f="${l.id}" style="--lv:var(${l.v})" aria-pressed="${filter===l.id}">${l.label||l.id} <i>${counts[l.id]}</i></button>`).join("");
   const q=query.trim().toLowerCase();
-  const shown=words.map((w,i)=>({w,i})).filter(({w})=>(filter==="all"||(w.level||"")===filter)&&(!q||w.word.toLowerCase().includes(q)||(w.note||"").toLowerCase().includes(q)));
+  const shown=words.map((w,i)=>({w,i})).filter(({w})=>(filter==="all"||(w.level||"")===filter)&&(!q||w.word.toLowerCase().includes(q)||(w.note||"").toLowerCase().includes(q)||(w.myNote||"").toLowerCase().includes(q)));
   if(!words.length){$("#shelf").innerHTML=`<div class="empty">Your shelf is empty. Upload a screenshot of your vocabulary or type a few words above.</div>`;return}
   if(!shown.length){$("#shelf").innerHTML=`<div class="empty">No words match this filter.</div>`;return}
   $("#shelf").innerHTML=GROUPS.map(l=>{
@@ -1527,7 +1539,18 @@ try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch{}
 /* Shelf interactions */
 $("#chips").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filter=b.dataset.f;render()});
 $("#search").addEventListener("input",e=>{query=e.target.value;render()});
+/* My notes: a small editor on each card; saved as you type */
+let noteTimer=null;
+function openNoteEditor(i){
+  const box=document.querySelector(`.mynote[data-note="${i}"]`); if(!box) return;
+  box.innerHTML=`<label class="mynote-head" for="note-${i}">My notes</label><textarea id="note-${i}" class="mynote-input" rows="3" placeholder="A memory trick, where you saw it, your own example…">${esc(words[i].myNote||"")}</textarea><div class="mynote-actions"><span class="mynote-saved" aria-live="polite"></span><button type="button" class="btn small" data-note-done="${i}">Done</button></div>`;
+  const ta=box.querySelector("textarea"); ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+  ta.addEventListener("input",()=>{ clearTimeout(noteTimer); noteTimer=setTimeout(()=>{ words[i].myNote=ta.value.trim(); store.set(words); box.querySelector(".mynote-saved").textContent="Saved" },350) });
+}
+function closeNoteEditor(i){ const ta=document.getElementById("note-"+i); if(ta){ clearTimeout(noteTimer); words[i].myNote=ta.value.trim(); store.set(words) } render() }
 $("#shelf").addEventListener("click",e=>{
+  const ne=e.target.closest("[data-note-edit]"); if(ne){ openNoteEditor(+ne.dataset.noteEdit); return }
+  const nd=e.target.closest("[data-note-done]"); if(nd){ closeNoteEditor(+nd.dataset.noteDone); return }
   const s=e.target.closest("[data-say]");
   if(s){speak(words[s.dataset.say].word,s.dataset.accent||"en-GB");return}
   const fx=e.target.closest("[data-fix]");
@@ -1561,14 +1584,15 @@ $("#ppGo").addEventListener("click",()=>{
       ws.map(w=>`<div class="pa-w"><b>${esc(w.word)}</b><span class="pa-meta">${esc(w.pos||"")}${o.ipa&&w.ipa?` · ${w.ipaUs?"UK ":""}${esc(w.ipa)}`:""}${o.ipa&&w.ipaUs?` · US ${esc(w.ipaUs)}`:""}</span>`+
         (o.def&&w.definition?`<p class="pa-def">${esc(w.definition)}</p>`:"")+
         (lang&&w.tr?.[lang]?`<p class="pa-note">${esc(langName(lang))}: <b>${esc(w.tr[lang])}</b></p>`:"")+
-        (o.note&&w.note?`<p class="pa-note">My note: ${esc(w.note)}</p>`:"")+
+        (o.note&&w.note?`<p class="pa-note">From my list: ${esc(w.note)}</p>`:"")+
+        (o.note&&w.myNote?`<p class="pa-note">My notes: ${esc(w.myNote)}</p>`:"")+
         (o.ex&&(w.examples||[]).length?`<ul>${w.examples.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`:"")+`</div>`).join("")+`</section>`).join("");
   window.print();
 });
 
 $("#copyAll").addEventListener("click",async()=>{
   closeMenu();
-  const txt=GROUPS.map(l=>{const g=words.filter(w=>(w.level||"")===l.id);return g.length?`${l.label||l.id} ${l.name}\n`+g.map(w=>`- ${w.word}${lang&&w.tr?.[lang]?` = ${w.tr[lang]}`:""} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
+  const txt=GROUPS.map(l=>{const g=words.filter(w=>(w.level||"")===l.id);return g.length?`${l.label||l.id} ${l.name}\n`+g.map(w=>`- ${w.word}${lang&&w.tr?.[lang]?` = ${w.tr[lang]}`:""} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}${w.myNote?`\n  My notes: ${w.myNote}`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
   try{await navigator.clipboard.writeText(txt);setStatus("List copied. Paste it into your notes.")}catch{setStatus("Copy isn't allowed here. Select the words on the page instead.",true)}
 });
 const CLEAR_HTML=$("#clearWrap").innerHTML;
