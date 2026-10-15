@@ -58,6 +58,41 @@
   --accent:#ffe14d; --accent-ink:#000000; --accent-soft:#2b2600; --focus:#ffe14d; --danger:#ff7a7a;
   --a1:#6dff9e; --a2:#d4ff5c; --b1:#5cdcff; --b2:#9db4ff; --c1:#d9a6ff; --c2:#ff8cc6; --unrated:#ffffff;
   --shadow:none; color-scheme:dark}
+/* more themes: light ones keep the light level colors, dark ones use the dark set */
+:root[data-ws-theme="midnight"],:root[data-ws-theme="coffee"],:root[data-ws-theme="sunset"],:root[data-ws-theme="nord"]{
+  --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8; color-scheme:dark}
+:root[data-ws-theme="sakura"]{
+  --bg:#fff5f7; --surface:#ffffff; --raised:#ffffff; --sunk:#fde8ee; --ink:#3a1f2a; --muted:#8a6573; --line:#f6d5df;
+  --accent:#e0457b; --accent-ink:#ffffff; --accent-soft:#fde0ea; --focus:#e0457b; --danger:#c02848;
+  --shadow:0 1px 2px rgba(120,30,60,.06),0 6px 20px -12px rgba(120,30,60,.25)}
+:root[data-ws-theme="mint"]{
+  --bg:#eefaf4; --surface:#ffffff; --raised:#ffffff; --sunk:#dcf3e7; --ink:#0f2b20; --muted:#557366; --line:#c9e8d8;
+  --accent:#12935f; --accent-ink:#ffffff; --accent-soft:#d4f2e3; --focus:#12935f; --danger:#b4235a;
+  --shadow:0 1px 2px rgba(10,60,40,.06),0 6px 20px -12px rgba(10,60,40,.25)}
+:root[data-ws-theme="lavender"]{
+  --bg:#f5f2fd; --surface:#ffffff; --raised:#ffffff; --sunk:#ebe5fa; --ink:#231a3a; --muted:#6b6187; --line:#ddd3f4;
+  --accent:#6d4fd8; --accent-ink:#ffffff; --accent-soft:#e7e0fb; --focus:#6d4fd8; --danger:#b4235a;
+  --shadow:0 1px 2px rgba(50,30,110,.06),0 6px 20px -12px rgba(50,30,110,.25)}
+:root[data-ws-theme="sand"]{
+  --bg:#f6f1e7; --surface:#fffdf8; --raised:#ffffff; --sunk:#ece3d2; --ink:#2f2a20; --muted:#776c58; --line:#e2d7c2;
+  --accent:#b7791f; --accent-ink:#ffffff; --accent-soft:#f6e6c8; --focus:#b7791f; --danger:#a0283f;
+  --shadow:0 1px 2px rgba(80,60,20,.07),0 6px 18px -12px rgba(80,60,20,.28)}
+:root[data-ws-theme="midnight"]{
+  --bg:#0d0b1f; --surface:#17142e; --raised:#1d1938; --sunk:#0a0818; --ink:#ece9ff; --muted:#a39fc4; --line:#2c2750;
+  --accent:#a78bfa; --accent-ink:#160f33; --accent-soft:#2a2150; --focus:#c4b5fd; --danger:#fb7185;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -14px rgba(0,0,0,.7)}
+:root[data-ws-theme="coffee"]{
+  --bg:#1a1410; --surface:#241c16; --raised:#2b221b; --sunk:#14100c; --ink:#f1e7dc; --muted:#b5a594; --line:#3b2f25;
+  --accent:#d9a066; --accent-ink:#2a1a0b; --accent-soft:#3d2c1d; --focus:#e8b781; --danger:#f2879f;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -14px rgba(0,0,0,.7)}
+:root[data-ws-theme="sunset"]{
+  --bg:#1c1020; --surface:#28172c; --raised:#301c35; --sunk:#160c19; --ink:#fbe9ee; --muted:#c6a3b4; --line:#43283f;
+  --accent:#ff8a5c; --accent-ink:#2b0f05; --accent-soft:#4a2530; --focus:#ffab88; --danger:#ff7a9c;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -14px rgba(0,0,0,.7)}
+:root[data-ws-theme="nord"]{
+  --bg:#242933; --surface:#2e3440; --raised:#353c4a; --sunk:#20242d; --ink:#eceff4; --muted:#a3adbf; --line:#434c5e;
+  --accent:#88c0d0; --accent-ink:#1d2430; --accent-soft:#38495a; --focus:#8fbcbb; --danger:#bf616a;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.6)}
 *{box-sizing:border-box}
 html,body{margin:0}
 [hidden]{display:none!important}
@@ -227,6 +262,15 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .menu-pop button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px}
 .menu-pop button:hover{background:var(--sunk)}
 .menu-pop .danger{color:var(--danger)}
+.menu-pop{min-width:260px}
+.menu-sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px 2px}
+.menu-sep{height:1px;background:var(--line);margin:6px 4px}
+.theme-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:4px 6px}
+.menu-pop .tchip{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--tb);color:var(--ti);border:1px solid color-mix(in srgb,var(--ti) 18%,transparent);
+  border-radius:10px;padding:9px 10px;font-weight:700;font-size:14px;width:100%;cursor:pointer;position:relative;overflow:hidden}
+.menu-pop .tchip::after{content:"";width:16px;height:5px;border-radius:3px;background:var(--ta);flex:none}
+.menu-pop .tchip:hover{background:var(--tb);transform:translateY(-1px)}
+.menu-pop .tchip[aria-pressed="true"]{outline:2.5px solid var(--accent);outline-offset:1.5px}
 .menu-pop .confirm{display:grid;gap:6px;padding:6px 8px;font-size:14px}
 .menu-pop .confirm div{display:flex;gap:6px}
 .example-note{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r-sm);font-size:15px}
@@ -321,7 +365,9 @@ footer p{margin:8px 0 0}
     </button>
     <select id="theme" class="vh" tabindex="-1" aria-hidden="true">
         <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
-        <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">High contrast</option>
+        <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">Contrast</option>
+        <option value="sakura">Sakura</option><option value="mint">Mint</option><option value="lavender">Lavender</option><option value="sand">Sand</option>
+        <option value="midnight">Midnight</option><option value="coffee">Coffee</option><option value="sunset">Sunset</option><option value="nord">Nord</option>
       </select>
   </header>
 
@@ -401,6 +447,9 @@ footer p{margin:8px 0 0}
       <details class="menu" id="moreMenu">
         <summary aria-label="More actions"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></summary>
         <div class="menu-pop">
+          <div class="menu-sec">Theme</div>
+          <div class="theme-list" id="themeList"></div>
+          <div class="menu-sep"></div>
           <button type="button" id="printOpen" aria-expanded="false" aria-controls="printPanel"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Print or save PDF</button>
           <button type="button" id="copyAll"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>Copy list</button>
           <span id="clearWrap"><button type="button" class="danger" id="clear"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Clear all words</button></span>
@@ -1390,15 +1439,27 @@ makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{c
 makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
 
 /* Theme: one sun/moon button. Until it's pressed the page follows the device; afterwards it remembers light or dark */
-const isDark=()=>{const t=$("#theme").value; return t==="auto"?matchMedia("(prefers-color-scheme: dark)").matches:t!=="light"};
+const LIGHT_THEMES=["light","paper","rose","sakura","mint","lavender","sand"];
+const isDark=()=>{const t=$("#theme").value; return t==="auto"?matchMedia("(prefers-color-scheme: dark)").matches:!LIGHT_THEMES.includes(t)};
+// each theme button is painted in that theme's own colors: [background, text, accent]
+const THEME_COLORS={light:["#f2f5f4","#14232b","#2350d8"],dark:["#0f1618","#e4ecec","#86a4ff"],paper:["#efe8dc","#2b2217","#9a3b1e"],ocean:["#081a2b","#e3f0fb","#4fd1c5"],
+  forest:["#0f1a14","#e6efe8","#e2b44c"],rose:["#fbf0f2","#2e1a22","#c2306a"],contrast:["#000000","#ffffff","#ffe14d"],sakura:["#fff5f7","#3a1f2a","#e0457b"],
+  mint:["#eefaf4","#0f2b20","#12935f"],lavender:["#f5f2fd","#231a3a","#6d4fd8"],sand:["#f6f1e7","#2f2a20","#b7791f"],midnight:["#0d0b1f","#ece9ff","#a78bfa"],
+  coffee:["#1a1410","#f1e7dc","#d9a066"],sunset:["#1c1020","#fbe9ee","#ff8a5c"],nord:["#242933","#eceff4","#88c0d0"]};
+function drawThemeList(){
+  const cur=$("#theme").value;
+  $("#themeList").innerHTML=[...$("#theme").options].filter(o=>o.value!=="auto").map(o=>{const [bg,ink,acc]=THEME_COLORS[o.value];
+    return `<button type="button" class="tchip" data-t="${o.value}" aria-pressed="${o.value===cur}" style="--tb:${bg};--ti:${ink};--ta:${acc}">${esc(o.textContent)}</button>`}).join("");
+}
+$("#themeList").addEventListener("click",e=>{e.stopPropagation();const b=e.target.closest("[data-t]");if(b) applyTheme(b.dataset.t)});
 function drawToggle(){ const d=isDark(); $("#themeToggle").classList.toggle("dark",d); $("#themeToggle").setAttribute("aria-label",d?"Switch to light theme":"Switch to dark theme") }
 $("#themeToggle").addEventListener("click",()=>applyTheme(isDark()?"light":"dark"));
 
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
-  if(!["auto","light","dark"].includes(t)) t=["paper","rose"].includes(t)?"light":"dark";  // older saved themes
-  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; drawToggle();
+  if(![...$("#theme").options].some(o=>o.value===t)) t="auto";
+  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; drawToggle(); drawThemeList();
   try{localStorage.setItem(THEME_KEY,t)}catch{}
   requestAnimationFrame(()=>{let m=document.querySelector('meta[name="theme-color"]');
     if(!m){m=document.createElement("meta");m.name="theme-color";document.head.append(m)}
