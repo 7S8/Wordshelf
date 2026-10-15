@@ -112,15 +112,16 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .dd-opt .sub{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
-.modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:800;font-family:var(--display);font-size:15px;color:#fff;background:var(--mc)}
+.modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
 .dd-btn .modeicon{width:22px;height:22px;border-radius:6px;font-size:11px}
 .dd-scrim{position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.35);display:none}
 @media (max-width:640px){
-  .dd-pop{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;min-width:0;max-height:72vh;border-radius:18px 18px 0 0;
-    padding:8px 10px calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+  .dd-pop,.dd-pop.left{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-width:none;min-width:0;max-height:78vh;max-height:78dvh;border-radius:20px 20px 0 0;
+    padding:8px 10px calc(28px + env(safe-area-inset-bottom,0px));animation:sheet .2s ease-out;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
   .dd-head{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 8px;font-family:var(--display);font-weight:700;font-size:17px}
   .dd-head::before{content:"";position:absolute;left:50%;top:6px;width:38px;height:4px;margin-left:-19px;border-radius:4px;background:var(--line)}
   .dd-scrim.on{display:block}
+  @keyframes sheet{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
   .dd-opt{padding:12px 10px}
 }
 
