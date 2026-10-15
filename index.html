@@ -382,7 +382,9 @@ const netFail=()=>fail(navigator.onLine===false?"You're offline. Connect and try
 
 /* Gemini (Google AI Studio). Picks the newest Flash model this key can use, so it keeps working as Google releases new ones */
 let geminiModel=null;
-async function pickGeminiModel(key){
+// Best models first: newest Flash, then other Flash/Flash-Lite models. Each model has its own free quota, so a busy or
+// rate-limited model can be skipped for the next one
+async function geminiModels(key){
   if(geminiModel) return geminiModel;
   const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200",{headers:{"x-goog-api-key":key}});
   if(!r.ok) throw {status:r.status,data:await r.json().catch(()=>({}))};
@@ -390,33 +392,43 @@ async function pickGeminiModel(key){
   const score=n=>{const v=parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/)||[])[1]||0);
     return v*100+(/flash/.test(n)?20:0)-(/lite/.test(n)?15:0)-(/preview|exp/.test(n)?5:0)-(/latest/.test(n)?1:0)};
   const ok=ms.filter(n=>/^gemini-/.test(n)&&!/(image|tts|audio|live|embedding|thinking|computer|robotics|native)/.test(n)&&/flash/.test(n));
-  geminiModel=(ok.sort((a,b)=>score(b)-score(a))[0])||"gemini-2.5-flash";
+  geminiModel=ok.sort((a,b)=>score(b)-score(a)).slice(0,4);
+  if(!geminiModel.length) geminiModel=["gemini-2.5-flash","gemini-2.5-flash-lite"];
   return geminiModel;
 }
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
 async function askGemini(key,prompt,images){
-  try{
-    const model=await pickGeminiModel(key);
-    const parts=[];
-    for(const f of images||[]){const im=await prepImage(f);parts.push({inline_data:{mime_type:im.media_type,data:im.data}})}
-    parts.push({text:prompt+"\n\n"+JSON_SHAPE});
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:"POST",
-      headers:{"content-type":"application/json","x-goog-api-key":key},
-      body:JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}})});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok) throw {status:r.status,data};
-    const cand=data.candidates?.[0];
-    if(!cand) return fail("Gemini couldn't process that. Try a different image.");
-    const res=parseJSONReply((cand.content?.parts||[]).map(p=>p.text||"").join(""));
-    if(!res) return fail(cand.finishReason==="MAX_TOKENS"?"The list was too long to finish in one go. Split the photo into smaller parts.":"Gemini's answer came back in the wrong format. Press the button again.");
-    return res;
-  }catch(e){
-    if(e?.status==null) return netFail();
-    const m=e.data?.error?.message||"";
-    if(e.status===400&&/API key/i.test(m)||e.status===401||e.status===403){$("#keybox").open=true;return fail("That Google key was rejected. Check it in the box below.")}
-    if(e.status===429) return fail("You've hit Gemini's free limit for now. Wait a minute and try again (the free tier allows a limited number of requests per minute and per day).");
-    if(e.status===503) return fail("Gemini is busy right now. Try again in a minute.");
-    return fail("Gemini request failed: "+(m||e.status));
+  let models, lastStatus=0, lastMsg="";
+  try{ models=await geminiModels(key) }catch(e){ if(e?.status==null) return netFail(); lastStatus=e.status; lastMsg=e.data?.error?.message||""; models=[] }
+  const parts=[];
+  for(const f of images||[]){const im=await prepImage(f);parts.push({inline_data:{mime_type:im.media_type,data:im.data}})}
+  parts.push({text:prompt+"\n\n"+JSON_SHAPE});
+  for(const model of models){
+    for(let attempt=0;attempt<2;attempt++){
+      let r,data;
+      try{
+        r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:"POST",
+          headers:{"content-type":"application/json","x-goog-api-key":key},
+          body:JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}})});
+        data=await r.json().catch(()=>({}));
+      }catch{ return netFail() }
+      if(r.ok){
+        const cand=data.candidates?.[0];
+        if(!cand) return fail("Gemini couldn't process that. Try a different image.");
+        const res=parseJSONReply((cand.content?.parts||[]).map(p=>p.text||"").join(""));
+        if(!res) return fail(cand.finishReason==="MAX_TOKENS"?"The list was too long to finish in one go. Split the photo into smaller parts.":"Gemini's answer came back in the wrong format. Press the button again.");
+        return res;
+      }
+      lastStatus=r.status; lastMsg=data?.error?.message||"";
+      if(r.status===400&&/API key/i.test(lastMsg)||r.status===401||r.status===403){$("#keybox").open=true;return fail("That Google key was rejected. Check it in the box below.")}
+      if(r.status===503||r.status===500){ setStatus(spin("Gemini is busy, trying again…")); await wait(2500); continue }  // busy: retry once, then next model
+      if(r.status===429||r.status===404) break;  // this model's free quota is used up or it's gone: next model
+      return fail("Gemini request failed: "+(lastMsg||r.status));
+    }
+    if(model!==models[models.length-1]) setStatus(spin("Gemini is busy, switching to another Gemini model…"));
   }
+  if(lastStatus===429) return fail("You've used Gemini's free limit for now. It resets within a minute (or daily for the daily limit). Try again later, or switch to Qwen.");
+  return fail("Gemini is busy right now. Wait a minute and try again, or switch to Qwen.");
 }
 
 /* Qwen via OpenRouter's free models. OpenRouter's free line-up changes often, so build a list of candidates:
@@ -823,7 +835,7 @@ $("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatu
 /* Write missing example sentences: with a saved AI key if there is one, otherwise with Qwen running in the browser */
 var filling=false;
 const needSentences=()=>words.filter(w=>!(w.examples||[]).length);
-const EX_PROMPT=list=>`Write exactly 2 short, natural, everyday example sentences for each English word or phrase below, for a language learner. Use the word in the sense of its definition. Reply with only JSON: {"items":[{"word":"...","examples":["...","..."]}]}
+const EX_PROMPT=list=>`Write exactly 2 short, natural, everyday example sentences for each English word or phrase below, for a language learner. Use the word in the sense of its definition. If a word has no definition below, also give a simple one-sentence learner definition. Reply with only JSON: {"items":[{"word":"...","definition":"...","examples":["...","..."]}]}
 
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.pos?w.pos+": ":""}${w.definition})`:""}`).join("\n");
 async function fillWithKey(provider,list){
@@ -882,13 +894,18 @@ async function fillMissing(useLocal){
   filling=true; render(); $("#fillConfirm").hidden=true;
   let items=null;
   const provider=["gemini","qwen","claude"].find(p=>getKey(p));
-  if(!useLocal&&provider) items=await fillWithKey(provider,list.slice(0,60));
+  if(!useLocal&&provider){
+    items=await fillWithKey(provider,list.slice(0,60));
+    let local=false; try{local=localStorage.getItem("wordshelf.localModel")==="1"}catch{}
+    if(!items&&local) items=await fillLocally(list.slice(0,60));
+  }
   else if(useLocal) items=await fillLocally(list.slice(0,60));
   filling=false;
   let n=0;
   for(const it of items||[]){
     const w=words.find(x=>x.word.toLowerCase()===String(it.word||"").toLowerCase());
     const exs=(Array.isArray(it.examples)?it.examples:[]).map(String).filter(Boolean).slice(0,2);
+    if(w&&!w.definition&&it.definition){w.definition=String(it.definition);w.suggest=""}
     if(w&&exs.length&&!(w.examples||[]).length){w.examples=exs;n++}
   }
   store.set(words); render();
