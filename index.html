@@ -127,6 +127,16 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .taa{font-family:var(--display);font-weight:800;font-size:17px;line-height:1;color:var(--ti)}
 .tdot{width:22px;height:8px;border-radius:999px;background:var(--ta)}
 .tname{font-weight:700;font-size:13.5px;color:var(--ti)}
+.dots{display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--line);background:var(--surface);border-radius:999px}
+.dot{width:20px;height:20px;border-radius:50%;border:0;padding:0;cursor:pointer;background:var(--dot);box-shadow:inset 0 0 0 1px rgba(127,127,127,.45);transition:transform .15s,box-shadow .15s}
+.dot:hover{transform:scale(1.15)}
+.dot.hc{box-shadow:inset 0 0 0 2.5px #ffe14d}
+.dot.auto{background:linear-gradient(160deg,#f4f6f5 15%,#7d8a8f 50%,#1c282b 85%)}
+
+.dot[aria-checked="true"]{box-shadow:inset 0 0 0 1px rgba(127,127,127,.45),0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+.dot.hc[aria-checked="true"]{box-shadow:inset 0 0 0 2.5px #ffe14d,0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+.dot:focus-visible{outline:none;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--focus)}
+@media (max-width:400px){.dots{gap:5px;padding:5px 7px}.dot{width:17px;height:17px}}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
 .modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
@@ -309,11 +319,11 @@ footer p{margin:8px 0 0}
 <div class="wrap">
   <header class="appbar">
     <div class="brand"><span class="logo" aria-hidden="true"><svg width="36" height="36" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#14232b"/><g><rect x="9" y="21" width="7" height="28" rx="1.6" fill="#5fcf8f"/><rect x="17" y="15" width="6" height="34" rx="1.6" fill="#a3d65f"/><rect x="24" y="19" width="8" height="30" rx="1.6" fill="#4fc3e8"/><rect x="33" y="13" width="6" height="36" rx="1.6" fill="#86a4ff"/><rect x="40" y="22" width="7" height="27" rx="1.6" fill="#bf93f5"/><rect x="50" y="18" width="6.5" height="31" rx="1.6" fill="#f283b6" transform="rotate(-14 56.5 49)"/></g><g fill="#14232b" opacity=".28"><rect x="9" y="25" width="7" height="2"/><rect x="9" y="43" width="7" height="2"/><rect x="17" y="19" width="6" height="2"/><rect x="17" y="43" width="6" height="2"/><rect x="24" y="23" width="8" height="1.6"/><rect x="24" y="26" width="8" height="1.6"/><rect x="24" y="44" width="8" height="1.6"/><rect x="33" y="17" width="6" height="2"/><rect x="33" y="43" width="6" height="2"/><rect x="40" y="26" width="7" height="2"/><rect x="40" y="43" width="7" height="2"/></g><rect x="6" y="49" width="52" height="4" rx="2" fill="#e4ecec"/></svg></span>Wordshelf</div>
-    <div class="pick" title="Theme"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4.1-4-7.6-9-7.6z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg><span class="vh">Theme</span>
-      <select id="theme" aria-label="Theme">
+    <div class="dots" id="themeDots" role="radiogroup" aria-label="Theme"></div>
+    <select id="theme" class="vh" tabindex="-1" aria-hidden="true">
         <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
         <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">High contrast</option>
-      </select></div>
+      </select>
   </header>
 
   <section class="intro">
@@ -1367,26 +1377,31 @@ function makeDropdown(sel,{item,title,search,align,grid}){
 document.addEventListener("click",e=>{ if(openDd&&!e.target.closest(".pick")&&!e.target.closest(".dd-scrim")) openDd.close() });
 function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
 
+const DOT={auto:null,light:"#f4f6f5",dark:"#1c282b",paper:"#e3d3b8",ocean:"#0f5f7a",forest:"#2f5d3a",rose:"#e59bb3",contrast:"#000000"};
 const THEME_NOTE={auto:"Follows your device",light:"Clean and bright",dark:"Easy on the eyes",paper:"Warm, like a notebook",ocean:"Deep blue",forest:"Dark green and gold",rose:"Soft pink",contrast:"Maximum readability"};
-// [background, card, text, accent]
-const THEMES={light:["#f2f5f4","#ffffff","#14232b","#2350d8"],dark:["#0f1618","#1c282b","#e4ecec","#86a4ff"],paper:["#efe8dc","#fbf7f0","#2b2217","#9a3b1e"],
-  ocean:["#081a2b","#132c44","#e3f0fb","#4fd1c5"],forest:["#0f1a14","#1b2c22","#e6efe8","#e2b44c"],rose:["#fbf0f2","#ffffff","#2e1a22","#c2306a"],contrast:["#000000","#0a0a0a","#ffffff","#ffe14d"]};
-const tileFace=([bg,card,ink,acc],name)=>`<span class="tface" style="--tb:${bg};--tc:${card};--ti:${ink};--ta:${acc}"><span class="tcard"><span class="taa">Aa</span><span class="tdot"></span></span><span class="tname">${name}</span></span>`;
-makeDropdown($("#theme"),{title:"Theme",grid:true,item:(o,short)=>{
-  if(short) return `<b>${esc(o.textContent)}</b>`;
-  const n=esc(o.textContent);
-  return `<span class="ttile${o.value==="auto"?" auto":""}" title="${THEME_NOTE[o.value]}">`+(o.value==="auto"?tileFace(THEMES.light,n)+tileFace(THEMES.dark,n):tileFace(THEMES[o.value],n))+`</span>`;
-}});
 const MODE_INFO={gemini:["G","#2f6fe4","Gemini","Free Google key · reads handwriting"],qwen:["Q","#6a46d8","Qwen","Free OpenRouter key · reads handwriting"],
   account:["C","#c46a3c","Claude account","Opens Wordshelf on claude.ai · no key"],claude:["C","#a14e2a","Claude API","Paid key · most accurate"],free:["B","#5b6b71","Basic","No key · typed or printed text only"]};
 makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{const m=MODE_INFO[o.value];
   return `<span class="modeicon" style="--mc:${m[1]}">${m[0]}</span>`+(short?`${esc(m[2])}`:`<span><b>${esc(m[2])}</b><small>${esc(m[3])}</small></span>`)}});
 makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
 
+/* Themes: a row of color dots in the top bar */
+function drawDots(){
+  const cur=$("#theme").value;
+  $("#themeDots").innerHTML=[...$("#theme").options].map(o=>`<button type="button" class="dot${o.value==="auto"?" auto":""}${o.value==="contrast"?" hc":""}" role="radio" aria-checked="${o.value===cur}" data-t="${o.value}" title="${esc(o.textContent)} · ${esc(THEME_NOTE[o.value])}" aria-label="${esc(o.textContent)} theme"${DOT[o.value]?` style="--dot:${DOT[o.value]}"`:""}></button>`).join("");
+}
+$("#themeDots").addEventListener("click",e=>{const d=e.target.closest("[data-t]");if(d){applyTheme(d.dataset.t)}});
+$("#themeDots").addEventListener("keydown",e=>{
+  if(!["ArrowRight","ArrowLeft"].includes(e.key)) return; e.preventDefault();
+  const ds=[...$("#themeDots").children], i=ds.indexOf(document.activeElement), n=ds[(i+(e.key==="ArrowRight"?1:ds.length-1))%ds.length];
+  n.focus(); applyTheme(n.dataset.t);
+});
+
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
-  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; refreshDropdowns();
+  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; drawDots();
+  document.querySelector(`#themeDots [data-t="${t}"]`)?.focus?.({preventScroll:true});
   try{localStorage.setItem(THEME_KEY,t)}catch{}
   requestAnimationFrame(()=>{let m=document.querySelector('meta[name="theme-color"]');
     if(!m){m=document.createElement("meta");m.name="theme-color";document.head.append(m)}
