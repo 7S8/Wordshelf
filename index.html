@@ -113,6 +113,9 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .del{border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 6px;margin-left:auto;align-self:center}
 .del:hover{color:var(--c2)}
 .empty{text-align:center;color:var(--muted);padding:32px 16px;border:1px dashed var(--line);border-radius:var(--r)}
+.fill{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;font-size:15px}
+.fill #fillConfirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fill #fillConfirm[hidden]{display:none}
 .confirm{display:flex;gap:8px;align-items:center;font-size:14px}
 .keybox{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
 .keybox summary{cursor:pointer;font-weight:700}
@@ -198,6 +201,14 @@ footer{color:var(--muted);font-size:13px}
 
   <div class="example-note" id="exampleNote" hidden>These are example words so you can see how the page works. They disappear as soon as you add your own.</div>
 
+  <div class="fill" id="fillBar" hidden>
+    <span id="fillText"></span>
+    <button class="btn small primary" id="fillGo" type="button">Write missing sentences</button>
+    <span id="fillConfirm" hidden>Download a small AI model (Qwen, about 500 MB, only once) to write sentences on this device?
+      <button class="btn small primary" id="fillYes" type="button">Download and write</button>
+      <button class="btn small" id="fillNo" type="button">Cancel</button></span>
+  </div>
+
   <div class="toolbar">
     <div class="chips" id="chips"></div>
     <div class="row">
@@ -268,7 +279,7 @@ function card(w,i){
       <div class="say"><button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button></div></div>
     ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
     ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
-    ${exs?`<ul class="ex">${exs}</ul>`:""}
+    ${exs?`<ul class="ex">${exs}</ul>`:`<p class="note">No example sentence yet. Use <b>Write missing sentences</b> above.</p>`}
     <div class="links">
       <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}British clips</a>
       <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}American clips</a>
@@ -280,6 +291,9 @@ function card(w,i){
 
 function render(){
   $("#exampleNote").hidden=!words.some(w=>w.example);
+  const missing=words.filter(w=>!(w.examples||[]).length).length;
+  $("#fillBar").hidden=!missing||filling;
+  $("#fillText").textContent=`${missing} word${missing===1?" has":"s have"} no example sentence.`;
   const counts=Object.fromEntries(GROUPS.map(l=>[l.id,words.filter(w=>(w.level||"")===l.id).length]));
   $("#chips").innerHTML=`<button class="chip" data-f="all" aria-pressed="${filter==="all"}">All <i>${words.length}</i></button>`+
     GROUPS.filter(l=>l.id||counts[""]).map(l=>`<button class="chip" data-f="${l.id}" style="--lv:var(${l.v})" aria-pressed="${filter===l.id}">${l.label||l.id} <i>${counts[l.id]}</i></button>`).join("");
@@ -804,6 +818,86 @@ function showKeyState(){
 setMode(mode);
 $("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);geminiModel=null;showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
 $("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatus("Key removed from this browser.")});
+
+/* Write missing example sentences: with a saved AI key if there is one, otherwise with Qwen running in the browser */
+var filling=false;
+const needSentences=()=>words.filter(w=>!(w.examples||[]).length);
+const EX_PROMPT=list=>`Write exactly 2 short, natural, everyday example sentences for each English word or phrase below, for a language learner. Use the word in the sense of its definition. Reply with only JSON: {"items":[{"word":"...","examples":["...","..."]}]}
+
+`+list.map(w=>`- ${w.word}${w.definition?` (${w.pos?w.pos+": ":""}${w.definition})`:""}`).join("\n");
+async function fillWithKey(provider,list){
+  const saved=mode; mode=provider;
+  try{
+    const key=getKey(); setStatus(spin(`Writing sentences with ${PROVIDERS[provider].name}…`));
+    const res=provider==="gemini"?await askGemini(key,EX_PROMPT(list),[]):provider==="qwen"?await askQwen(key,EX_PROMPT(list),[]):await askClaudeText(key,EX_PROMPT(list));
+    return res?.items||null;
+  } finally { mode=saved; setMode(mode) }
+}
+async function askClaudeText(key,prompt){
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key,
+      "anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:MODEL,max_tokens:8000,output_config:{effort:"low"},messages:[{role:"user",content:prompt}]})});
+    const data=await r.json(); if(!r.ok) return fail("Claude request failed: "+(data?.error?.message||r.status));
+    return parseJSONReply((data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join(""));
+  }catch{ return netFail() }
+}
+let localGen=null;
+async function loadLocalModel(){
+  if(localGen) return localGen;
+  const T=await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2");
+  const gpu=!!navigator.gpu;
+  const files={};
+  localGen=await T.pipeline("text-generation","onnx-community/Qwen2.5-0.5B-Instruct",{
+    device:gpu?"webgpu":"wasm",dtype:gpu?"q4f16":"q4",
+    progress_callback:p=>{
+      if(p.status==="progress"&&p.total){files[p.file]=[p.loaded,p.total];
+        const [l,t]=Object.values(files).reduce((a,[x,y])=>[a[0]+x,a[1]+y],[0,0]);
+        setStatus(spin(`Downloading the sentence model… ${Math.round(l/1e6)} of ${Math.round(t/1e6)} MB (only the first time)`))}
+    }});
+  return localGen;
+}
+async function fillLocally(list){
+  let gen;
+  try{ gen=await loadLocalModel() }catch{ localGen=null; return fail("Couldn't download the sentence model. Check your connection, or add a free Gemini key instead.") }
+  const out=[];
+  for(let i=0;i<list.length;i++){
+    const w=list[i];
+    setStatus(spin(`Writing sentences on this device… ${i+1} of ${list.length}`));
+    try{
+      const r=await gen([{role:"system",content:"You write example sentences for English learners. Reply with exactly two short sentences, one per line, nothing else."},
+        {role:"user",content:`Word: "${w.word}"${w.definition?`\nMeaning: ${w.definition}`:""}\nWrite two simple, natural sentences that use "${w.word}".`}],
+        {max_new_tokens:90,do_sample:false});
+      const text=r[0].generated_text.at(-1).content;
+      const exs=text.split(/\n+/).map(x=>x.replace(/^\s*(\d+[.)]|[-*•])\s*/,"").replace(/^"|"$/g,"").trim()).filter(x=>x.split(" ").length>=3).slice(0,2);
+      out.push({word:w.word,examples:exs});
+    }catch{}
+  }
+  return out;
+}
+async function fillMissing(useLocal){
+  const list=needSentences(); if(!list.length) return;
+  filling=true; render(); $("#fillConfirm").hidden=true;
+  let items=null;
+  const provider=["gemini","qwen","claude"].find(p=>getKey(p));
+  if(!useLocal&&provider) items=await fillWithKey(provider,list.slice(0,60));
+  else if(useLocal) items=await fillLocally(list.slice(0,60));
+  filling=false;
+  let n=0;
+  for(const it of items||[]){
+    const w=words.find(x=>x.word.toLowerCase()===String(it.word||"").toLowerCase());
+    const exs=(Array.isArray(it.examples)?it.examples:[]).map(String).filter(Boolean).slice(0,2);
+    if(w&&exs.length&&!(w.examples||[]).length){w.examples=exs;n++}
+  }
+  store.set(words); render();
+  if(items) setStatus(n?`Added sentences for ${n} word${n===1?"":"s"}.`:"No sentences came back. Try again.",!n);
+}
+$("#fillGo").addEventListener("click",()=>{
+  if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
+  $("#fillConfirm").hidden=false;   // no key saved: offer the on-device model
+});
+$("#fillYes").addEventListener("click",()=>fillMissing(true));
+$("#fillNo").addEventListener("click",()=>{$("#fillConfirm").hidden=true});
 
 /* Pronunciation: pick a voice for the accent (en-GB or en-US), preferring natural-sounding ones */
 function pickVoice(lang){
