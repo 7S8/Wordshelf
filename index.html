@@ -404,6 +404,7 @@ async function closestWord(w){
   return bestD<=max?best:"";
 }
 const ORDER=["A1","A2","B1","B2","C1","C2"];
+const PARTICLES=new Set("up off on out in down over away back after through around about along apart across into".split(" "));
 const hardest=ls=>ls.reduce((a,b)=>ORDER.indexOf(b)>ORDER.indexOf(a)?b:a);
 // Words missing from both CEFR lists are at least C1: fairly common ones C1, rare ones C2
 const levelFromZipf=z=>z>=3.5?"C1":"C2";
@@ -413,14 +414,18 @@ async function wordLevel(map,w){
 }
 async function lookupOne(map,w){
   const e=await dictEntry(w);
-  let {level,est}=await wordLevel(map,w);
+  let {level,est}=w.includes(" ")?{level:cefrLevel(map,w),est:false}:await wordLevel(map,w);
   if(!level&&w.includes(" ")){
     // a phrase is rated by its hardest word ("sovereign debt" → level of "sovereign")
     const parts=(await Promise.all(w.split(" ").filter(x=>!STOP.has(x)).map(x=>wordLevel(map,x)))).filter(p=>p.level);
-    if(parts.length){level=hardest(parts.map(p=>p.level));est=true}
+    if(parts.length){
+      // the word lists already contain everyday phrases ("bus stop", "credit card"), so a phrase missing from them is
+      // usually more specialised: compound nouns ("bond market") at least B2, phrasal verbs ("take off") at least B1
+      const ws=w.split(" "), phrasal=ws.length<=3&&PARTICLES.has(ws[ws.length-1]);
+      level=hardest([...parts.map(p=>p.level),phrasal?"B1":"B2"]);est=true}
   }
   const item={word:w,level,est,pos:e?.pos||(w.includes(" ")?"phrase":""),ipa:e?.ipa||"",
-    definition:e?.definition?e.definition.replace(/^./,c=>c.toUpperCase())+".":"",examples:e?.examples||[],note:""};
+    definition:e?.definition?e.definition.trim().replace(/^./,c=>c.toUpperCase()).replace(/([^.!?])$/,"$1."):"",examples:e?.examples||[],note:""};
   if(!e) item.suggest=await closestWord(w);
   return item;
 }
