@@ -165,9 +165,9 @@ footer{color:var(--muted);font-size:13px}
     </div>
     <label class="drop" id="drop" for="file">
       <strong>Drop your vocabulary list here</strong>
-      <small>photos, screenshots, PDF, Word (.docx), Excel (.xlsx, .xls), CSV or text files · click to choose, or paste an image with Ctrl/⌘+V</small>
+      <small>photos, screenshots, PDF, Word (.docx, .doc), RTF, OpenDocument, Excel (.xlsx, .xls), CSV, PowerPoint (.pptx) or text files · click to choose, or paste an image with Ctrl/⌘+V</small>
     </label>
-    <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.pdf,.docx,.xlsx,.xls,.csv,.txt,text/plain,text/csv" multiple hidden>
+    <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.pdf,.docx,.doc,.rtf,.odt,.xlsx,.xls,.ods,.csv,.pptx,.odp,.txt,.md,text/plain,text/csv" multiple hidden>
     <div class="thumbs" id="thumbs"></div>
     <div class="row">
       <button class="btn primary" id="recognize" disabled>Recognize words</button>
@@ -717,17 +717,94 @@ async function pdfToContent(file){
   }
   return {text,images};
 }
+const XLSX_JS="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+const JSZIP_JS="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+// Word 97–2003 .doc: read the WordDocument stream's piece table (text pieces are either 8-bit cp1252 or UTF-16)
+async function docBinaryText(f){
+  await loadScript(XLSX_JS);
+  const cfb=XLSX.CFB.read(new Uint8Array(await f.arrayBuffer()),{type:"array"});
+  const get=n=>{const e=XLSX.CFB.find(cfb,n);return e&&e.content?new Uint8Array(e.content):null};
+  const wd=get("WordDocument"); if(!wd) throw new Error("not a Word file");
+  const dv=new DataView(wd.buffer,wd.byteOffset,wd.byteLength);
+  const table=get((dv.getUint16(0x0A,true)&0x0200)?"1Table":"0Table");
+  const fcClx=dv.getUint32(0x01A2,true), lcbClx=dv.getUint32(0x01A6,true);
+  const cp1252=new TextDecoder("windows-1252"), u16=new TextDecoder("utf-16le");
+  let text="";
+  if(table&&lcbClx){
+    const t=new DataView(table.buffer,table.byteOffset,table.byteLength);
+    let i=fcClx;
+    while(table[i]===1) i+=3+t.getUint16(i+1,true);        // skip formatting (Prc) blocks
+    if(table[i]===2){
+      const lcb=t.getUint32(i+1,true), start=i+5, n=(lcb-4)/12;
+      for(let k=0;k<n;k++){
+        const cp0=t.getUint32(start+k*4,true), cp1=t.getUint32(start+(k+1)*4,true);
+        const fcRaw=t.getUint32(start+(n+1)*4+k*8+2,true), len=cp1-cp0;
+        if(fcRaw&0x40000000){const fc=(fcRaw&0x3FFFFFFF)/2; text+=cp1252.decode(wd.subarray(fc,fc+len))}
+        else text+=u16.decode(wd.subarray(fcRaw,fcRaw+len*2));
+      }
+    }
+  }
+  if(!text){ // fallback: pull readable runs out of the stream
+    text=cp1252.decode(wd).replace(/[^\x20-\x7E\r\n\t\u00A0-\u024F]+/g,"\n");
+  }
+  return text.replace(/\r|\x0B|\x07/g,"\n").replace(/[\x00-\x08\x0C\x0E-\x1F]/g,"").replace(/\x13[^\x14\x15]*\x14?|\x15/g,"");
+}
+function rtfText(rtf){
+  let out="", depth=0; const skipAt=[]; let i=0;
+  const ansi=new TextDecoder("windows-1252");
+  while(i<rtf.length){
+    const c=rtf[i];
+    if(c==="{"){depth++;i++;continue}
+    if(c==="}"){if(skipAt.length&&skipAt[skipAt.length-1]===depth)skipAt.pop();depth--;i++;continue}
+    if(c==="\\"){
+      const m=rtf.slice(i).match(/^\\(?:([a-z]+)(-?\d+)? ?|'([0-9a-f]{2})|(.))/i); if(!m){i++;continue}
+      i+=m[0].length;
+      if(skipAt.length) continue;
+      const [ ,word,num,hex,sym]=m;
+      if(hex) out+=ansi.decode(new Uint8Array([parseInt(hex,16)]));
+      else if(sym==="*"||/^(fonttbl|colortbl|stylesheet|info|pict|header|footer|themedata|colorschememapping|latentstyles|datastore|xmlnstbl|listtable|listoverridetable|rsidtbl|generator)$/.test(word||"")) skipAt.push(depth);
+      else if(word==="par"||word==="line"||word==="row") out+="\n";
+      else if(word==="tab"||word==="cell") out+=" - ";
+      else if(word==="u"){out+=String.fromCharCode((+num+65536)%65536); if(rtf[i]==="?")i++}
+      else if(sym==="~") out+=" "; else if(sym&&/[\\{}]/.test(sym)) out+=sym;
+      continue;
+    }
+    if(!skipAt.length&&c!=="\r"&&c!=="\n") out+=c;
+    i++;
+  }
+  return out;
+}
+// .odt / .odp: paragraphs from content.xml; .pptx: paragraphs from each slide
+async function zipXmlText(f,ext){
+  await loadScript(JSZIP_JS);
+  const zip=await JSZip.loadAsync(await f.arrayBuffer());
+  const files=ext==="pptx"?Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a,b)=>parseInt(a.match(/\d+/))-parseInt(b.match(/\d+/))):["content.xml"];
+  let text="";
+  for(const n of files){
+    if(!zip.file(n)) continue;
+    const doc=new DOMParser().parseFromString(await zip.file(n).async("string"),"application/xml");
+    const paras=[...doc.getElementsByTagName("*")].filter(e=>ext==="pptx"?e.localName==="p"&&e.namespaceURI?.includes("drawingml"):(e.localName==="p"||e.localName==="h")&&e.namespaceURI?.includes("text"));
+    for(const p of paras){
+      if(ext==="pptx") text+=[...p.getElementsByTagName("*")].filter(e=>e.localName==="t").map(e=>e.textContent).join("")+"\n";
+      else { const parts=[]; for(const node of p.childNodes) parts.push(node.localName==="tab"?" - ":node.localName==="s"?" ":node.textContent); text+=parts.join("")+"\n" }
+    }
+  }
+  return text;
+}
 async function docToContent(p){
   const f=p.file, ext=p.doc;
   if(ext==="pdf") return pdfToContent(f);
-  if(ext==="txt") return {text:await f.text(),images:[]};
+  if(ext==="txt"||ext==="md") return {text:await f.text(),images:[]};
+  if(ext==="doc") return {text:await docBinaryText(f),images:[]};
+  if(ext==="rtf") return {text:rtfText(await f.text()),images:[]};
+  if(ext==="odt"||ext==="odp"||ext==="pptx") return {text:await zipXmlText(f,ext),images:[]};
   if(ext==="docx"){
     await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js");
     const r=await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()});
     return {text:r.value,images:[]};
   }
-  // xlsx, xls, csv: each row becomes "cell - cell - cell"
-  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+  // xlsx, xls, ods, csv: each row becomes "cell - cell - cell"
+  await loadScript(XLSX_JS);
   const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});
   let text="";
   for(const name of wb.SheetNames){
@@ -748,7 +825,7 @@ async function readUploads(batch){
 }
 
 /* Images */
-const DOC_EXT=/\.(pdf|docx|xlsx|xls|csv|txt)$/i;
+const DOC_EXT=/\.(pdf|docx|doc|rtf|odt|xlsx|xls|ods|csv|pptx|odp|txt|md)$/i;
 function addFiles(list){
   let skipped=[];
   for(const f of list){
@@ -758,7 +835,7 @@ function addFiles(list){
   }
   if(mode==="free"&&pending.some(p=>p.url)) getOcrWorker(()=>{}).catch(()=>{ocrWorker=null});
   drawThumbs();
-  if(skipped.length) setStatus(`Can't read ${skipped.join(", ")}. Use a photo, PDF, Word (.docx), Excel, CSV or text file. Old .doc files: save them as .docx first.`,true);
+  if(skipped.length) setStatus(`Can't read ${skipped.join(", ")}. Use a photo, PDF, Word, RTF, OpenDocument, Excel, CSV, PowerPoint or text file.`,true);
 }
 function drawThumbs(){
   $("#thumbs").innerHTML=pending.map((p,i)=>`<div class="thumb">${p.url?`<img src="${p.url}" alt="Uploaded image ${i+1}">`:`<div class="doc"><b>${esc(p.doc.toUpperCase())}</b><span>${esc(p.file.name)}</span></div>`}<button data-rm="${i}" aria-label="Remove file ${i+1}">×</button></div>`).join("");

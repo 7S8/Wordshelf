@@ -1,6 +1,6 @@
 # Wordshelf
 
-Upload a photo, screenshot, PDF, Word (.docx), Excel (.xlsx/.xls), CSV or text file of your English vocabulary list (handwriting works in the AI modes). Wordshelf reads every word and sorts it by CEFR level (A1–C2), with:
+Upload a photo, screenshot, PDF, Word (.docx, .doc), RTF, OpenDocument (.odt, .ods, .odp), Excel (.xlsx, .xls), CSV, PowerPoint (.pptx) or text file of your English vocabulary list (handwriting works in the AI modes). Wordshelf reads every word and sorts it by CEFR level (A1–C2), with:
 
 - a simple definition, part of speech, and British and American pronunciation (IPA plus UK/US read-aloud buttons)
 - two example sentences
@@ -32,5 +32,5 @@ It's a single static file: open `index.html` in a browser, or serve the folder w
 - Octanove Vocabulary Profile C1/C2 1.0 by Octanove Labs, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). `cefr-words.json` combines both lists and is shared under the same license.
 - Definitions and examples from [Open English WordNet](https://en-word.net) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), based on Princeton WordNet ([WordNet License](https://wordnet.princeton.edu/license-and-commercial-use)). The files in `dict/` are derived from it. Word frequencies from [wordfreq](https://github.com/rspeer/wordfreq).
 - Example sentences from [Tatoeba](https://tatoeba.org) ([CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/)), the [Europarl corpus](https://www.statmt.org/europarl/) and [Project Gutenberg](https://www.gutenberg.org) public-domain books.
-- Documents are read in the browser with [pdf.js](https://mozilla.github.io/pdf.js/), [mammoth.js](https://github.com/mwilliamson/mammoth.js) and [SheetJS](https://sheetjs.com).
+- Documents are read in the browser with [pdf.js](https://mozilla.github.io/pdf.js/), [mammoth.js](https://github.com/mwilliamson/mammoth.js) and [SheetJS](https://sheetjs.com) (including its compound-file reader for .doc) and [JSZip](https://stuk.github.io/jszip/).
 - Text recognition by [Tesseract.js](https://github.com/naptha/tesseract.js).
