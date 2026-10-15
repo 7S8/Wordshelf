@@ -6,7 +6,6 @@
 <meta name="description" content="Upload a screenshot of your vocabulary list and get every word sorted by CEFR level, with definitions, example sentences and YouTube clips.">
 <title>Wordshelf CEFR</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon-180.png">
 <script>try{document.documentElement.dataset.wsTheme=localStorage.getItem("wordshelf.theme")||"auto"}catch{document.documentElement.dataset.wsTheme="auto"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,8 +109,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 /* app bar + intro */
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
-.logo{width:38px;height:38px;display:block;flex:none}
-.logo svg{display:block;border-radius:11px}
+.logo{font-size:30px;line-height:1;flex:none;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .intro{display:grid;gap:10px}
 .intro h1{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.08;max-width:22ch}
 .intro p{margin:0;color:var(--muted);max-width:60ch}
@@ -349,7 +347,7 @@ footer p{margin:8px 0 0}
 <body>
 <div class="wrap">
   <header class="appbar">
-    <div class="brand"><span class="logo" aria-hidden="true"><svg width="38" height="38" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="var(--accent)"/><path d="M14 54V30a18 18 0 0 1 36 0v24z" fill="#ffffff"/><rect x="20" y="31" width="6.5" height="21" rx="1.6" fill="#2f8f5b"/><rect x="28" y="26" width="6.5" height="26" rx="1.6" fill="#f2a93b"/><rect x="36" y="33" width="6.5" height="19" rx="1.6" fill="#b0306e"/><g fill="#ffffff" opacity=".55"><rect x="20" y="35" width="6.5" height="1.8"/><rect x="20" y="46" width="6.5" height="1.8"/><rect x="28" y="30" width="6.5" height="1.8"/><rect x="28" y="46" width="6.5" height="1.8"/><rect x="36" y="37" width="6.5" height="1.8"/><rect x="36" y="46" width="6.5" height="1.8"/></g><g transform="rotate(18 45 52)"><rect x="38.5" y="28" width="6.5" height="24" rx="1.6" fill="#7a3fc4"/><rect x="38.5" y="32" width="6.5" height="1.8" fill="#ffffff" opacity=".55"/><rect x="38.5" y="46" width="6.5" height="1.8" fill="#ffffff" opacity=".55"/></g><rect x="16" y="51.5" width="32" height="2.5" fill="#d9dee3"/></svg></span>Wordshelf</div>
+    <div class="brand"><span class="logo" aria-hidden="true">📚</span>Wordshelf</div>
     <div class="pick themepick" title="Theme">
     <select id="theme" aria-label="Theme">
         <option value="auto">Automatic</option><option value="light">Morning</option><option value="dark">Night</option>
