@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Upload a screenshot of your vocabulary list and get every word sorted by CEFR level, with definitions, example sentences and YouTube clips.">
+<title>Wordshelf CEFR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one working column — capture panel on top, then words shelved by CEFR level, A1 → C2 */
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --sunk:#e3e9e8; --ink:#14232b; --muted:#5a6b72; --line:#cdd7d6;
+  --accent:#1f4fd1; --accent-ink:#ffffff; --focus:#1f4fd1;
+  --a1:#2f8f5b; --a2:#5a9a2a; --b1:#1c7fa6; --b2:#2a55c7; --c1:#7a3fc4; --c2:#b0306e;
+  --tint:color-mix(in srgb,var(--lv,#888) 12%,var(--surface));
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1719; --surface:#172225; --sunk:#111b1d; --ink:#e3ecec; --muted:#93a5a9; --line:#2a3a3e;
+  --accent:#7ea2ff; --accent-ink:#0d1530; --focus:#9db8ff;
+  --a1:#5fcf8f; --a2:#9ad35a; --b1:#4fc0e6; --b2:#7d9dff; --c1:#b98bf2; --c2:#f07bb0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1719; --surface:#172225; --sunk:#111b1d; --ink:#e3ecec; --muted:#93a5a9; --line:#2a3a3e;
+  --accent:#7ea2ff; --accent-ink:#0d1530; --focus:#9db8ff;
+  --a1:#5fcf8f; --a2:#9ad35a; --b1:#4fc0e6; --b2:#7d9dff; --c1:#b98bf2; --c2:#f07bb0; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+a{color:var(--accent)}
+
+header.top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px}
+header.top h1{font-size:clamp(30px,5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1}
+header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
+.scale{display:flex;border-radius:6px;overflow:hidden;font-family:var(--mono);font-size:12px;font-weight:500}
+.scale span{padding:4px 9px;color:#fff;background:var(--lv)}
+
+.capture{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:16px}
+.drop{border:2px dashed var(--line);border-radius:var(--r);padding:24px 16px;text-align:center;background:var(--sunk);cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--sunk))}
+.drop strong{font-family:var(--display);font-size:20px;display:block}
+.drop small{color:var(--muted)}
+.thumbs{display:flex;flex-wrap:wrap;gap:10px}
+.thumb{position:relative;width:96px;height:96px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;line-height:1}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:700}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.small{padding:5px 12px;font-size:14px}
+.or{color:var(--muted);font-size:14px}
+.manual{display:flex;gap:8px;flex:1 1 320px;min-width:0}
+.manual input{flex:1;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk)}
+.status{font-size:15px;color:var(--muted);min-height:1.5em}
+.status.err{color:var(--c2)}
+.status .spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin-right:8px;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.status .spin{animation:none}}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-family:var(--mono);font-size:13px;display:flex;gap:6px;align-items:center}
+.chip i{font-style:normal;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--lv,var(--ink));border-color:var(--lv,var(--ink));color:var(--bg)}
+.chip[aria-pressed="true"] i{color:inherit;opacity:.8}
+.search{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);flex:0 1 240px;min-width:0}
+.example-note{background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r);font-size:15px}
+
+.level{display:grid;gap:12px}
+.level-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--lv);padding-bottom:6px}
+.level-head .tag{font-family:var(--mono);font-weight:500;background:var(--lv);color:var(--bg);padding:2px 8px;border-radius:5px;font-size:15px}
+.level-head h2{font-size:22px;font-weight:700}
+.level-head span.n{margin-left:auto;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card-top{display:flex;align-items:start;gap:8px}
+.card-top h3{font-size:24px;font-weight:700;line-height:1.1;letter-spacing:-.01em;overflow-wrap:anywhere}
+.meta{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.icon-btn{margin-left:auto;flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center}
+.icon-btn:hover{border-color:var(--ink)}
+.icon-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.def{margin:0}
+.note{font-size:14px;color:var(--muted)}
+.note b{font-weight:700;color:var(--ink)}
+.ex{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.ex li{background:var(--tint);border-radius:6px;padding:7px 10px;font-style:italic;font-size:15px}
+.ex mark{background:none;color:var(--lv);font-weight:700;font-style:normal}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+.links a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--ink)}
+.links a:hover{border-color:var(--ink)}
+.links a svg{width:14px;height:14px}
+.del{border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 6px;margin-left:auto;align-self:center}
+.del:hover{color:var(--c2)}
+.empty{text-align:center;color:var(--muted);padding:32px 16px;border:1px dashed var(--line);border-radius:var(--r)}
+.confirm{display:flex;gap:8px;align-items:center;font-size:14px}
+.keybox{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.keybox summary{cursor:pointer;font-weight:700}
+.keyrow{display:flex;flex-wrap:wrap;gap:8px}
+.keyrow input{flex:1 1 260px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
+.keybox p{margin:0;font-size:14px;color:var(--muted)}
+footer{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Wordshelf</h1>
+      <p>Upload a photo or screenshot of your vocabulary list. Every word gets a CEFR level, a definition, example sentences and links to real YouTube clips where people say it.</p>
+    </div>
+    <div class="scale" aria-label="CEFR levels from beginner to proficient">
+      <span style="--lv:var(--a1)">A1</span><span style="--lv:var(--a2)">A2</span><span style="--lv:var(--b1)">B1</span><span style="--lv:var(--b2)">B2</span><span style="--lv:var(--c1)">C1</span><span style="--lv:var(--c2)">C2</span>
+    </div>
+  </header>
+
+  <section class="capture" aria-label="Add words">
+    <label class="drop" id="drop" for="file">
+      <strong>Drop your vocabulary screenshot here</strong>
+      <small>or click to choose photos · you can also paste an image with Ctrl/⌘+V · handwriting works</small>
+    </label>
+    <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="row">
+      <button class="btn primary" id="recognize" disabled>Recognize words</button>
+      <span class="or">or type words</span>
+      <form class="manual" id="manualForm">
+        <input id="manual" placeholder="e.g. reluctant, take off, cozy" aria-label="Words to add, separated by commas">
+        <button class="btn" id="manualBtn" type="submit">Add</button>
+      </form>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <details class="keybox" id="keybox">
+      <summary id="keySummary">Anthropic API key</summary>
+      <p>Word recognition uses Claude. Paste your own API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. It is stored only in this browser and sent only to Anthropic. Each scan costs a few cents on your account.</p>
+      <form class="keyrow" id="keyForm">
+        <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-..." aria-label="Anthropic API key">
+        <button class="btn small" type="submit">Save key</button>
+        <button class="btn small" type="button" id="forgetKey">Forget key</button>
+      </form>
+    </details>
+  </section>
+
+  <div class="example-note" id="exampleNote" hidden>These are example words so you can see how the page works. They disappear as soon as you add your own.</div>
+
+  <div class="toolbar">
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <input class="search" id="search" type="search" placeholder="Find a word" aria-label="Find a word">
+      <button class="btn small" id="copyAll">Copy list</button>
+      <span id="clearWrap"><button class="btn small" id="clear">Clear</button></span>
+    </div>
+  </div>
+
+  <main id="shelf" style="display:grid;gap:32px"></main>
+
+  <footer>CEFR levels are estimates based on typical learner word lists (like the English Vocabulary Profile). YouGlish links play YouTube clips at the moment someone says the word.</footer>
+</div>
+
+<script>
+const LEVELS=[
+  {id:"A1",name:"Beginner",v:"--a1"},{id:"A2",name:"Elementary",v:"--a2"},
+  {id:"B1",name:"Intermediate",v:"--b1"},{id:"B2",name:"Upper intermediate",v:"--b2"},
+  {id:"C1",name:"Advanced",v:"--c1"},{id:"C2",name:"Proficient",v:"--c2"}];
+const EXAMPLES=[
+  {word:"apple",pos:"noun",ipa:"/ˈæp.əl/",level:"A1",definition:"A round fruit with red, green or yellow skin.",examples:["I eat an apple every morning.","She cut the apple into four pieces."],note:""},
+  {word:"borrow",pos:"verb",ipa:"/ˈbɒr.əʊ/",level:"A2",definition:"To take something from someone and give it back later.",examples:["Can I borrow your pen for a minute?","He borrowed some money from his brother."],note:""},
+  {word:"take off",pos:"phrasal verb",ipa:"/teɪk ˈɒf/",level:"B1",definition:"When a plane leaves the ground; or to remove clothes.",examples:["Our plane takes off at six o'clock.","Please take off your shoes at the door."],note:""},
+  {word:"reluctant",pos:"adjective",ipa:"/rɪˈlʌk.tənt/",level:"B2",definition:"Not willing to do something.",examples:["She was reluctant to leave the party early.","Many people are reluctant to change their habits."],note:""},
+  {word:"meticulous",pos:"adjective",ipa:"/məˈtɪk.jə.ləs/",level:"C1",definition:"Very careful and paying attention to every detail.",examples:["He keeps meticulous notes in every class.","The repair was done with meticulous care."],note:""},
+  {word:"ubiquitous",pos:"adjective",ipa:"/juːˈbɪk.wɪ.təs/",level:"C2",definition:"Seeming to be everywhere at the same time.",examples:["Smartphones have become ubiquitous.","Coffee shops are ubiquitous in this city."],note:""}
+].map(w=>({...w,example:true}));
+
+const $=s=>document.querySelector(s);
+const store={get(){try{return JSON.parse(localStorage.getItem("wordshelf.v1"))}catch{return null}},set(v){try{localStorage.setItem("wordshelf.v1",JSON.stringify(v))}catch{}}};
+let words=store.get()||EXAMPLES;
+let filter="all", query="", pending=[];
+const KEY="wordshelf.apikey";
+const getKey=()=>{try{return localStorage.getItem(KEY)||""}catch{return ""}};
+const setKey=v=>{try{v?localStorage.setItem(KEY,v):localStorage.removeItem(KEY)}catch{}};
+const MODEL="claude-opus-5-5";
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+function highlight(sentence,word){
+  const safe=esc(sentence);
+  const parts=word.trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return safe;
+  // match the word plus inflections (borrow → borrowed, take off → takes off)
+  const stem=p=>reEsc(esc(p.length>4&&/e$/i.test(p)?p.slice(0,-1):p))+"[\\w']*";
+  const re=new RegExp("\\b("+parts.map(stem).join("\\s+(?:\\w+\\s+)?")+")","i");
+  return safe.replace(re,"<mark>$1</mark>");
+}
+const ytIcon='<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="#e62117"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg>';
+const searchIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>';
+const speakIcon='<svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+
+function card(w,i){
+  const lv=LEVELS.find(l=>l.id===w.level)||LEVELS[2];
+  const q=encodeURIComponent(w.word);
+  const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
+  return `<article class="card" style="--lv:var(${lv.v})">
+    <div class="card-top"><div style="min-width:0"><h3>${esc(w.word)}</h3>
+      <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${esc(w.ipa)}</span>`:""}</div></div>
+      <button class="icon-btn" data-say="${i}" aria-label="Pronounce ${esc(w.word)}" title="Pronounce">${speakIcon}</button></div>
+    <p class="def">${esc(w.definition)}</p>
+    ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
+    ${exs?`<ul class="ex">${exs}</ul>`:""}
+    <div class="links">
+      <a href="https://youglish.com/pronounce/${q}/english" target="_blank" rel="noopener">${ytIcon}Hear it in YouTube clips</a>
+      <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">${searchIcon}YouTube lessons</a>
+      <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}">Remove</button>
+    </div></article>`;
+}
+
+function render(){
+  $("#exampleNote").hidden=!words.some(w=>w.example);
+  const counts=Object.fromEntries(LEVELS.map(l=>[l.id,words.filter(w=>w.level===l.id).length]));
+  $("#chips").innerHTML=`<button class="chip" data-f="all" aria-pressed="${filter==="all"}">All <i>${words.length}</i></button>`+
+    LEVELS.map(l=>`<button class="chip" data-f="${l.id}" style="--lv:var(${l.v})" aria-pressed="${filter===l.id}">${l.id} <i>${counts[l.id]}</i></button>`).join("");
+  const q=query.trim().toLowerCase();
+  const shown=words.map((w,i)=>({w,i})).filter(({w})=>(filter==="all"||w.level===filter)&&(!q||w.word.toLowerCase().includes(q)||(w.note||"").toLowerCase().includes(q)));
+  if(!words.length){$("#shelf").innerHTML=`<div class="empty">Your shelf is empty. Upload a screenshot of your vocabulary or type a few words above.</div>`;return}
+  if(!shown.length){$("#shelf").innerHTML=`<div class="empty">No words match this filter.</div>`;return}
+  $("#shelf").innerHTML=LEVELS.map(l=>{
+    const g=shown.filter(({w})=>w.level===l.id).sort((a,b)=>a.w.word.localeCompare(b.w.word));
+    if(!g.length) return "";
+    return `<section class="level" style="--lv:var(${l.v})"><div class="level-head"><span class="tag">${l.id}</span><h2>${l.name}</h2><span class="n">${g.length} word${g.length>1?"s":""}</span></div>
+      <div class="grid">${g.map(({w,i})=>card(w,i)).join("")}</div></section>`;
+  }).join("");
+}
+
+function setStatus(html,err){const s=$("#status");s.innerHTML=html;s.classList.toggle("err",!!err)}
+const spin=t=>`<span class="spin" aria-hidden="true"></span>${esc(t)}`;
+
+function addWords(items){
+  const clean=(Array.isArray(items)?items:[]).filter(x=>x&&typeof x.word==="string"&&x.word.trim()).map(x=>({
+    word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),
+    level:LEVELS.some(l=>l.id===String(x.level).toUpperCase())?String(x.level).toUpperCase():"B1",
+    definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
+  let base=words.filter(w=>!w.example);
+  let added=0;
+  for(const w of clean){
+    const k=w.word.toLowerCase();
+    const at=base.findIndex(b=>b.word.toLowerCase()===k);
+    if(at>=0) base[at]={...base[at],...w,note:w.note||base[at].note}; else {base.push(w);added++}
+  }
+  words=base; store.set(words); filter="all"; render();
+  return {added,total:clean.length};
+}
+
+const RULES=`You are an English vocabulary assistant for a language learner.
+For each English word or phrase, return:
+- "word": the word or phrase in English, spelling corrected if clearly misspelled (keep phrasal verbs and idioms whole)
+- "pos": part of speech (noun, verb, adjective, adverb, phrasal verb, idiom, ...)
+- "ipa": British IPA in slashes
+- "level": CEFR level A1, A2, B1, B2, C1 or C2, judged by the English Vocabulary Profile / Oxford 3000-5000 style lists for the word's most common meaning
+- "definition": a simple learner-friendly definition, one sentence, using words easier than the word itself
+- "examples": exactly 2 natural, everyday example sentences that use the word (different contexts)
+- "note": any translation or note written next to the word in the source, copied as written; "" if none
+Return them all in the "items" array.`;
+
+const SCHEMA={type:"object",additionalProperties:false,required:["items"],properties:{items:{type:"array",items:{
+  type:"object",additionalProperties:false,required:["word","pos","ipa","level","definition","examples","note"],
+  properties:{word:{type:"string"},pos:{type:"string"},ipa:{type:"string"},level:{type:"string",enum:["A1","A2","B1","B2","C1","C2"]},
+    definition:{type:"string"},examples:{type:"array",items:{type:"string"}},note:{type:"string"}}}}}};
+const toB64=f=>new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=bad;r.readAsDataURL(f)});
+// Shrink big photos before sending: keeps requests small and fast
+async function prepImage(file){
+  try{
+    const bmp=await createImageBitmap(file);
+    const scale=Math.min(1,1600/Math.max(bmp.width,bmp.height));
+    if(scale===1&&file.size<3e6) return {media_type:file.type,data:await toB64(file)};
+    const c=document.createElement("canvas");c.width=Math.round(bmp.width*scale);c.height=Math.round(bmp.height*scale);
+    c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);
+    const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",0.88));
+    return {media_type:"image/jpeg",data:await toB64(blob)};
+  }catch{return {media_type:file.type,data:await toB64(file)}}
+}
+
+async function ask(prompt,images,label){
+  const key=getKey();
+  if(!key){$("#keybox").open=true;$("#apiKey").focus();setStatus("Add your Anthropic API key below to recognize words.",true);return null}
+  setStatus(spin(label));
+  try{
+    const content=[];
+    for(const f of images||[]) content.push({type:"image",source:{type:"base64",...await prepImage(f)}});
+    content.push({type:"text",text:prompt});
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{
+      "content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01",
+      "anthropic-beta":"server-side-fallback-2026-07-01",
+      "anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:MODEL,max_tokens:16000,fallbacks:"default",
+        output_config:{effort:"medium",format:{type:"json_schema",schema:SCHEMA}},
+        messages:[{role:"user",content}]})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){
+      const msg={401:"That API key was rejected. Check it in the box below.",403:"This API key isn't allowed to use Claude.",
+        413:"The image is too large. Try a smaller screenshot.",429:"Too many requests or no credit left. Wait a minute, or check your balance at console.anthropic.com.",
+        529:"Claude is busy right now. Try again in a minute."}[r.status]||("Request failed: "+(data?.error?.message||r.status));
+      if(r.status===401) $("#keybox").open=true;
+      setStatus(esc(msg),true); return null;
+    }
+    if(data.stop_reason==="refusal"){setStatus("Claude couldn't process that. Try a different image.",true);return null}
+    if(data.stop_reason==="max_tokens"){setStatus("The list was too long to finish in one go. Split the photo into smaller parts.",true);return null}
+    const text=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+    return JSON.parse(text);
+  }catch(e){
+    setStatus(navigator.onLine===false?"You're offline. Connect and try again.":"Something went wrong while reading the words. Try again.",true);
+    return null;
+  }
+}
+
+/* Images */
+function addFiles(list){
+  for(const f of list){ if(!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) continue; pending.push({file:f,url:URL.createObjectURL(f)}) }
+  drawThumbs();
+}
+function drawThumbs(){
+  $("#thumbs").innerHTML=pending.map((p,i)=>`<div class="thumb"><img src="${p.url}" alt="Uploaded page ${i+1}"><button data-rm="${i}" aria-label="Remove image ${i+1}">×</button></div>`).join("");
+  $("#recognize").disabled=!pending.length;
+  $("#recognize").textContent=pending.length>1?`Recognize words in ${pending.length} images`:"Recognize words";
+  if(pending.length) setStatus("Ready. Press the button to read the words.");
+}
+$("#file").addEventListener("change",e=>{addFiles(e.target.files);e.target.value=""});
+const drop=$("#drop");
+["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
+document.addEventListener("paste",e=>{const fs=[...(e.clipboardData?.files||[])];if(fs.length){e.preventDefault();addFiles(fs)}});
+$("#thumbs").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i==null)return;URL.revokeObjectURL(pending[i].url);pending.splice(+i,1);drawThumbs()});
+
+$("#recognize").addEventListener("click",async()=>{
+  const btn=$("#recognize"); btn.disabled=true;
+  const batch=pending.slice(0,10);
+  const res=await ask(`The attached image${batch.length>1?"s are photos or screenshots":" is a photo or screenshot"} of a learner's English vocabulary list. It may be handwritten, messy, rotated, or mixed with another language. Read EVERY English word or phrase on it (skip numbers, dates and headings that are not vocabulary).\n\n`+RULES,
+    batch.map(p=>p.file),"Reading your list… this takes about 20–60 seconds.");
+  btn.disabled=false;
+  if(!res) return;
+  const {added,total}=addWords(res.items||res);
+  if(!total){setStatus("No English words were found in that image. Try a clearer or closer photo.",true);return}
+  batch.forEach(p=>URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
+  setStatus(`Found ${total} word${total>1?"s":""}${added<total?` (${total-added} already on your shelf, updated)`:""}.`);
+});
+
+$("#manualForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const v=$("#manual").value.trim(); if(!v) return;
+  $("#manualBtn").disabled=true;
+  const res=await ask(`Words from a learner's vocabulary list (comma or line separated):\n${v.slice(0,4000)}\n\n`+RULES,[],"Looking up your words…");
+  $("#manualBtn").disabled=false;
+  if(!res) return;
+  const {total}=addWords(res.items||res);
+  if(total){$("#manual").value="";setStatus(`Added ${total} word${total>1?"s":""}.`)}
+});
+
+/* API key */
+function showKeyState(){const k=getKey();$("#keySummary").textContent=k?"Anthropic API key · saved (…"+k.slice(-4)+")":"Anthropic API key · needed to recognize words";$("#apiKey").value="";if(!k)$("#keybox").open=true}
+$("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
+$("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatus("Key removed from this browser.")});
+showKeyState();
+
+/* Shelf interactions */
+$("#chips").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filter=b.dataset.f;render()});
+$("#search").addEventListener("input",e=>{query=e.target.value;render()});
+$("#shelf").addEventListener("click",e=>{
+  const s=e.target.closest("[data-say]");
+  if(s){try{const u=new SpeechSynthesisUtterance(words[s.dataset.say].word);u.lang="en-GB";speechSynthesis.cancel();speechSynthesis.speak(u)}catch{} return}
+  const d=e.target.closest("[data-del]");
+  if(d){words.splice(+d.dataset.del,1);store.set(words);render()}
+});
+$("#copyAll").addEventListener("click",async()=>{
+  const txt=LEVELS.map(l=>{const g=words.filter(w=>w.level===l.id);return g.length?`${l.id} ${l.name}\n`+g.map(w=>`- ${w.word} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
+  try{await navigator.clipboard.writeText(txt);setStatus("List copied. Paste it into your notes.")}catch{setStatus("Copy isn't allowed here. Select the words on the page instead.",true)}
+});
+function resetClear(){$("#clearWrap").innerHTML=`<button class="btn small" id="clear">Clear</button>`}
+$("#clearWrap").addEventListener("click",e=>{
+  if(e.target.id==="clear"){$("#clearWrap").innerHTML=`<span class="confirm">Remove all words? <button class="btn small" id="clearYes">Remove all</button><button class="btn small" id="clearNo">Keep</button></span>`;return}
+  if(e.target.id==="clearYes"){words=[];store.set(words);render();resetClear()}
+  if(e.target.id==="clearNo") resetClear();
+});
+
+render();
+</script>
+</body>
+</html>
