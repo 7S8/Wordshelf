@@ -5,147 +5,229 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Upload a screenshot of your vocabulary list and get every word sorted by CEFR level, with definitions, example sentences and YouTube clips.">
 <title>Wordshelf CEFR</title>
+<script>try{document.documentElement.dataset.wsTheme=localStorage.getItem("wordshelf.theme")||"auto"}catch{document.documentElement.dataset.wsTheme="auto"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one working column — capture panel on top, then words shelved by CEFR level, A1 → C2 */
+/* Layout: app bar, an "Add words" panel, then a sticky shelf toolbar over word cards grouped A1 → C2.
+   Themes: every color is a token; html[data-ws-theme] picks a palette ("auto" follows the device). */
 :root{
-  --bg:#eef2f1; --surface:#ffffff; --sunk:#e3e9e8; --ink:#14232b; --muted:#5a6b72; --line:#cdd7d6;
-  --accent:#1f4fd1; --accent-ink:#ffffff; --focus:#1f4fd1;
-  --a1:#2f8f5b; --a2:#5a9a2a; --b1:#1c7fa6; --b2:#2a55c7; --c1:#7a3fc4; --c2:#b0306e;
-  --tint:color-mix(in srgb,var(--lv,#888) 12%,var(--surface));
+  --bg:#f2f5f4; --surface:#ffffff; --raised:#ffffff; --sunk:#e8eeec; --ink:#14232b; --muted:#5b6b71; --line:#d5dddb;
+  --accent:#2350d8; --accent-ink:#ffffff; --accent-soft:#e6ecfd; --focus:#2350d8; --danger:#b4235a;
+  --a1:#2f8f5b; --a2:#5f962a; --b1:#1a7ea3; --b2:#2a55c7; --c1:#7a3fc4; --c2:#b0306e; --unrated:#6b7a80;
+  --shadow:0 1px 2px rgba(20,35,43,.06),0 6px 20px -12px rgba(20,35,43,.25);
   --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
   --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
-  --r:10px;
+  --r:14px; --r-sm:10px;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1719; --surface:#172225; --sunk:#111b1d; --ink:#e3ecec; --muted:#93a5a9; --line:#2a3a3e;
-  --accent:#7ea2ff; --accent-ink:#0d1530; --focus:#9db8ff;
-  --a1:#5fcf8f; --a2:#9ad35a; --b1:#4fc0e6; --b2:#7d9dff; --c1:#b98bf2; --c2:#f07bb0; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f1719; --surface:#172225; --sunk:#111b1d; --ink:#e3ecec; --muted:#93a5a9; --line:#2a3a3e;
-  --accent:#7ea2ff; --accent-ink:#0d1530; --focus:#9db8ff;
-  --a1:#5fcf8f; --a2:#9ad35a; --b1:#4fc0e6; --b2:#7d9dff; --c1:#b98bf2; --c2:#f07bb0; color-scheme:dark}
+/* shared dark level colors */
+:root[data-ws-theme="dark"],:root[data-ws-theme="ocean"],:root[data-ws-theme="forest"]{
+  --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8; color-scheme:dark}
+@media (prefers-color-scheme:dark){:root[data-ws-theme="auto"]{
+  --bg:#0f1618; --surface:#172124; --raised:#1c282b; --sunk:#121b1d; --ink:#e4ecec; --muted:#93a4a8; --line:#2b3a3e;
+  --accent:#86a4ff; --accent-ink:#0b1430; --accent-soft:#1f2b4d; --focus:#a9bfff; --danger:#f283b6;
+  --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-ws-theme="dark"]{
+  --bg:#0f1618; --surface:#172124; --raised:#1c282b; --sunk:#121b1d; --ink:#e4ecec; --muted:#93a4a8; --line:#2b3a3e;
+  --accent:#86a4ff; --accent-ink:#0b1430; --accent-soft:#1f2b4d; --focus:#a9bfff; --danger:#f283b6;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.6)}
+:root[data-ws-theme="paper"]{
+  --bg:#efe8dc; --surface:#fbf7f0; --raised:#fffdf8; --sunk:#e6ddcd; --ink:#2b2217; --muted:#6f6352; --line:#d8ccb8;
+  --accent:#9a3b1e; --accent-ink:#fff8f0; --accent-soft:#f3e0d4; --focus:#9a3b1e; --danger:#a0283f;
+  --a1:#3f7d4a; --a2:#6c7d23; --b1:#25708a; --b2:#3b4fa3; --c1:#6f3d97; --c2:#9a2d5a; --unrated:#7d7262;
+  --shadow:0 1px 2px rgba(60,40,10,.08),0 6px 18px -12px rgba(60,40,10,.3)}
+:root[data-ws-theme="ocean"]{
+  --bg:#081a2b; --surface:#0e2438; --raised:#132c44; --sunk:#071625; --ink:#e3f0fb; --muted:#8fa9bf; --line:#1f3a55;
+  --accent:#4fd1c5; --accent-ink:#04201d; --accent-soft:#103a40; --focus:#7ee6dc; --danger:#ff8fa3;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.7)}
+:root[data-ws-theme="forest"]{
+  --bg:#0f1a14; --surface:#16241c; --raised:#1b2c22; --sunk:#0c1510; --ink:#e6efe8; --muted:#9bb0a2; --line:#2a3d31;
+  --accent:#e2b44c; --accent-ink:#2a1e04; --accent-soft:#3a3218; --focus:#f0cb73; --danger:#f2879f;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.7)}
+:root[data-ws-theme="rose"]{
+  --bg:#fbf0f2; --surface:#ffffff; --raised:#ffffff; --sunk:#f6e3e7; --ink:#2e1a22; --muted:#7a5c66; --line:#efd3da;
+  --accent:#c2306a; --accent-ink:#ffffff; --accent-soft:#fbe0ea; --focus:#c2306a; --danger:#b0223f;
+  --shadow:0 1px 2px rgba(80,20,40,.06),0 6px 20px -12px rgba(80,20,40,.25)}
+:root[data-ws-theme="contrast"]{
+  --bg:#000000; --surface:#000000; --raised:#0a0a0a; --sunk:#000000; --ink:#ffffff; --muted:#e0e0e0; --line:#ffffff;
+  --accent:#ffe14d; --accent-ink:#000000; --accent-soft:#2b2600; --focus:#ffe14d; --danger:#ff7a7a;
+  --a1:#6dff9e; --a2:#d4ff5c; --b1:#5cdcff; --b2:#9db4ff; --c1:#d9a6ff; --c2:#ff8cc6; --unrated:#ffffff;
+  --shadow:none; color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0}
+html,body{margin:0}
 [hidden]{display:none!important}
 img{max-width:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
-.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:grid;gap:28px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:max(12px,env(safe-area-inset-top,0px)) 64px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.wrap>*{min-width:0}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
-button,input{font:inherit;color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 a{color:var(--accent)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-header.top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px}
-header.top h1{font-size:clamp(30px,5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1}
-header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
-.scale{display:flex;border-radius:6px;overflow:hidden;font-family:var(--mono);font-size:12px;font-weight:500}
-.scale span{padding:4px 9px;color:#fff;background:var(--lv)}
+/* app bar + intro */
+.appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:18px;
+  background:linear-gradient(135deg,var(--a1),var(--b1) 40%,var(--c1) 75%,var(--c2))}
+.intro{display:grid;gap:10px}
+.intro h1{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.08;max-width:22ch}
+.intro p{margin:0;color:var(--muted);max-width:60ch}
+.ladder{display:flex;gap:4px;align-items:center;font-family:var(--mono);font-size:11.5px;font-weight:500;flex-wrap:wrap}
+.ladder span{padding:2px 8px;border-radius:999px;color:var(--lv);background:color-mix(in srgb,var(--lv) 14%,transparent)}
+.ladder em{font-style:normal;color:var(--muted);margin-left:6px;font-family:var(--body);font-size:13px}
 
-.capture{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:16px}
-.drop{border:2px dashed var(--line);border-radius:var(--r);padding:24px 16px;text-align:center;background:var(--sunk);cursor:pointer;transition:border-color .15s,background .15s}
-.drop:hover,.drop.over{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--sunk))}
-.drop strong{font-family:var(--display);font-size:20px;display:block}
-.drop small{color:var(--muted)}
+/* pill selects (theme, language, mode) */
+.pick{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:0 4px 0 12px;min-height:40px;color:var(--muted);max-width:100%}
+.pick select{border:0;background:transparent;color:var(--ink);font-weight:700;font-size:15px;padding:8px 26px 8px 2px;appearance:none;-webkit-appearance:none;cursor:pointer;min-width:0;max-width:100%;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.pick select option{color:#000;background:#fff}
+
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;box-shadow:var(--shadow)}
+.panel-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.panel-head h2{font-size:20px;font-weight:700}
+.mode-help{font-size:14px;color:var(--muted);margin:-4px 0 0}
+.drop{border:2px dashed var(--line);border-radius:var(--r-sm);padding:22px 16px;text-align:center;background:var(--sunk);cursor:pointer;transition:border-color .15s,background .15s;display:grid;gap:4px;justify-items:center}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop .i{width:30px;height:30px;color:var(--accent);margin-bottom:2px}
+.drop strong{font-family:var(--display);font-size:18px}
+.drop small{color:var(--muted);font-size:13px}
 .thumbs{display:flex;flex-wrap:wrap;gap:10px}
-.thumb{position:relative;width:96px;height:96px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.thumbs:empty{display:none}
+.thumb{position:relative;width:84px;height:84px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover}
 .thumb .doc{width:100%;height:100%;display:grid;place-content:center;gap:4px;text-align:center;background:var(--sunk);padding:6px}
-.thumb .doc b{font-family:var(--mono);font-size:13px;color:var(--accent)}
-.thumb .doc span{font-size:11px;color:var(--muted);overflow-wrap:anywhere;line-height:1.2;max-height:3.6em;overflow:hidden}
+.thumb .doc b{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.thumb .doc span{font-size:10.5px;color:var(--muted);overflow-wrap:anywhere;line-height:1.2;max-height:3.6em;overflow:hidden}
 .thumb button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;line-height:1}
+.actions{display:grid;gap:10px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.btn{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--raised);padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:700;min-height:40px;transition:border-color .15s,filter .15s,background .15s}
 .btn:hover{border-color:var(--ink)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.btn.primary:hover{filter:brightness(1.08)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn.small{padding:5px 12px;font-size:14px}
-.or{color:var(--muted);font-size:14px}
-.manual{display:flex;gap:8px;flex:1 1 320px;min-width:0}
-.manual input{flex:1;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk)}
-.status{font-size:15px;color:var(--muted);min-height:1.5em}
-.status.err{color:var(--c2)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn.small{padding:5px 12px;font-size:14px;min-height:34px}
+.btn.block{width:100%}
+.manual{display:flex;gap:8px;min-width:0}
+.manual input{flex:1;min-width:0;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);min-height:42px}
+.status{font-size:15px;color:var(--muted)}
+.status:empty{display:none}
+.status.err{color:var(--danger)}
 .status .spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin-right:8px;vertical-align:-1px}
 @keyframes sp{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.status .spin{animation:none}}
-
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-family:var(--mono);font-size:13px;display:flex;gap:6px;align-items:center}
-.chip i{font-style:normal;color:var(--muted)}
-.chip[aria-pressed="true"]{background:var(--lv,var(--ink));border-color:var(--lv,var(--ink));color:var(--bg)}
-.chip[aria-pressed="true"] i{color:inherit;opacity:.8}
-.search{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);flex:0 1 240px;min-width:0}
-.example-note{background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r);font-size:15px}
-
-.level{display:grid;gap:12px}
-.level-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--lv);padding-bottom:6px}
-.level-head .tag{font-family:var(--mono);font-weight:500;background:var(--lv);color:var(--bg);padding:2px 8px;border-radius:5px;font-size:15px}
-.level-head h2{font-size:22px;font-weight:700}
-.level-head span.n{margin-left:auto;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
-.card-top{display:flex;align-items:start;gap:8px}
-.card-top h3{font-size:24px;font-weight:700;line-height:1.1;letter-spacing:-.01em;overflow-wrap:anywhere}
-.meta{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
-.icon-btn{margin-left:auto;flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center}
-.icon-btn:hover{border-color:var(--ink)}
-.say{margin-left:auto;flex:none;display:flex;gap:4px}
-.say-btn{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:500}
-.say-btn:hover{border-color:var(--ink)}
-.say-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.icon-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.def{margin:0}
-.note{font-size:14px;color:var(--muted)}
-.note b{font-weight:700;color:var(--ink)}
-.ex{margin:0;padding:0;list-style:none;display:grid;gap:6px}
-.ex li{background:var(--tint);border-radius:6px;padding:7px 10px;font-style:italic;font-size:15px}
-.ex mark{background:none;color:var(--lv);font-weight:700;font-style:normal}
-.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
-.links a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--ink)}
-.links a:hover{border-color:var(--ink)}
-.links a svg{width:14px;height:14px}
-.linkish{border:0;background:none;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer}
-.del{border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 6px;margin-left:auto;align-self:center}
-.del:hover{color:var(--c2)}
-.empty{text-align:center;color:var(--muted);padding:32px 16px;border:1px dashed var(--line);border-radius:var(--r)}
-.fill{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;font-size:15px}
-.fill #fillConfirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.fill #fillConfirm[hidden]{display:none}
-.confirm{display:flex;gap:8px;align-items:center;font-size:14px}
-.keybox{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
-.keybox summary{cursor:pointer;font-weight:700}
-.keyrow{display:flex;flex-wrap:wrap;gap:8px}
-.keyrow input{flex:1 1 260px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
-.keybox p,.keyhelp{margin:0;font-size:14px;color:var(--muted)}
-.accountbox{display:grid;gap:10px;justify-items:start;border-top:1px solid var(--line);padding-top:14px}
-.accountbox p{margin:0;font-size:15px}
-.accountbox a.btn{text-decoration:none}
-.keyhelp ol{margin:4px 0 0;padding-left:20px;display:grid;gap:2px}
-.mode{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.mode .lbl{font-size:14px;color:var(--muted);margin-right:4px}
-.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:3px;background:var(--sunk)}
-.seg button{border:0;background:none;padding:6px 14px;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.mode-help{font-size:14px;color:var(--muted);margin:0;flex-basis:100%}
-.review{display:grid;gap:8px;background:var(--sunk);border-radius:var(--r);padding:14px}
+@media (prefers-reduced-motion:reduce){.status .spin{animation:none}*{transition:none!important}}
+.review{display:grid;gap:8px;background:var(--sunk);border-radius:var(--r-sm);padding:14px}
 .review label{font-weight:700}
 .review small{color:var(--muted)}
 .review textarea{width:100%;min-height:160px;resize:vertical;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--mono);font-size:14px;line-height:1.6}
-footer{color:var(--muted);font-size:13px}
-.langpick{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
-.langpick select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 10px;max-width:190px}
-.tr{margin:0;font-size:16px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
-.tr span{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
-.printpanel{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.keybox{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.keybox summary{cursor:pointer;font-weight:700;font-size:15px}
+.keyrow{display:flex;flex-wrap:wrap;gap:8px}
+.keyrow input{flex:1 1 240px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
+.keybox p,.keyhelp{margin:0;font-size:14px;color:var(--muted)}
+.keyhelp ol{margin:4px 0 0;padding-left:20px;display:grid;gap:2px}
+.accountbox{display:grid;gap:10px;justify-items:start;border-top:1px solid var(--line);padding-top:12px}
+.accountbox p{margin:0;font-size:15px}
+.accountbox a.btn{text-decoration:none}
+
+/* banners */
+.banner{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r-sm);font-size:15px}
+.banner #fillConfirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%}
+.banner #fillConfirm[hidden]{display:none}
+
+/* shelf toolbar: sticky while you scroll the words */
+.shelfbar>*{min-width:0}
+.shelfbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding-block:10px;margin-inline:-6px;padding-inline:6px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-inline:-2px;padding-inline:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-family:var(--mono);font-size:13px;display:flex;gap:6px;align-items:center;min-height:34px}
+.chip i{font-style:normal;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--lv,var(--ink));border-color:var(--lv,var(--ink));color:var(--bg)}
+.chip[aria-pressed="true"] i{color:inherit;opacity:.8}
+.tools{display:flex;gap:8px;align-items:center}
+.search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:0 14px;min-height:40px;color:var(--muted)}
+.search input{flex:1;min-width:0;border:0;background:transparent;padding:8px 0;outline:none;color:var(--ink)}
+.search:focus-within{outline:2px solid var(--focus);outline-offset:2px}
+.tools .pick select{max-width:170px}
+.menu{position:relative}
+.menu summary{list-style:none;cursor:pointer;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.menu summary::-webkit-details-marker{display:none}
+.menu[open] summary{border-color:var(--ink)}
+.menu-pop{position:absolute;right:0;top:46px;min-width:220px;background:var(--raised);border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:var(--shadow);padding:6px;display:grid;gap:2px;z-index:6}
+.menu-pop button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px}
+.menu-pop button:hover{background:var(--sunk)}
+.menu-pop .danger{color:var(--danger)}
+.menu-pop .confirm{display:grid;gap:6px;padding:6px 8px;font-size:14px}
+.menu-pop .confirm div{display:flex;gap:6px}
+.example-note{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r-sm);font-size:15px}
+
+/* levels + cards */
+#shelf{display:grid;gap:30px}
+.level{display:grid;gap:12px}
+.level-head{display:flex;align-items:center;gap:10px}
+.level-head .tag{font-family:var(--mono);font-weight:500;background:var(--lv);color:var(--bg);padding:2px 9px;border-radius:7px;font-size:14px}
+.level-head h2{font-size:20px;font-weight:700}
+.level-head .n{margin-left:auto;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.level-head::after{content:"";order:2;flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--lv),transparent)}
+.level-head .n{order:3;margin-left:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr));gap:12px}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 12px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:var(--shadow);overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--lv)}
+.card-head{display:flex;align-items:flex-start;gap:10px}
+.card-head h3{font-size:23px;font-weight:700;line-height:1.15;letter-spacing:-.01em;overflow-wrap:anywhere;flex:1;min-width:0}
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:-4px}
+.meta .est{border:1px dashed var(--line);border-radius:4px;padding:0 5px}
+.say{flex:none;display:flex;gap:4px}
+.say-btn{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 9px;border-radius:999px;border:1px solid var(--line);background:var(--raised);cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:500}
+.say-btn:hover{border-color:var(--ink)}
+.say-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tr{margin:0;font-size:17px;font-weight:700;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;color:var(--ink)}
+.tr span{font-family:var(--mono);font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--lv);background:color-mix(in srgb,var(--lv) 14%,transparent);border-radius:4px;padding:1px 6px}
+.def{margin:0}
+.note{font-size:14px;color:var(--muted);margin:0}
+.note b{font-weight:700;color:var(--ink)}
+.ex{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.ex li{background:color-mix(in srgb,var(--lv) 9%,var(--surface));border-radius:8px;padding:7px 10px;font-style:italic;font-size:15px}
+.ex mark{background:none;color:var(--lv);font-weight:700;font-style:normal}
+.card-foot{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
+.links{display:flex;flex-wrap:wrap;gap:4px 12px;flex:1;min-width:0}
+.links a{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:13px;font-weight:700;color:var(--muted);padding:3px 0}
+.links a:hover{color:var(--ink)}
+.links a svg{width:14px;height:14px}
+.linkish{border:0;background:none;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer}
+.del{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;align-self:flex-start}
+.del:hover{color:var(--danger);background:var(--sunk)}
+.del svg{width:16px;height:16px}
+.empty{text-align:center;color:var(--muted);padding:32px 16px;border:1px dashed var(--line);border-radius:var(--r)}
+
+.printpanel{display:grid;gap:10px}
 .pp-row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:15px}
 .pp-row label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
 .pp-levels{display:flex;flex-wrap:wrap;gap:8px 12px}
 .pp-row small{color:var(--muted)}
+footer{color:var(--muted);font-size:13px}
+footer summary{cursor:pointer;font-weight:700}
+footer p{margin:8px 0 0}
+
+@media (max-width:640px){
+  .panel{padding:14px}
+  .intro h1{font-size:26px}
+  .appbar .pick span.lbl{display:none}
+  .tools .pick{padding-left:10px}
+  .tools .pick select{max-width:96px}
+  .card-head h3{font-size:21px}
+}
 #printArea{display:none}
 @media print{
   @page{margin:14mm}
@@ -171,39 +253,46 @@ footer{color:var(--muted);font-size:13px}
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div>
-      <h1>Wordshelf</h1>
-      <p>Upload a photo or screenshot of your vocabulary list. Every word gets a CEFR level, a definition, example sentences and links to real YouTube clips where people say it.</p>
-    </div>
-    <div class="scale" aria-label="CEFR levels from beginner to proficient">
-      <span style="--lv:var(--a1)">A1</span><span style="--lv:var(--a2)">A2</span><span style="--lv:var(--b1)">B1</span><span style="--lv:var(--b2)">B2</span><span style="--lv:var(--c1)">C1</span><span style="--lv:var(--c2)">C2</span>
-    </div>
+  <header class="appbar">
+    <div class="brand"><span class="logo" aria-hidden="true">W</span>Wordshelf</div>
+    <label class="pick" title="Theme"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4.1-4-7.6-9-7.6z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg><span class="vh">Theme</span>
+      <select id="theme" aria-label="Theme">
+        <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
+        <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">High contrast</option>
+      </select></label>
   </header>
 
-  <section class="capture" aria-label="Add words">
-    <div class="mode">
-      <span class="lbl">Reading mode</span>
-      <div class="seg" role="group" aria-label="Reading mode">
-        <button type="button" data-mode="gemini" aria-pressed="true">Gemini · free</button>
-        <button type="button" data-mode="qwen" aria-pressed="false">Qwen · free</button>
-        <button type="button" data-mode="account" aria-pressed="false">Claude account</button>
-        <button type="button" data-mode="claude" aria-pressed="false">Claude API</button>
-        <button type="button" data-mode="free" aria-pressed="false">Basic · no key</button>
-      </div>
-      <p class="mode-help" id="modeHelp"></p>
+  <section class="intro">
+    <h1>Turn any vocabulary list into a study shelf</h1>
+    <p>Upload a photo, screenshot or document. Every word gets a CEFR level, a definition, a translation, example sentences, and British and American pronunciation.</p>
+    <div class="ladder" aria-label="CEFR levels from beginner to proficient"><span style="--lv:var(--a1)">A1</span><span style="--lv:var(--a2)">A2</span><span style="--lv:var(--b1)">B1</span><span style="--lv:var(--b2)">B2</span><span style="--lv:var(--c1)">C1</span><span style="--lv:var(--c2)">C2</span><em>beginner → proficient</em></div>
+  </section>
+
+  <section class="panel capture" aria-label="Add words">
+    <div class="panel-head">
+      <h2>Add words</h2>
+      <label class="pick"><span class="lbl">Read with</span>
+        <select id="modeSel" aria-label="Reading mode">
+          <option value="gemini">Gemini · free key</option>
+          <option value="qwen">Qwen · free key</option>
+          <option value="account">Claude account</option>
+          <option value="claude">Claude API key</option>
+          <option value="free">Basic · no key</option>
+        </select></label>
     </div>
+    <p class="mode-help" id="modeHelp"></p>
     <label class="drop" id="drop" for="file">
-      <strong>Drop your vocabulary list here</strong>
-      <small>photos, screenshots, PDF, Word (.docx, .doc), RTF, OpenDocument, Excel (.xlsx, .xls), CSV, PowerPoint (.pptx) or text files · click to choose, or paste an image with Ctrl/⌘+V</small>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+      <strong>Drop files or tap to upload</strong>
+      <small>Photos · PDF · Word · Excel · PowerPoint · RTF · OpenDocument · CSV · text. You can also paste an image.</small>
     </label>
     <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.pdf,.docx,.doc,.rtf,.odt,.xlsx,.xls,.ods,.csv,.pptx,.odp,.txt,.md,text/plain,text/csv" multiple hidden>
     <div class="thumbs" id="thumbs"></div>
-    <div class="row">
-      <button class="btn primary" id="recognize" disabled>Recognize words</button>
-      <span class="or">or type words</span>
+    <div class="actions">
+      <button class="btn primary block" id="recognize" disabled>Recognize words</button>
+      <div class="or">or type words</div>
       <form class="manual" id="manualForm">
-        <input id="manual" placeholder="e.g. reluctant, take off, cozy" aria-label="Words to add, separated by commas">
+        <input id="manual" placeholder="reluctant, take off, cozy" aria-label="Words to add, separated by commas" autocomplete="off">
         <button class="btn" id="manualBtn" type="submit">Add</button>
       </form>
     </div>
@@ -231,26 +320,33 @@ footer{color:var(--muted);font-size:13px}
 
   <div class="example-note" id="exampleNote" hidden>These are example words so you can see how the page works. They disappear as soon as you add your own.</div>
 
-  <div class="fill" id="fillBar" hidden>
+  <div class="banner" id="fillBar" hidden>
     <span id="fillText"></span>
     <button class="btn small primary" id="fillGo" type="button">Write missing sentences</button>
     <span id="fillConfirm" hidden>To write them without a key, download a small AI model (Qwen, about 500 MB, only once). After that, sentences are written automatically.
       <button class="btn small primary" id="fillYes" type="button">Download and write</button>
-      <button class="btn small" id="fillNo" type="button">Cancel</button></span>
+      <button class="btn small" id="fillNo" type="button">Not now</button></span>
   </div>
 
-  <div class="toolbar">
-    <div class="chips" id="chips"></div>
-    <div class="row">
-      <label class="langpick">Translate to <select id="lang" aria-label="Translate words to"></select></label>
-      <input class="search" id="search" type="search" placeholder="Find a word" aria-label="Find a word">
-      <button class="btn small" id="printOpen" type="button" aria-expanded="false" aria-controls="printPanel">Print</button>
-      <button class="btn small" id="copyAll">Copy list</button>
-      <span id="clearWrap"><button class="btn small" id="clear">Clear</button></span>
+  <div class="shelfbar">
+    <div class="chips" id="chips" role="group" aria-label="Filter by level"></div>
+    <div class="tools">
+      <label class="search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>
+        <input id="search" type="search" placeholder="Find a word" aria-label="Find a word"></label>
+      <label class="pick" title="Translate words to"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
+        <select id="lang" aria-label="Translate words to"></select></label>
+      <details class="menu" id="moreMenu">
+        <summary aria-label="More actions"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></summary>
+        <div class="menu-pop">
+          <button type="button" id="printOpen" aria-expanded="false" aria-controls="printPanel"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Print or save PDF</button>
+          <button type="button" id="copyAll"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>Copy list</button>
+          <span id="clearWrap"><button type="button" class="danger" id="clear"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Clear all words</button></span>
+        </div>
+      </details>
     </div>
   </div>
 
-  <section class="printpanel" id="printPanel" hidden aria-label="Print options">
+  <section class="panel printpanel" id="printPanel" hidden aria-label="Print options">
     <div class="pp-row"><b>Print which levels?</b>
       <label><input type="checkbox" id="ppAll" checked> All</label>
       <span id="ppLevels" class="pp-levels"></span></div>
@@ -262,12 +358,12 @@ footer{color:var(--muted);font-size:13px}
       <label><input type="checkbox" id="ppBreak"> each level on a new page</label></div>
     <div class="pp-row"><button class="btn small primary" id="ppGo" type="button">Print <span id="ppCount"></span></button>
       <button class="btn small" id="ppClose" type="button">Close</button>
-      <small>Tip: choose "Save as PDF" in the print window to keep a file.</small></div>
+      <small>Choose "Save as PDF" in the print window to keep a file.</small></div>
   </section>
 
-  <main id="shelf" style="display:grid;gap:32px"></main>
+  <main id="shelf"></main>
 
-  <footer>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl and Project Gutenberg, and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
+  <footer><details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl and Project Gutenberg, and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details></footer>
 </div>
 
 <div id="printArea" aria-hidden="true"></div>
@@ -276,7 +372,7 @@ const LEVELS=[
   {id:"A1",name:"Beginner",v:"--a1"},{id:"A2",name:"Elementary",v:"--a2"},
   {id:"B1",name:"Intermediate",v:"--b1"},{id:"B2",name:"Upper intermediate",v:"--b2"},
   {id:"C1",name:"Advanced",v:"--c1"},{id:"C2",name:"Proficient",v:"--c2"}];
-const UNRATED={id:"",label:"?",name:"Not on the CEFR list",v:"--muted"};
+const UNRATED={id:"",label:"?",name:"Not on the CEFR list",v:"--unrated"};
 const GROUPS=[...LEVELS,UNRATED];
 const EXAMPLES=[
   {word:"apple",pos:"noun",ipa:"/ˈæp.əl/",level:"A1",definition:"A round fruit with red, green or yellow skin.",examples:["I eat an apple every morning.","She cut the apple into four pieces."],note:""},
@@ -317,25 +413,28 @@ const ytIcon='<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" 
 const searchIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>';
 const speakIcon='<svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 
+const trashIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
 function card(w,i){
   const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED;
   const q=encodeURIComponent(w.word);
   const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
+  const meta=[w.pos&&`<span>${esc(w.pos)}</span>`,w.ipa&&`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`,w.ipaUs&&`<span>US ${esc(w.ipaUs)}</span>`,
+    w.est&&`<span class="est" title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">estimated</span>`].filter(Boolean).join("");
   return `<article class="card" style="--lv:var(${lv.v})">
-    <div class="card-top"><div style="min-width:0"><h3>${esc(w.word)}</h3>
-      <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`:""}${w.ipaUs?`<span>US ${esc(w.ipaUs)}</span>`:""}${w.est?`<span title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`:""}</div></div>
+    <div class="card-head"><h3>${esc(w.word)}</h3>
       <div class="say"><button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button></div></div>
-    ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
+    ${meta?`<div class="meta">${meta}</div>`:""}
     ${lang&&w.tr?.[lang]?`<p class="tr" lang="${lang}"><span>${lang}</span>${esc(w.tr[lang])}</p>`:""}
-    ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
-    ${exs?`<ul class="ex">${exs}</ul>`:`<p class="note">No example sentence yet. Use <b>Write missing sentences</b> above.</p>`}
-    <div class="links">
-      <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}British clips</a>
-      <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}American clips</a>
-      <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">${searchIcon}YouTube lessons</a>
-      ${lang?`<a href="https://translate.google.com/?sl=en&tl=${lang}&text=${encodeURIComponent([w.word,...(w.examples||[])].join("\n"))}&op=translate" target="_blank" rel="noopener">Google Translate</a>`:""}
-      <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">More sentences</a>
-      <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}">Remove</button>
+    ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
+    ${w.note?`<p class="note">From your list: <b>${esc(w.note)}</b></p>`:""}
+    ${exs?`<ul class="ex">${exs}</ul>`:`<p class="note">No example sentence yet.</p>`}
+    <div class="card-foot"><div class="links">
+      <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}UK clips</a>
+      <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}US clips</a>
+      <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">Lessons</a>
+      ${lang?`<a href="https://translate.google.com/?sl=en&tl=${lang}&text=${encodeURIComponent([w.word,...(w.examples||[])].join("\n"))}&op=translate" target="_blank" rel="noopener">Translate</a>`:""}
+      <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">More sentences</a></div>
+      <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}" title="Remove">${trashIcon}</button>
     </div></article>`;
 }
 
@@ -713,7 +812,7 @@ const MODE_KEY="wordshelf.mode";
 var mode=(()=>{try{return localStorage.getItem(MODE_KEY)}catch{return null}})()||"gemini";
 function setMode(m){
   mode=m; try{localStorage.setItem(MODE_KEY,m)}catch{}
-  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
+  $("#modeSel").value=m;
   $("#keybox").hidden=m==="free"||m==="account";
   $("#accountBox").hidden=m!=="account";
   $("#modeHelp").textContent={
@@ -724,7 +823,7 @@ function setMode(m){
     free:"No key needed, but basic: reads typed or printed text only (not handwriting), uses a built-in dictionary, and many words have no example sentence."}[m];
   if(PROVIDERS[m]) showKeyState();
 }
-document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)});
+$("#modeSel").addEventListener("change",e=>setMode(e.target.value));
 
 function showReview(list,poor){
   $("#review").hidden=false; $("#reviewText").value=list.join("\n");
@@ -1066,7 +1165,7 @@ lang=(()=>{try{const v=localStorage.getItem("wordshelf.lang");if(v!==null)return
   if(base==="en") return ""; if(base==="zh") return nav.includes("tw")||nav.includes("hk")?"zh-TW":"zh-CN";
   return LANGS.includes(base)?base:""})();
 $("#lang").innerHTML=`<option value="">No translation</option>`+LANGS.map(c=>({c,n:langName(c),nn:nativeName(c)})).sort((a,b)=>a.n.localeCompare(b.n))
-  .map(({c,n,nn})=>`<option value="${c}">${esc(n)}${nn&&nn.toLowerCase()!==n.toLowerCase()?` · ${esc(nn)}`:""}</option>`).join("");
+  .map(({c,n,nn})=>`<option value="${c}" title="${esc(nn)}">${esc(n)}</option>`).join("");
 $("#lang").value=lang;
 $("#lang").addEventListener("change",e=>{lang=e.target.value;try{localStorage.setItem("wordshelf.lang",lang)}catch{};render();autoTranslate()});
 var translating=false;
@@ -1121,6 +1220,20 @@ async function autoTranslate(){
   if(lang!==forLang) autoTranslate();
 }
 
+/* Themes */
+const THEME_KEY="wordshelf.theme";
+function applyTheme(t){
+  document.documentElement.dataset.wsTheme=t;
+  try{localStorage.setItem(THEME_KEY,t)}catch{}
+  requestAnimationFrame(()=>{let m=document.querySelector('meta[name="theme-color"]');
+    if(!m){m=document.createElement("meta");m.name="theme-color";document.head.append(m)}
+    m.content=getComputedStyle(document.body).backgroundColor});
+}
+$("#theme").value=document.documentElement.dataset.wsTheme;
+$("#theme").addEventListener("change",e=>applyTheme(e.target.value));
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>applyTheme($("#theme").value))}catch{}
+applyTheme($("#theme").value);
+
 /* Pronunciation: pick a voice for the accent (en-GB or en-US), preferring natural-sounding ones */
 function pickVoice(lang){
   const vs=speechSynthesis.getVoices().filter(v=>v.lang.replace("_","-").toLowerCase()===lang.toLowerCase());
@@ -1160,7 +1273,7 @@ function ppOpen(){
   $("#ppLevels").innerHTML=GROUPS.filter(g=>counts[g.id]).map(g=>`<label><input type="checkbox" data-pp="${g.id}" ${$("#ppAll").checked?"checked disabled":""}> ${g.label||g.id} <small>(${counts[g.id]})</small></label>`).join("");
   $("#printPanel").hidden=false; $("#printOpen").setAttribute("aria-expanded","true"); ppRefresh();
 }
-$("#printOpen").addEventListener("click",()=>$("#printPanel").hidden?ppOpen():($("#printPanel").hidden=true,$("#printOpen").setAttribute("aria-expanded","false")));
+$("#printOpen").addEventListener("click",()=>{closeMenu();ppOpen();$("#printPanel").scrollIntoView({behavior:"smooth",block:"nearest"})});
 $("#ppClose").addEventListener("click",()=>{$("#printPanel").hidden=true;$("#printOpen").setAttribute("aria-expanded","false")});
 $("#ppAll").addEventListener("change",e=>{document.querySelectorAll("[data-pp]").forEach(c=>{c.disabled=e.target.checked;c.checked=e.target.checked});ppRefresh()});
 $("#ppLevels").addEventListener("change",ppRefresh);
@@ -1180,12 +1293,16 @@ $("#ppGo").addEventListener("click",()=>{
 });
 
 $("#copyAll").addEventListener("click",async()=>{
+  closeMenu();
   const txt=GROUPS.map(l=>{const g=words.filter(w=>(w.level||"")===l.id);return g.length?`${l.label||l.id} ${l.name}\n`+g.map(w=>`- ${w.word}${lang&&w.tr?.[lang]?` = ${w.tr[lang]}`:""} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
   try{await navigator.clipboard.writeText(txt);setStatus("List copied. Paste it into your notes.")}catch{setStatus("Copy isn't allowed here. Select the words on the page instead.",true)}
 });
-function resetClear(){$("#clearWrap").innerHTML=`<button class="btn small" id="clear">Clear</button>`}
+const CLEAR_HTML=$("#clearWrap").innerHTML;
+function resetClear(){$("#clearWrap").innerHTML=CLEAR_HTML}
+const closeMenu=()=>{$("#moreMenu").open=false;resetClear()};
+document.addEventListener("click",e=>{if($("#moreMenu").open&&!e.target.closest("#moreMenu"))closeMenu()});
 $("#clearWrap").addEventListener("click",e=>{
-  if(e.target.id==="clear"){$("#clearWrap").innerHTML=`<span class="confirm">Remove all words? <button class="btn small" id="clearYes">Remove all</button><button class="btn small" id="clearNo">Keep</button></span>`;return}
+  if(e.target.closest("#clear")){$("#clearWrap").innerHTML=`<div class="confirm">Remove all words from your shelf?<div><button class="btn small" id="clearYes" style="color:var(--danger)">Remove all</button><button class="btn small" id="clearNo">Keep</button></div></div>`;return}
   if(e.target.id==="clearYes"){words=[];store.set(words);render();resetClear()}
   if(e.target.id==="clearNo") resetClear();
 });
