@@ -112,6 +112,21 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .dd-opt b{display:block;font-size:15px}
 .dd-opt small{display:block;color:var(--muted);font-size:13px;line-height:1.3}
 .dd-opt .sub{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.dd-list{display:grid;gap:2px}
+.dd-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:4px}
+.dd-pop:has(.dd-grid){min-width:300px}
+.dd-grid .dd-opt{padding:0;border-radius:12px;background:none;display:block}
+.dd-grid .dd-opt::after{display:none}
+.ttile{position:relative;display:block;height:78px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(127,127,127,.3);transition:transform .15s,box-shadow .15s}
+.dd-grid .dd-opt:hover .ttile{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(127,127,127,.45),0 8px 18px -10px rgba(0,0,0,.5)}
+.dd-grid .dd-opt[aria-selected="true"] .ttile{box-shadow:0 0 0 2.5px var(--accent),0 0 0 5px var(--accent-soft)}
+.dd-grid .dd-opt:focus-visible .ttile{box-shadow:0 0 0 2.5px var(--focus)}
+.tface{position:absolute;inset:0;background:var(--tb);color:var(--ti);padding:10px;display:flex;flex-direction:column;justify-content:space-between}
+.ttile.auto .tface:last-child{clip-path:polygon(62% 0,100% 0,100% 100%,38% 100%)}
+.tcard{display:flex;align-items:center;justify-content:space-between;background:var(--tc);border-radius:8px;padding:5px 8px;box-shadow:0 0 0 1px color-mix(in srgb,var(--ti) 12%,transparent)}
+.taa{font-family:var(--display);font-weight:800;font-size:17px;line-height:1;color:var(--ti)}
+.tdot{width:22px;height:8px;border-radius:999px;background:var(--ta)}
+.tname{font-weight:700;font-size:13.5px;color:var(--ti)}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
 .modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
@@ -1313,7 +1328,7 @@ var dropdowns=[];
 let openDd=null;
 const scrim=document.createElement("div"); scrim.className="dd-scrim"; document.body.append(scrim);
 scrim.addEventListener("click",()=>openDd?.close());
-function makeDropdown(sel,{item,title,search,align}){
+function makeDropdown(sel,{item,title,search,align,grid}){
   const wrap=sel.closest(".pick");
   sel.classList.add("vh"); sel.tabIndex=-1; sel.setAttribute("aria-hidden","true");
   const btn=document.createElement("button"); btn.type="button"; btn.className="dd-btn";
@@ -1326,7 +1341,7 @@ function makeDropdown(sel,{item,title,search,align}){
     const opts=[...sel.options].filter(o=>!ql||o.textContent.toLowerCase().includes(ql)||(o.title||"").toLowerCase().includes(ql)||o.value.toLowerCase()===ql);
     pop.querySelector(".dd-list").innerHTML=opts.map(o=>`<button type="button" class="dd-opt" role="option" data-v="${esc(o.value)}" aria-selected="${o.value===sel.value}">${item(o,false)}</button>`).join("")||`<p class="note" style="padding:8px 10px">Nothing found.</p>`;
   }
-  pop.innerHTML=`<div class="dd-head">${esc(title)}<button type="button" class="btn small dd-close">Done</button></div>${search?`<div class="dd-search"><input type="search" placeholder="Search" aria-label="Search ${esc(title)}"></div>`:""}<div class="dd-list" style="display:grid;gap:2px"></div>`;
+  pop.innerHTML=`<div class="dd-head">${esc(title)}<button type="button" class="btn small dd-close">Done</button></div>${search?`<div class="dd-search"><input type="search" placeholder="Search" aria-label="Search ${esc(title)}"></div>`:""}<div class="dd-list${grid?" dd-grid":""}"></div>`;
   const dd={
     open(){ openDd?.close(); build(); pop.hidden=false; btn.setAttribute("aria-expanded","true"); scrim.classList.add("on"); openDd=dd;
       const cur=pop.querySelector('[aria-selected="true"]'); cur?.scrollIntoView({block:"nearest"});
@@ -1353,7 +1368,15 @@ document.addEventListener("click",e=>{ if(openDd&&!e.target.closest(".pick")&&!e
 function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
 
 const THEME_NOTE={auto:"Follows your device",light:"Clean and bright",dark:"Easy on the eyes",paper:"Warm, like a notebook",ocean:"Deep blue",forest:"Dark green and gold",rose:"Soft pink",contrast:"Maximum readability"};
-makeDropdown($("#theme"),{title:"Theme",item:(o,short)=>short?`<b>${esc(o.textContent)}</b>`:`<span><b>${esc(o.textContent)}</b><small>${THEME_NOTE[o.value]}</small></span>`});
+// [background, card, text, accent]
+const THEMES={light:["#f2f5f4","#ffffff","#14232b","#2350d8"],dark:["#0f1618","#1c282b","#e4ecec","#86a4ff"],paper:["#efe8dc","#fbf7f0","#2b2217","#9a3b1e"],
+  ocean:["#081a2b","#132c44","#e3f0fb","#4fd1c5"],forest:["#0f1a14","#1b2c22","#e6efe8","#e2b44c"],rose:["#fbf0f2","#ffffff","#2e1a22","#c2306a"],contrast:["#000000","#0a0a0a","#ffffff","#ffe14d"]};
+const tileFace=([bg,card,ink,acc],name)=>`<span class="tface" style="--tb:${bg};--tc:${card};--ti:${ink};--ta:${acc}"><span class="tcard"><span class="taa">Aa</span><span class="tdot"></span></span><span class="tname">${name}</span></span>`;
+makeDropdown($("#theme"),{title:"Theme",grid:true,item:(o,short)=>{
+  if(short) return `<b>${esc(o.textContent)}</b>`;
+  const n=esc(o.textContent);
+  return `<span class="ttile${o.value==="auto"?" auto":""}" title="${THEME_NOTE[o.value]}">`+(o.value==="auto"?tileFace(THEMES.light,n)+tileFace(THEMES.dark,n):tileFace(THEMES[o.value],n))+`</span>`;
+}});
 const MODE_INFO={gemini:["G","#2f6fe4","Gemini","Free Google key · reads handwriting"],qwen:["Q","#6a46d8","Qwen","Free OpenRouter key · reads handwriting"],
   account:["C","#c46a3c","Claude account","Opens Wordshelf on claude.ai · no key"],claude:["C","#a14e2a","Claude API","Paid key · most accurate"],free:["B","#5b6b71","Basic","No key · typed or printed text only"]};
 makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{const m=MODE_INFO[o.value];
