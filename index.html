@@ -1070,11 +1070,13 @@ $("#lang").innerHTML=`<option value="">No translation</option>`+LANGS.map(c=>({c
 $("#lang").value=lang;
 $("#lang").addEventListener("change",e=>{lang=e.target.value;try{localStorage.setItem("wordshelf.lang",lang)}catch{};render();autoTranslate()});
 var translating=false;
-const needTranslation=()=>lang?words.filter(w=>!w.example&&!w.tr?.[lang]):[];
+const upgraded=new Set();
+const hasAiKey=()=>["gemini","qwen","claude"].some(p=>getKey(p));
+const needTranslation=()=>lang?words.filter(w=>!w.example&&(!w.tr?.[lang]||(hasAiKey()&&w.trSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)))):[];
 async function translateWithKey(provider,list){
   const prompt=`Translate each English word or phrase into ${langName(lang)} for a language learner. Give the most common equivalent(s) for the meaning described, comma-separated, short. Reply with only JSON: {"items":[{"word":"...","translation":"..."}]}
 
-`+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n");
+`+list.map(w=>`- ${w.word}${w.pos||w.definition?` (${[w.pos,w.definition].filter(Boolean).join(": ")})`:""}`).join("\n");
   const key=getKey(provider); setStatus(spin(`Translating into ${langName(lang)} with ${PROVIDERS[provider].name}…`));
   const res=provider==="gemini"?await askGemini(key,prompt,[]):provider==="qwen"?await askQwen(key,prompt,[]):await askClaudeText(key,prompt);
   return res?.items||null;
@@ -1084,10 +1086,12 @@ async function translateFree(list){
   async function worker(){
     while(i<list.length&&!stop){
       const w=list[i++];
-      const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(w.word)}&langpair=en|${encodeURIComponent(lang)}`,8000);
+      // bare "curb" comes back as the noun (kerb); "to curb" gives the verb
+      const q=/verb/i.test(w.pos||"")&&!/^to /i.test(w.word)?"to "+w.word:w.word;
+      const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|${encodeURIComponent(lang)}`,8000);
       if(d?.quotaFinished||d?.responseStatus==429){stop="limit";break}
       const t=d?.responseData?.translatedText;
-      if(t&&t.toLowerCase()!==w.word.toLowerCase()&&!/MYMEMORY WARNING|INVALID/i.test(t)) out.push({word:w.word,translation:t});
+      if(t&&t.toLowerCase()!==q.toLowerCase()&&!/MYMEMORY WARNING|INVALID/i.test(t)) out.push({word:w.word,translation:t.replace(/^(to|zu|à|a|para)\s+/i,""),src:"free"});
       setStatus(spin(`Translating into ${langName(lang)}… ${++done} of ${list.length}`));
     }
   }
@@ -1103,11 +1107,13 @@ async function autoTranslate(){
   try{
     const provider=["gemini","qwen","claude"].find(p=>getKey(p));
     let items=provider?await translateWithKey(provider,list):null;
-    if(!items) items=await translateFree(list);
+    if(provider) list.forEach(w=>upgraded.add(w.word+"|"+forLang));
+    // without a working AI, only fill words that have no translation yet (don't replace one free answer with another)
+    if(!items) items=await translateFree(list.filter(w=>!w.tr?.[forLang]));
     let n=0;
     for(const it of items||[]){
       const w=words.find(x=>x.word.toLowerCase()===String(it.word||"").toLowerCase());
-      if(w&&it.translation){ w.tr={...(w.tr||{}),[forLang]:String(it.translation)}; n++ }
+      if(w&&it.translation){ w.tr={...(w.tr||{}),[forLang]:String(it.translation)}; w.trSrc={...(w.trSrc||{}),[forLang]:it.src||"ai"}; n++ }
     }
     store.set(words); render();
     if(n&&!/limit/.test($("#status").textContent)) setStatus(`Translated ${n} word${n===1?"":"s"} into ${langName(forLang)}.`);
