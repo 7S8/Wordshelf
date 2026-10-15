@@ -20,7 +20,7 @@ Keys are stored only in your browser and sent only to that provider. The page pi
 
 **Basic mode** reads screenshots with Tesseract.js, takes the term before the dash on each line, keeps only real words, gets CEFR levels from the CEFR-J and Octanove word lists (estimating words that aren't listed), and uses a built-in copy of Open English WordNet for definitions, with example sentences from Tatoeba, Europarl and Project Gutenberg (about 90% of A1–B2 words have one).
 
-Your word list is saved in your browser.
+Your word list is saved in your browser. Use **Print** to print (or save as PDF) all levels or only the ones you choose, with or without definitions, sentences, pronunciation and notes.
 
 ## Running locally
 
