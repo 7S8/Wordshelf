@@ -137,6 +137,10 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .review small{color:var(--muted)}
 .review textarea{width:100%;min-height:160px;resize:vertical;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--mono);font-size:14px;line-height:1.6}
 footer{color:var(--muted);font-size:13px}
+.langpick{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.langpick select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 10px;max-width:190px}
+.tr{margin:0;font-size:16px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tr span{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
 .printpanel{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
 .pp-row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:15px}
 .pp-row label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
@@ -238,6 +242,7 @@ footer{color:var(--muted);font-size:13px}
   <div class="toolbar">
     <div class="chips" id="chips"></div>
     <div class="row">
+      <label class="langpick">Translate to <select id="lang" aria-label="Translate words to"></select></label>
       <input class="search" id="search" type="search" placeholder="Find a word" aria-label="Find a word">
       <button class="btn small" id="printOpen" type="button" aria-expanded="false" aria-controls="printPanel">Print</button>
       <button class="btn small" id="copyAll">Copy list</button>
@@ -321,12 +326,14 @@ function card(w,i){
       <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`:""}${w.ipaUs?`<span>US ${esc(w.ipaUs)}</span>`:""}${w.est?`<span title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`:""}</div></div>
       <div class="say"><button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button></div></div>
     ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
+    ${lang&&w.tr?.[lang]?`<p class="tr" lang="${lang}"><span>${lang}</span>${esc(w.tr[lang])}</p>`:""}
     ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
     ${exs?`<ul class="ex">${exs}</ul>`:`<p class="note">No example sentence yet. Use <b>Write missing sentences</b> above.</p>`}
     <div class="links">
       <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}British clips</a>
       <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}American clips</a>
       <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">${searchIcon}YouTube lessons</a>
+      ${lang?`<a href="https://translate.google.com/?sl=en&tl=${lang}&text=${encodeURIComponent([w.word,...(w.examples||[])].join("\n"))}&op=translate" target="_blank" rel="noopener">Google Translate</a>`:""}
       <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">More sentences</a>
       <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}">Remove</button>
     </div></article>`;
@@ -359,20 +366,21 @@ function addWords(items){
   const clean=(Array.isArray(items)?items:[]).filter(x=>x&&typeof x.word==="string"&&x.word.trim()).map(x=>({
     word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),ipaUs:String(x.ipa_us||x.ipaUs||""),
     level:LEVELS.some(l=>l.id===String(x.level).toUpperCase())?String(x.level).toUpperCase():"",
-    est:!!x.est,suggest:String(x.suggest||""),definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
+    tr:x.translation&&lang?{[lang]:String(x.translation)}:(x.tr||{}),est:!!x.est,suggest:String(x.suggest||""),definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
   let base=words.filter(w=>!w.example);
   let added=0;
   for(const w of clean){
     const k=w.word.toLowerCase();
     const at=base.findIndex(b=>b.word.toLowerCase()===k);
-    if(at>=0) base[at]={...base[at],...w,note:w.note||base[at].note}; else {base.push(w);added++}
+    if(at>=0) base[at]={...base[at],...w,note:w.note||base[at].note,tr:{...(base[at].tr||{}),...w.tr}}; else {base.push(w);added++}
   }
   words=base; store.set(words); filter="all"; render();
-  setTimeout(autoFill,0);
+  setTimeout(autoFill,0); setTimeout(autoTranslate,0);
   return {added,total:clean.length};
 }
 
-const RULES=`You are an English vocabulary assistant for a language learner.
+var lang="";
+const RULES_T=()=>`You are an English vocabulary assistant for a language learner.
 For each English word or phrase, return:
 - "word": the word or phrase in English, spelling corrected if clearly misspelled (keep phrasal verbs and idioms whole)
 - "pos": part of speech (noun, verb, adjective, adverb, phrasal verb, idiom, ...)
@@ -382,6 +390,7 @@ For each English word or phrase, return:
 - "definition": a simple learner-friendly definition, one sentence, using words easier than the word itself
 - "examples": exactly 2 natural, everyday example sentences that use the word (different contexts)
 - "note": any translation or note written next to the word in the source, copied as written; "" if none
+- "translation": ${lang?`the word's meaning translated into ${langName(lang)}: the most common equivalent(s), comma-separated`:'always ""'}
 Return them all in the "items" array.`;
 const JSON_SHAPE=`Reply with only JSON, no other text, in this shape:
 {"items":[{"word":"borrow","pos":"verb","ipa":"/ˈbɒr.əʊ/","ipa_us":"/ˈbɑːr.oʊ/","level":"A2","definition":"To take something and give it back later.","examples":["Can I borrow your pen?","She borrowed a book from the library."],"note":""}]}`;
@@ -394,8 +403,8 @@ function parseJSONReply(text){
 }
 
 const SCHEMA={type:"object",additionalProperties:false,required:["items"],properties:{items:{type:"array",items:{
-  type:"object",additionalProperties:false,required:["word","pos","ipa","ipa_us","level","definition","examples","note"],
-  properties:{word:{type:"string"},pos:{type:"string"},ipa:{type:"string"},ipa_us:{type:"string"},level:{type:"string",enum:["A1","A2","B1","B2","C1","C2"]},
+  type:"object",additionalProperties:false,required:["word","pos","ipa","ipa_us","translation","level","definition","examples","note"],
+  properties:{word:{type:"string"},pos:{type:"string"},ipa:{type:"string"},ipa_us:{type:"string"},translation:{type:"string"},level:{type:"string",enum:["A1","A2","B1","B2","C1","C2"]},
     definition:{type:"string"},examples:{type:"array",items:{type:"string"}},note:{type:"string"}}}}}};
 const toB64=f=>new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=bad;r.readAsDataURL(f)});
 // Shrink big photos before sending: keeps requests small and fast
@@ -914,7 +923,7 @@ $("#recognize").addEventListener("click",async()=>{
   const parts=[];
   if(up.images.length) parts.push(`The attached image${up.images.length>1?"s are photos, screenshots or scanned pages":" is a photo, screenshot or scanned page"} of a learner's English vocabulary list. It may be handwritten, messy, rotated, or mixed with another language.`);
   if(up.text) parts.push(`Text from the learner's vocabulary document${up.images.length?" (read it together with the images)":""}. It may be a "word - meaning" list, a table with columns, or mixed with another language:\n"""\n${up.text.slice(0,40000)}\n"""`);
-  const res=await ask(parts.join("\n\n")+`\n\nFind EVERY English vocabulary word or phrase the learner is studying (skip numbers, dates, headings and the meanings themselves).\n\n`+RULES,
+  const res=await ask(parts.join("\n\n")+`\n\nFind EVERY English vocabulary word or phrase the learner is studying (skip numbers, dates, headings and the meanings themselves).\n\n`+RULES_T(),
     up.images,"Reading your list… this takes about 20–60 seconds.");
   btn.disabled=false;
   if(!res) return;
@@ -934,7 +943,7 @@ $("#manualForm").addEventListener("submit",async e=>{
     if(!r) return;
     const {total}=addWords(r.items); $("#manual").value=""; setStatus(`Added ${total} word${total>1?"s":""}.`); return;
   }
-  const res=await ask(`Words from a learner's vocabulary list (comma or line separated):\n${v.slice(0,4000)}\n\n`+RULES,[],"Looking up your words…");
+  const res=await ask(`Words from a learner's vocabulary list (comma or line separated):\n${v.slice(0,4000)}\n\n`+RULES_T(),[],"Looking up your words…");
   $("#manualBtn").disabled=false;
   if(!res) return;
   const {total}=addWords(res.items||res);
@@ -959,12 +968,9 @@ const EX_PROMPT=list=>`Write exactly 2 short, natural, everyday example sentence
 
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.pos?w.pos+": ":""}${w.definition})`:""}`).join("\n");
 async function fillWithKey(provider,list){
-  const saved=mode; mode=provider;
-  try{
-    const key=getKey(); setStatus(spin(`Writing sentences with ${PROVIDERS[provider].name}…`));
-    const res=provider==="gemini"?await askGemini(key,EX_PROMPT(list),[]):provider==="qwen"?await askQwen(key,EX_PROMPT(list),[]):await askClaudeText(key,EX_PROMPT(list));
-    return res?.items||null;
-  } finally { mode=saved; setMode(mode) }
+  const key=getKey(provider); setStatus(spin(`Writing sentences with ${PROVIDERS[provider].name}…`));
+  const res=provider==="gemini"?await askGemini(key,EX_PROMPT(list),[]):provider==="qwen"?await askQwen(key,EX_PROMPT(list),[]):await askClaudeText(key,EX_PROMPT(list));
+  return res?.items||null;
 }
 async function askClaudeText(key,prompt){
   try{
@@ -1046,6 +1052,69 @@ $("#fillGo").addEventListener("click",()=>{
 $("#fillYes").addEventListener("click",()=>fillMissing(true));
 $("#fillNo").addEventListener("click",()=>{$("#fillConfirm").hidden=true});
 
+// fetch JSON with a time limit so one slow request can't hold everything up
+async function getJSON(url,ms=6000){
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),ms);
+  try{ const r=await fetch(url,{signal:ctl.signal}); return await r.json() }catch{ return null }finally{ clearTimeout(t) }
+}
+/* Translation: into any language. AI key → the AI translates (best); otherwise the free MyMemory service */
+const LANGS="af sq am ar hy az eu be bn bs bg ca ceb zh-CN zh-TW co hr cs da nl eo et fi fr fy gl ka de el gu ht ha haw he hi hmn hu is ig id ga it ja jv kn kk km rw ko ku ky lo la lv lt lb mk mg ms ml mt mi mr mn my ne no ny or ps fa pl pt pa ro ru sm gd sr st sn sd si sk sl so es su sw sv tl tg ta tt te th tr tk uk ur ug uz vi cy xh yi yo zu".split(" ");
+function langName(code){ try{ return new Intl.DisplayNames(["en"],{type:"language"}).of(code)||code }catch{ return code } }
+function nativeName(code){ try{ return new Intl.DisplayNames([code],{type:"language"}).of(code)||"" }catch{ return "" } }
+lang=(()=>{try{const v=localStorage.getItem("wordshelf.lang");if(v!==null)return v}catch{}
+  const nav=(navigator.language||"").toLowerCase(), base=nav.split("-")[0];
+  if(base==="en") return ""; if(base==="zh") return nav.includes("tw")||nav.includes("hk")?"zh-TW":"zh-CN";
+  return LANGS.includes(base)?base:""})();
+$("#lang").innerHTML=`<option value="">No translation</option>`+LANGS.map(c=>({c,n:langName(c),nn:nativeName(c)})).sort((a,b)=>a.n.localeCompare(b.n))
+  .map(({c,n,nn})=>`<option value="${c}">${esc(n)}${nn&&nn.toLowerCase()!==n.toLowerCase()?` · ${esc(nn)}`:""}</option>`).join("");
+$("#lang").value=lang;
+$("#lang").addEventListener("change",e=>{lang=e.target.value;try{localStorage.setItem("wordshelf.lang",lang)}catch{};render();autoTranslate()});
+var translating=false;
+const needTranslation=()=>lang?words.filter(w=>!w.example&&!w.tr?.[lang]):[];
+async function translateWithKey(provider,list){
+  const prompt=`Translate each English word or phrase into ${langName(lang)} for a language learner. Give the most common equivalent(s) for the meaning described, comma-separated, short. Reply with only JSON: {"items":[{"word":"...","translation":"..."}]}
+
+`+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n");
+  const key=getKey(provider); setStatus(spin(`Translating into ${langName(lang)} with ${PROVIDERS[provider].name}…`));
+  const res=provider==="gemini"?await askGemini(key,prompt,[]):provider==="qwen"?await askQwen(key,prompt,[]):await askClaudeText(key,prompt);
+  return res?.items||null;
+}
+async function translateFree(list){
+  const out=[]; let i=0, done=0, stop="";
+  async function worker(){
+    while(i<list.length&&!stop){
+      const w=list[i++];
+      const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(w.word)}&langpair=en|${encodeURIComponent(lang)}`,8000);
+      if(d?.quotaFinished||d?.responseStatus==429){stop="limit";break}
+      const t=d?.responseData?.translatedText;
+      if(t&&t.toLowerCase()!==w.word.toLowerCase()&&!/MYMEMORY WARNING|INVALID/i.test(t)) out.push({word:w.word,translation:t});
+      setStatus(spin(`Translating into ${langName(lang)}… ${++done} of ${list.length}`));
+    }
+  }
+  await Promise.all([worker(),worker(),worker()]);
+  if(stop) setStatus("The free translation service's daily limit is used up. Add a free Gemini key for unlimited translations, or try again tomorrow.",true);
+  return out;
+}
+async function autoTranslate(){
+  if(translating||!lang) return;
+  const list=needTranslation().slice(0,80); if(!list.length) return;
+  translating=true;
+  const forLang=lang;
+  try{
+    const provider=["gemini","qwen","claude"].find(p=>getKey(p));
+    let items=provider?await translateWithKey(provider,list):null;
+    if(!items) items=await translateFree(list);
+    let n=0;
+    for(const it of items||[]){
+      const w=words.find(x=>x.word.toLowerCase()===String(it.word||"").toLowerCase());
+      if(w&&it.translation){ w.tr={...(w.tr||{}),[forLang]:String(it.translation)}; n++ }
+    }
+    store.set(words); render();
+    if(n&&!/limit/.test($("#status").textContent)) setStatus(`Translated ${n} word${n===1?"":"s"} into ${langName(forLang)}.`);
+  } finally { translating=false }
+  if(lang!==forLang) autoTranslate();
+}
+
 /* Pronunciation: pick a voice for the accent (en-GB or en-US), preferring natural-sounding ones */
 function pickVoice(lang){
   const vs=speechSynthesis.getVoices().filter(v=>v.lang.replace("_","-").toLowerCase()===lang.toLowerCase());
@@ -1098,13 +1167,14 @@ $("#ppGo").addEventListener("click",()=>{
     groups.map(({g,ws},i)=>`<section class="pa-lv${o.brk&&i?" newpage":""}" style="--pc:var(${g.v})"><h2><span class="tag">${g.label||g.id}</span>${esc(g.name)}<span class="n">${ws.length} word${ws.length===1?"":"s"}</span></h2>`+
       ws.map(w=>`<div class="pa-w"><b>${esc(w.word)}</b><span class="pa-meta">${esc(w.pos||"")}${o.ipa&&w.ipa?` · ${w.ipaUs?"UK ":""}${esc(w.ipa)}`:""}${o.ipa&&w.ipaUs?` · US ${esc(w.ipaUs)}`:""}</span>`+
         (o.def&&w.definition?`<p class="pa-def">${esc(w.definition)}</p>`:"")+
+        (lang&&w.tr?.[lang]?`<p class="pa-note">${esc(langName(lang))}: <b>${esc(w.tr[lang])}</b></p>`:"")+
         (o.note&&w.note?`<p class="pa-note">My note: ${esc(w.note)}</p>`:"")+
         (o.ex&&(w.examples||[]).length?`<ul>${w.examples.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`:"")+`</div>`).join("")+`</section>`).join("");
   window.print();
 });
 
 $("#copyAll").addEventListener("click",async()=>{
-  const txt=GROUPS.map(l=>{const g=words.filter(w=>(w.level||"")===l.id);return g.length?`${l.label||l.id} ${l.name}\n`+g.map(w=>`- ${w.word} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
+  const txt=GROUPS.map(l=>{const g=words.filter(w=>(w.level||"")===l.id);return g.length?`${l.label||l.id} ${l.name}\n`+g.map(w=>`- ${w.word}${lang&&w.tr?.[lang]?` = ${w.tr[lang]}`:""} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
   try{await navigator.clipboard.writeText(txt);setStatus("List copied. Paste it into your notes.")}catch{setStatus("Copy isn't allowed here. Select the words on the page instead.",true)}
 });
 function resetClear(){$("#clearWrap").innerHTML=`<button class="btn small" id="clear">Clear</button>`}
@@ -1125,7 +1195,7 @@ setTimeout(()=>loadCefr().catch(()=>{}),300);
     if(exs.length){w.examples=exs;changed=true}
   }
   if(changed){store.set(words);render()}
-  autoFill();
+  autoFill(); autoTranslate();
 })();
 </script>
 </body>
