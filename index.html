@@ -484,7 +484,7 @@ footer p{margin:8px 0 0}
     <div class="credit-sig">Nuramatova Sakinat Ibnuabasovna</div>
     <div class="credit-note">© 2026 Wordshelf · All rights reserved · Not affiliated with Cambridge English or the Council of Europe</div>
     <details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details>
-    <span class="ver">Version 15 Oct · 15:50</span>
+    <span class="ver">Version 15 Oct · 16:00</span>
   </footer>
 </div>
 
@@ -1459,41 +1459,36 @@ const SKY={auto:"linear-gradient(135deg,#8fbde6 0 48%,#15284a 52% 100%)",morning
 function themeDot(t){ return `<span class="tdot" style="background:${SKY[t]||SKY.morning}"></span>` }
 
 /* Library silhouette: a back row of tall books and a front shelf of smaller ones (same drawing every visit) */
-function drawShelves(){
+function drawShelves(gap){
   let seed=11; const r=()=>(seed=(seed*9301+49297)%233280)/233280;
   const out=[];
-  // soft book colors from the level colors, mixed with the shelf color so they suit every theme
-  const COLORS=["--a1","--b1","--b2","--c1","--c2","--a2"].map(v=>`color-mix(in srgb,var(${v}) 58%,var(--shelf))`);
-  const pick=()=>COLORS[Math.floor(r()*COLORS.length)];
-  const LIGHT="color-mix(in srgb,#ffffff 55%,transparent)", GOLD="color-mix(in srgb,#f3d38a 70%,transparent)";
-  const book=(x,base,w,h,lean)=>{
+  const book=(x,base,w,h,fill,band,lean)=>{
     const y=base-h, tr=lean?` transform="rotate(${lean.toFixed(1)} ${x.toFixed(1)} ${base})"`:"";
-    let g=`<g${tr}><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${pick()}"/>`;
-    g+=`<rect x="${x.toFixed(1)}" y="${(y+h*.1).toFixed(1)}" width="${w.toFixed(1)}" height="2" fill="${GOLD}"/><rect x="${x.toFixed(1)}" y="${(y+h*.86).toFixed(1)}" width="${w.toFixed(1)}" height="2" fill="${GOLD}"/>`;
-    if(w>11) g+=`<rect x="${(x+w*.22).toFixed(1)}" y="${(y+h*.3).toFixed(1)}" width="${(w*.56).toFixed(1)}" height="${(h*.22).toFixed(1)}" rx="1" fill="${LIGHT}" opacity=".55"/>`;
-    return g+`</g>`;
+    let g=`<g${tr}><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="1.8" fill="${fill}"/>`;
+    // two thin bands near the top and bottom of the spine make it read as a book
+    g+=`<rect x="${(x+1.5).toFixed(1)}" y="${(y+h*.14).toFixed(1)}" width="${(w-3).toFixed(1)}" height="1.6" fill="${band}"/><rect x="${(x+1.5).toFixed(1)}" y="${(y+h*.8).toFixed(1)}" width="${(w-3).toFixed(1)}" height="1.6" fill="${band}"/></g>`;
+    return g;
   };
-  const plant=x=>{
-    const leaf=`color-mix(in srgb,var(--a1) 70%,var(--shelf))`, pot=`color-mix(in srgb,#c8794f 75%,var(--shelf))`;
-    return `<g><path d="M${x+3} 172 L${x+25} 172 L${x+22} 190 L${x+6} 190 Z" fill="${pot}"/>`+
-      `<ellipse cx="${x+9}" cy="160" rx="5" ry="13" transform="rotate(-25 ${x+9} 168)" fill="${leaf}"/><ellipse cx="${x+19}" cy="160" rx="5" ry="13" transform="rotate(25 ${x+19} 168)" fill="${leaf}"/><ellipse cx="${x+14}" cy="155" rx="5" ry="15" fill="${leaf}"/></g>`;
-  };
-  let sincePlant=0;
+  // front shelf: plank at y=190, packed with upright books; now and then a book leaning on its neighbor or a small flat stack
+  const band="color-mix(in srgb,var(--sky-2) 30%,transparent)";
   for(let x=-6;x<1450;){
     const roll=r();
-    if(sincePlant>420&&roll<.12){ out.push(plant(x)); x+=32; sincePlant=0; continue }
-    if(roll<.045){                                          // a small stack lying flat
-      const n=3+Math.floor(r()*3), sw=34+r()*14; let y=190;
-      for(let k=0;k<n;k++){ const bh=8+r()*2.5, bw=sw-r()*7, bx=x+(sw-bw)/2+(r()-.5)*3;
-        out.push(`<rect x="${bx.toFixed(1)}" y="${(y-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="1.6" fill="${pick()}"/><rect x="${(bx+bw-7).toFixed(1)}" y="${(y-bh).toFixed(1)}" width="2" height="${bh.toFixed(1)}" fill="${GOLD}"/>`); y-=bh+.6; }
-      x+=sw+1.5; sincePlant+=sw; continue;
+    if(roll<.045){                                          // a stack of 4–6 books lying flat
+      const n=4+Math.floor(r()*3), sw=36+r()*16; let y=190;
+      for(let k=0;k<n;k++){ const bh=7.5+r()*2.5, bw=sw-r()*7, bx=x+(sw-bw)/2+(r()-.5)*3;
+        out.push(`<rect x="${bx.toFixed(1)}" y="${(y-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="1.5" fill="var(--shelf)"/><rect x="${(bx+3).toFixed(1)}" y="${(y-bh/2-.6).toFixed(1)}" width="${(bw-6).toFixed(1)}" height="1.2" fill="${band}"/>`); y-=bh+.8; }
+      x+=sw+1; continue;
     }
-    const w=10+r()*11, h=42+r()*34;
-    if(roll<.1){ const ang=8+r()*6; out.push(book(x,190,w,h,ang)); const dx=w+h*Math.sin(ang*Math.PI/180)*.85; x+=dx; sincePlant+=dx; continue }
-    out.push(book(x,190,w,h,0)); x+=w+.8; sincePlant+=w+.8;
+    const w=9+r()*12, h=40+r()*36;
+    if(roll<.11){                                           // leaning right: it rests on the next book, so no hole
+      const ang=9+r()*7;
+      out.push(book(x,190,w,h,"var(--shelf)",band,ang));
+      x+=w+h*Math.sin(ang*Math.PI/180)*.85; continue;
+    }
+    out.push(book(x,190,w,h,"var(--shelf)",band,0));
+    x+=w+.6+r()*.6;
   }
-  // wooden plank with a lighter top edge
-  out.push(`<rect x="0" y="190" width="1440" height="10" fill="color-mix(in srgb,#8a5a3c 55%,var(--shelf))"/><rect x="0" y="190" width="1440" height="2.2" fill="color-mix(in srgb,#d9a877 60%,var(--shelf))"/>`);
+  out.push(`<rect x="0" y="190" width="1440" height="10" fill="var(--shelf)"/>`);
   $("#shelves").innerHTML=out.join("");
 }
 drawShelves(null);
