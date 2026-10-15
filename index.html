@@ -379,6 +379,8 @@ footer p{margin:8px 0 0}
   #printArea li{font-style:italic;color:#222}
 }
 </style>
+<!-- anonymous visit counting (no cookies, no personal data): https://wordshell.goatcounter.com -->
+<script data-goatcounter="https://wordshell.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <header class="scene">
@@ -609,6 +611,8 @@ function render(){
 function setStatus(html,err){const s=$("#status");s.innerHTML=html;s.classList.toggle("err",!!err)}
 const spin=t=>`<span class="spin" aria-hidden="true"></span>${esc(t)}`;
 
+// count what people use, without any words or notes: only the action's name
+function track(path,title){try{window.goatcounter?.count?.({path,title:title||path,event:true})}catch{}}
 function addWords(items){
   const clean=(Array.isArray(items)?items:[]).filter(x=>x&&typeof x.word==="string"&&x.word.trim()).map(x=>({
     word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),ipaUs:String(x.ipa_us||x.ipaUs||""),
@@ -623,6 +627,7 @@ function addWords(items){
   }
   words=base; store.set(words); filter="all"; render();
   setTimeout(autoFill,0); setTimeout(autoTranslate,0);
+  if(clean.length) track("words-added","Words added ("+mode+")");
   return {added,total:clean.length};
 }
 
@@ -1151,7 +1156,7 @@ document.addEventListener("paste",e=>{const fs=[...(e.clipboardData?.files||[])]
 $("#thumbs").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i==null)return;if(pending[i].url)URL.revokeObjectURL(pending[i].url);pending.splice(+i,1);drawThumbs()});
 
 $("#recognize").addEventListener("click",async()=>{
-  const btn=$("#recognize"); btn.disabled=true;
+  const btn=$("#recognize"); btn.disabled=true; track("scan-"+mode,"Scan ("+mode+")");
   const batch=pending.slice(0,10);
   const up=await readUploads(batch);
   if(!up){btn.disabled=false;return}
@@ -1368,7 +1373,7 @@ lang=(()=>{try{const v=localStorage.getItem("wordshelf.lang");if(v!==null)return
 $("#lang").innerHTML=`<option value="">No translation</option>`+LANGS.map(c=>({c,n:langName(c),nn:nativeName(c)})).sort((a,b)=>a.n.localeCompare(b.n))
   .map(({c,n,nn})=>`<option value="${c}" title="${esc(nn)}">${esc(n)}</option>`).join("");
 $("#lang").value=lang;
-$("#lang").addEventListener("change",e=>{lang=e.target.value;try{localStorage.setItem("wordshelf.lang",lang)}catch{};render();autoTranslate()});
+$("#lang").addEventListener("change",e=>{lang=e.target.value;if(lang)track("translate-"+lang,"Translate to "+langName(lang));try{localStorage.setItem("wordshelf.lang",lang)}catch{};render();autoTranslate()});
 var translating=false;
 const upgraded=new Set();
 const hasAiKey=()=>["gemini","qwen","claude"].some(p=>getKey(p));
@@ -1621,7 +1626,7 @@ $("#ppGo").addEventListener("click",()=>{
         (o.note&&w.note?`<p class="pa-note">From my list: ${esc(w.note)}</p>`:"")+
         (o.note&&w.myNote?`<p class="pa-note">My notes: ${esc(w.myNote)}</p>`:"")+
         (o.ex&&(w.examples||[]).length?`<ul>${w.examples.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`:"")+`</div>`).join("")+`</section>`).join("");
-  window.print();
+  track("print","Print"); window.print();
 });
 
 $("#copyAll").addEventListener("click",async()=>{

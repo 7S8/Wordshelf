@@ -12,6 +12,7 @@ def sub(old, new, count=1):
 # only the Claude account mode here: other services can't be reached from inside claude.ai
 s = re.sub(r'(<select id="modeSel"[^>]*>).*?(</select>)', r'\1<option value="account">Claude account</option>\2', s, flags=re.S)
 sub('<link rel="manifest" href="manifest.webmanifest">', '')
+s = re.sub(r'<!-- anonymous visit counting.*?</script>\n', '', s, flags=re.S)  # outside scripts can't load on claude.ai
 # the "open on claude.ai" box isn't needed when we're already there
 sub('$("#accountBox").hidden=m!=="account";', '$("#accountBox").hidden=true;')
 sub('account:"Have a Claude account (claude.ai) but no API key? Use the claude.ai version of Wordshelf, which runs on your account.",',

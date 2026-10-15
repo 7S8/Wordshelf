@@ -26,6 +26,10 @@ Pick a language in **Translate to** (about 100 languages, defaults to your brows
 
 Your word list is saved in your browser. Use **Print** to print (or save as PDF) all levels or only the ones you choose, with or without definitions, sentences, pronunciation and notes.
 
+## Privacy
+
+Visits are counted anonymously with [GoatCounter](https://www.goatcounter.com) (no cookies, no personal data). The site also counts how often scanning, adding words, translating and printing are used. Your words, notes and keys are never sent: they stay in your browser.
+
 ## Running locally
 
 It's a single static file: open `index.html` in a browser, or serve the folder with any static server.
