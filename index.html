@@ -90,7 +90,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .scene .intro p,.scene .ladder em{color:color-mix(in srgb,var(--on-sky) 82%,transparent)}
 .scene .ladder span{background:color-mix(in srgb,var(--surface) 70%,transparent);color:var(--lv)}
 .scene .pick{background:color-mix(in srgb,var(--surface) 72%,transparent);border-color:color-mix(in srgb,var(--on-sky) 25%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.wrap{position:relative;z-index:3;margin-top:-34px}
+.wrap{position:relative;z-index:3;margin-top:-12px}
 @media (max-width:640px){.scene-inner{padding-bottom:96px}.shelves{height:80px}.orb{width:40px;height:40px;right:44px;top:auto;bottom:44px}}
 
 /* app bar + intro */
@@ -480,7 +480,7 @@ footer p{margin:8px 0 0}
     <div class="credit-sig">Nuramatova Sakinat Ibnuabasovna</div>
     <div class="credit-note">© 2026 Wordshelf · All rights reserved · Not affiliated with Cambridge English or the Council of Europe</div>
     <details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details>
-    <span class="ver">Version 15 Oct · 14:25</span>
+    <span class="ver">Version 15 Oct · 14:35</span>
   </footer>
 </div>
 
@@ -1465,10 +1465,18 @@ function themeDot(t){ return `<span class="tdot" style="background:${SKY[t]||SKY
     g+=`<rect x="${(x+1.5).toFixed(1)}" y="${(y+h*.14).toFixed(1)}" width="${(w-3).toFixed(1)}" height="1.6" fill="${band}"/><rect x="${(x+1.5).toFixed(1)}" y="${(y+h*.8).toFixed(1)}" width="${(w-3).toFixed(1)}" height="1.6" fill="${band}"/></g>`;
     return g;
   };
-  // front shelf: plank at y=190
-  for(let x=-6;x<1450;){ if(r()<.05){ x+=28+r()*36; continue }
-    const w=12+r()*14, h=38+r()*30, lean=r()<.08?12+r()*8:0;
-    out.push(book(x,190,w,h,"var(--shelf)","color-mix(in srgb,var(--sky-2) 30%,transparent)",lean)); x+=w+(lean?h*.32:1+r()*1.5); }
+  // front shelf: plank at y=190, packed with books, now and then a small stack lying flat
+  for(let x=-6;x<1450;){
+    if(r()<.05){                                            // a stack of 4–6 books lying flat
+      const n=4+Math.floor(r()*3), sw=36+r()*20; let y=190;
+      for(let k=0;k<n;k++){ const bh=7+r()*3, bw=sw-r()*8, bx=x+(sw-bw)/2+(r()-.5)*4;
+        out.push(`<rect x="${bx.toFixed(1)}" y="${(y-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="1.5" fill="var(--shelf)"/><rect x="${(bx+3).toFixed(1)}" y="${(y-bh/2-.6).toFixed(1)}" width="${(bw-6).toFixed(1)}" height="1.2" fill="color-mix(in srgb,var(--sky-2) 30%,transparent)"/>`); y-=bh+.8; }
+      x+=sw+1.5; continue;
+    }
+    const w=8+r()*11, h=34+r()*42, lean=r()<.05?10+r()*8:0;
+    out.push(book(x,190,w,h,"var(--shelf)","color-mix(in srgb,var(--sky-2) 30%,transparent)",lean));
+    x+=w+(lean?h*.3:.8+r()*.9);
+  }
   out.push(`<rect x="0" y="190" width="1440" height="10" fill="var(--shelf)"/>`);
   $("#shelves").innerHTML=out.join("");
 })();
