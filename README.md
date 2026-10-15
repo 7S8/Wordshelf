@@ -6,17 +6,18 @@ Upload a photo or screenshot of your English vocabulary list (handwriting works)
 - two example sentences
 - links to YouTube clips where people say the word (via YouGlish) and to YouTube lessons about it
 
-## Two reading modes
+## Reading modes
 
-**Free (default, no account needed)**
-- Reads the screenshot in your browser with Tesseract.js. This works for typed or printed text only, not handwriting.
-- Takes the term before the dash on each line ("word - meaning"), keeps only real words, fixes small misreadings, and lets you edit the list before looking it up.
-- Gets CEFR levels from the CEFR-J Wordlist and the Octanove C1/C2 list. Words not on those lists get an estimated level (C1 or C2, from how common the word is). Phrases are rated by their hardest word.
-- Gets definitions, pronunciation and example sentences from a built-in copy of Open English WordNet, so lookups are instant and don't depend on other websites. Many words have no example sentence.
+| Mode | Cost | Handwriting | Example sentences |
+|---|---|---|---|
+| **Gemini** (default) | Free key from [Google AI Studio](https://aistudio.google.com/apikey), no card | Yes | 2 for every word |
+| **Qwen** | Free key from [OpenRouter](https://openrouter.ai/settings/keys); free models have daily limits | Yes | 2 for every word |
+| **Claude** | Paid Anthropic API key from [console.anthropic.com](https://console.anthropic.com/settings/keys) | Yes, most accurate | 2 for every word |
+| **Basic** | No key at all | No, typed or printed text only | Only when the built-in dictionary has one |
 
-**Claude (most accurate)**
-- Reads handwriting, phrasal verbs and translations written next to words, and writes two example sentences for every word.
-- Needs an Anthropic API key from [console.anthropic.com](https://console.anthropic.com/settings/keys). The key is stored only in your browser and is sent only to Anthropic.
+Keys are stored only in your browser and sent only to that provider. The page picks the newest suitable model automatically (Gemini Flash, or the largest free Qwen vision model on OpenRouter).
+
+**Basic mode** reads screenshots with Tesseract.js, takes the term before the dash on each line, keeps only real words, gets CEFR levels from the CEFR-J and Octanove word lists (estimating words that aren't listed), and uses a built-in copy of Open English WordNet for definitions.
 
 Your word list is saved in your browser.
 

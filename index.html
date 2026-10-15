@@ -111,11 +111,12 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .keybox summary{cursor:pointer;font-weight:700}
 .keyrow{display:flex;flex-wrap:wrap;gap:8px}
 .keyrow input{flex:1 1 260px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
-.keybox p{margin:0;font-size:14px;color:var(--muted)}
+.keybox p,.keyhelp{margin:0;font-size:14px;color:var(--muted)}
+.keyhelp ol{margin:4px 0 0;padding-left:20px;display:grid;gap:2px}
 .mode{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .mode .lbl{font-size:14px;color:var(--muted);margin-right:4px}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--sunk)}
-.seg button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:3px;background:var(--sunk)}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .mode-help{font-size:14px;color:var(--muted);margin:0;flex-basis:100%}
 .review{display:grid;gap:8px;background:var(--sunk);border-radius:var(--r);padding:14px}
@@ -141,8 +142,10 @@ footer{color:var(--muted);font-size:13px}
     <div class="mode">
       <span class="lbl">Reading mode</span>
       <div class="seg" role="group" aria-label="Reading mode">
-        <button type="button" data-mode="free" aria-pressed="true">Free</button>
+        <button type="button" data-mode="gemini" aria-pressed="true">Gemini · free</button>
+        <button type="button" data-mode="qwen" aria-pressed="false">Qwen · free</button>
         <button type="button" data-mode="claude" aria-pressed="false">Claude</button>
+        <button type="button" data-mode="free" aria-pressed="false">Basic · no key</button>
       </div>
       <p class="mode-help" id="modeHelp"></p>
     </div>
@@ -168,10 +171,10 @@ footer{color:var(--muted);font-size:13px}
       <div class="row"><button class="btn primary" id="reviewGo" type="button">Look up these words</button><button class="btn" id="reviewCancel" type="button">Cancel</button></div>
     </div>
     <details class="keybox" id="keybox">
-      <summary id="keySummary">Anthropic API key</summary>
-      <p>Word recognition uses Claude. Paste your own API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. It is stored only in this browser and sent only to Anthropic. Each scan costs a few cents on your account.</p>
+      <summary id="keySummary">API key</summary>
+      <div id="keyHelp" class="keyhelp"></div>
       <form class="keyrow" id="keyForm">
-        <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-..." aria-label="Anthropic API key">
+        <input id="apiKey" type="password" autocomplete="off" placeholder="Paste your key" aria-label="API key">
         <button class="btn small" type="submit">Save key</button>
         <button class="btn small" type="button" id="forgetKey">Forget key</button>
       </form>
@@ -191,7 +194,7 @@ footer{color:var(--muted);font-size:13px}
 
   <main id="shelf" style="display:grid;gap:32px"></main>
 
-  <footer>CEFR levels are estimates. Free mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions and examples from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
+  <footer>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions and examples from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
 </div>
 
 <script>
@@ -214,9 +217,15 @@ const $=s=>document.querySelector(s);
 const store={get(){try{return JSON.parse(localStorage.getItem("wordshelf.v1"))}catch{return null}},set(v){try{localStorage.setItem("wordshelf.v1",JSON.stringify(v))}catch{}}};
 let words=store.get()||EXAMPLES;
 let filter="all", query="", pending=[];
-const KEY="wordshelf.apikey";
-const getKey=()=>{try{return localStorage.getItem(KEY)||""}catch{return ""}};
-const setKey=v=>{try{v?localStorage.setItem(KEY,v):localStorage.removeItem(KEY)}catch{}};
+const PROVIDERS={
+  gemini:{name:"Gemini",keyName:"Google AI Studio key",storage:"wordshelf.key.gemini",
+    help:'<p>Gemini is free. Get a key in about a minute, no card needed:</p><ol><li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and sign in with Google.</li><li>Click <b>Create API key</b> and copy it.</li><li>Paste it below. It stays in this browser and is sent only to Google.</li></ol>'},
+  qwen:{name:"Qwen",keyName:"OpenRouter key",storage:"wordshelf.key.openrouter",
+    help:'<p>Qwen runs through OpenRouter\'s free models. Free models have a daily limit and are sometimes busy.</p><ol><li>Sign up at <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener">openrouter.ai/settings/keys</a> (free).</li><li>Click <b>Create API key</b> and copy it.</li><li>Paste it below. It stays in this browser and is sent only to OpenRouter.</li></ol>'},
+  claude:{name:"Claude",keyName:"Anthropic API key",storage:"wordshelf.apikey",
+    help:'<p>Paste an API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. It stays in this browser and is sent only to Anthropic. Each scan costs a few cents on your account.</p>'}};
+const getKey=(m=mode)=>{try{return localStorage.getItem(PROVIDERS[m]?.storage)||""}catch{return ""}};
+const setKey=(v,m=mode)=>{try{v?localStorage.setItem(PROVIDERS[m].storage,v):localStorage.removeItem(PROVIDERS[m].storage)}catch{}};
 const MODEL="claude-opus-5-5";
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -299,6 +308,15 @@ For each English word or phrase, return:
 - "examples": exactly 2 natural, everyday example sentences that use the word (different contexts)
 - "note": any translation or note written next to the word in the source, copied as written; "" if none
 Return them all in the "items" array.`;
+const JSON_SHAPE=`Reply with only JSON, no other text, in this shape:
+{"items":[{"word":"borrow","pos":"verb","ipa":"/ˈbɒr.əʊ/","level":"A2","definition":"To take something and give it back later.","examples":["Can I borrow your pen?","She borrowed a book from the library."],"note":""}]}`;
+// Pull a JSON object out of a reply that may have extra text or a code fence around it
+function parseJSONReply(text){
+  try{return JSON.parse(text)}catch{}
+  const fence=text.match(/```(?:json)?\s*([\s\S]*?)```/); if(fence) try{return JSON.parse(fence[1])}catch{}
+  const a=text.indexOf("{"), b=text.lastIndexOf("}"); if(a>=0&&b>a) try{return JSON.parse(text.slice(a,b+1))}catch{}
+  return null;
+}
 
 const SCHEMA={type:"object",additionalProperties:false,required:["items"],properties:{items:{type:"array",items:{
   type:"object",additionalProperties:false,required:["word","pos","ipa","level","definition","examples","note"],
@@ -320,8 +338,92 @@ async function prepImage(file){
 
 async function ask(prompt,images,label){
   const key=getKey();
-  if(!key){$("#keybox").open=true;$("#apiKey").focus();setStatus("Add your Anthropic API key below to recognize words.",true);return null}
+  if(!key){$("#keybox").open=true;$("#apiKey").focus();setStatus(`Add your ${PROVIDERS[mode].keyName} below first. It's free for Gemini and Qwen.`,true);return null}
   setStatus(spin(label));
+  if(mode==="gemini") return askGemini(key,prompt,images);
+  if(mode==="qwen") return askQwen(key,prompt,images);
+  return askClaude(key,prompt,images);
+}
+const fail=msg=>{setStatus(esc(msg),true);return null};
+const netFail=()=>fail(navigator.onLine===false?"You're offline. Connect and try again.":"Couldn't reach the AI service. Check your connection and try again.");
+
+/* Gemini (Google AI Studio). Picks the newest Flash model this key can use, so it keeps working as Google releases new ones */
+let geminiModel=null;
+async function pickGeminiModel(key){
+  if(geminiModel) return geminiModel;
+  const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200",{headers:{"x-goog-api-key":key}});
+  if(!r.ok) throw {status:r.status,data:await r.json().catch(()=>({}))};
+  const ms=((await r.json()).models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace("models/",""));
+  const score=n=>{const v=parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/)||[])[1]||0);
+    return v*100+(/flash/.test(n)?20:0)-(/lite/.test(n)?15:0)-(/preview|exp/.test(n)?5:0)-(/latest/.test(n)?1:0)};
+  const ok=ms.filter(n=>/^gemini-/.test(n)&&!/(image|tts|audio|live|embedding|thinking|computer|robotics|native)/.test(n)&&/flash/.test(n));
+  geminiModel=(ok.sort((a,b)=>score(b)-score(a))[0])||"gemini-2.5-flash";
+  return geminiModel;
+}
+async function askGemini(key,prompt,images){
+  try{
+    const model=await pickGeminiModel(key);
+    const parts=[];
+    for(const f of images||[]){const im=await prepImage(f);parts.push({inline_data:{mime_type:im.media_type,data:im.data}})}
+    parts.push({text:prompt+"\n\n"+JSON_SHAPE});
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:"POST",
+      headers:{"content-type":"application/json","x-goog-api-key":key},
+      body:JSON.stringify({contents:[{role:"user",parts}],generationConfig:{responseMimeType:"application/json",temperature:0.3}})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw {status:r.status,data};
+    const cand=data.candidates?.[0];
+    if(!cand) return fail("Gemini couldn't process that. Try a different image.");
+    const res=parseJSONReply((cand.content?.parts||[]).map(p=>p.text||"").join(""));
+    if(!res) return fail(cand.finishReason==="MAX_TOKENS"?"The list was too long to finish in one go. Split the photo into smaller parts.":"Gemini's answer came back in the wrong format. Press the button again.");
+    return res;
+  }catch(e){
+    if(e?.status==null) return netFail();
+    const m=e.data?.error?.message||"";
+    if(e.status===400&&/API key/i.test(m)||e.status===401||e.status===403){$("#keybox").open=true;return fail("That Google key was rejected. Check it in the box below.")}
+    if(e.status===429) return fail("You've hit Gemini's free limit for now. Wait a minute and try again (the free tier allows a limited number of requests per minute and per day).");
+    if(e.status===503) return fail("Gemini is busy right now. Try again in a minute.");
+    return fail("Gemini request failed: "+(m||e.status));
+  }
+}
+
+/* Qwen via OpenRouter's free models. Picks a free Qwen model that accepts images (or text only when no image is sent) */
+const qwenModels={};
+async function pickQwenModel(needImages){
+  const k=needImages?"vision":"text";
+  if(qwenModels[k]) return qwenModels[k];
+  const r=await fetch("https://openrouter.ai/api/v1/models");
+  const list=r.ok?(await r.json()).data||[]:[];
+  const free=list.filter(m=>/^qwen\//.test(m.id)&&(m.id.endsWith(":free")||(m.pricing&&+m.pricing.prompt===0&&+m.pricing.completion===0)));
+  const vision=free.filter(m=>(m.architecture?.input_modalities||[]).includes("image")||/vl/i.test(m.id));
+  const pool=needImages?vision:free;
+  const size=m=>Math.max(0,...(m.id.match(/(\d+)b/gi)||["0"]).map(x=>parseInt(x)));
+  pool.sort((a,b)=>size(b)-size(a)||(b.created||0)-(a.created||0));
+  qwenModels[k]=pool[0]?.id||null;
+  return qwenModels[k];
+}
+async function askQwen(key,prompt,images){
+  try{
+    const model=await pickQwenModel((images||[]).length>0);
+    if(!model) return fail("OpenRouter has no free Qwen model for this right now. Switch to Gemini, or try again later.");
+    const content=[{type:"text",text:prompt+"\n\n"+JSON_SHAPE}];
+    for(const f of images||[]){const im=await prepImage(f);content.push({type:"image_url",image_url:{url:`data:${im.media_type};base64,${im.data}`}})}
+    const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",
+      headers:{"content-type":"application/json","authorization":"Bearer "+key,"X-Title":"Wordshelf"},
+      body:JSON.stringify({model,messages:[{role:"user",content}],temperature:0.3})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw {status:r.status,data};
+    const res=parseJSONReply(data.choices?.[0]?.message?.content||"");
+    return res||fail("Qwen's answer came back in the wrong format. Press the button again.");
+  }catch(e){
+    if(e?.status==null) return netFail();
+    const m=e.data?.error?.message||"";
+    if(e.status===401){$("#keybox").open=true;return fail("That OpenRouter key was rejected. Check it in the box below.")}
+    if(e.status===429) return fail("Qwen's free limit is used up for now. Try again later, or switch to Gemini.");
+    return fail("Qwen request failed: "+(m||e.status));
+  }
+}
+
+async function askClaude(key,prompt,images){
   try{
     const content=[];
     for(const f of images||[]) content.push({type:"image",source:{type:"base64",...await prepImage(f)}});
@@ -498,20 +600,23 @@ async function ocrImages(files){
 
 /* Mode */
 const MODE_KEY="wordshelf.mode";
-let mode=(()=>{try{return localStorage.getItem(MODE_KEY)}catch{return null}})()||(getKey()?"claude":"free");
+var mode=(()=>{try{return localStorage.getItem(MODE_KEY)}catch{return null}})()||"gemini";
 function setMode(m){
   mode=m; try{localStorage.setItem(MODE_KEY,m)}catch{}
   document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
-  $("#keybox").hidden=m!=="claude";
-  $("#modeHelp").textContent=m==="free"
-    ?"Free, no account needed. Reads typed or printed screenshots only, not handwriting. Definitions come from a built-in dictionary, and not every word has example sentences."
-    :"Most accurate: reads handwriting, phrases and translations, and writes example sentences for every word. Needs an Anthropic API key.";
+  $("#keybox").hidden=m==="free";
+  $("#modeHelp").textContent={
+    gemini:"Free with a Google key. Reads handwriting, phrases and translations, and writes example sentences for every word.",
+    qwen:"Free with an OpenRouter key. Reads handwriting and writes examples. Free Qwen models can be slow or busy.",
+    claude:"Most accurate. Reads handwriting, phrases and translations. Needs an Anthropic API key (paid per use).",
+    free:"No key needed, but basic: reads typed or printed text only (not handwriting), uses a built-in dictionary, and many words have no example sentence."}[m];
+  if(m!=="free") showKeyState();
 }
 document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)});
 
 function showReview(list,poor){
   $("#review").hidden=false; $("#reviewText").value=list.join("\n");
-  if(poor) setStatus(`This image was hard to read (handwriting usually is). Free mode only picked out ${list.length} word${list.length===1?"":"s"}, and some may be wrong. Fix the list below, type the missing words, or switch to Claude for handwriting.`,true);
+  if(poor) setStatus(`This image was hard to read (handwriting usually is). Free mode only picked out ${list.length} word${list.length===1?"":"s"}, and some may be wrong. Fix the list below, type the missing words, or switch to Gemini (free) for handwriting.`,true);
   else setStatus(`Found ${list.length} word${list.length===1?"":"s"}. Check the list below, then look them up.`);
   $("#reviewText").focus();
 }
@@ -556,7 +661,7 @@ $("#recognize").addEventListener("click",async()=>{
     const cands=extractTerms(ocr.text), list=await keepRealWords(cands);
     btn.disabled=false;
     const poor=ocr.confidence<60||list.length<cands.length/2;
-    if(!list.length){setStatus("Free mode couldn't read any words in this image. If it's handwritten, type the words in the box above or switch to Claude, which reads handwriting.",true);return}
+    if(!list.length){setStatus("Free mode couldn't read any words in this image. If it's handwritten, type the words in the box above or switch to Gemini (free), which reads handwriting.",true);return}
     batch.forEach(p=>URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
     showReview(list,poor); return;
   }
@@ -588,11 +693,15 @@ $("#manualForm").addEventListener("submit",async e=>{
 });
 
 /* API key */
-function showKeyState(){const k=getKey();$("#keySummary").textContent=k?"Anthropic API key · saved (…"+k.slice(-4)+")":"Anthropic API key · needed to recognize words";$("#apiKey").value="";if(!k)$("#keybox").open=true}
+function showKeyState(){
+  const p=PROVIDERS[mode]; if(!p) return; const k=getKey();
+  $("#keySummary").textContent=k?`${p.keyName} · saved (…${k.slice(-4)})`:`${p.keyName} · needed`;
+  $("#keyHelp").innerHTML=p.help; $("#apiKey").value=""; $("#apiKey").placeholder="Paste your "+p.keyName;
+  $("#keybox").open=!k;
+}
 setMode(mode);
-$("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
+$("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);geminiModel=null;showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
 $("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatus("Key removed from this browser.")});
-showKeyState();
 
 /* Shelf interactions */
 $("#chips").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filter=b.dataset.f;render()});
