@@ -110,7 +110,7 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 /* app bar + intro */
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
-.logo{width:36px;height:36px;display:block;flex:none}
+.logo{width:38px;height:38px;display:block;flex:none}
 .logo svg{display:block;border-radius:10px;box-shadow:0 2px 8px -3px rgba(0,0,0,.35)}
 .intro{display:grid;gap:10px}
 .intro h1{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.08;max-width:22ch}
@@ -162,12 +162,12 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .taa{font-family:var(--display);font-weight:800;font-size:17px;line-height:1;color:var(--ti)}
 .tdot{width:22px;height:8px;border-radius:999px;background:var(--ta)}
 .tname{font-weight:700;font-size:13.5px;color:var(--ti)}
-.modebtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center;overflow:hidden;position:relative;transition:border-color .15s,background .2s}
-.modebtn:hover{border-color:var(--ink)}
-.modebtn .i{position:absolute;width:20px;height:20px;transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}
-.modebtn .moon{transform:translateY(26px) rotate(-40deg);opacity:0}
-.modebtn.dark .sun{transform:translateY(-26px) rotate(40deg);opacity:0}
-.modebtn.dark .moon{transform:none;opacity:1}
+.tdot{width:22px;height:22px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(127,127,127,.35)}
+.dd-btn .tdot{width:18px;height:18px}
+.themepick{padding-left:10px}
+.themepick .dd-btn{font-weight:600}
+.dd-opt .tlabel{font-size:16px}
+.dd-opt[aria-selected="true"] .tlabel{font-weight:700}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
 .modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
@@ -262,15 +262,6 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .menu-pop button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px}
 .menu-pop button:hover{background:var(--sunk)}
 .menu-pop .danger{color:var(--danger)}
-.menu-pop{min-width:260px}
-.menu-sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px 2px}
-.menu-sep{height:1px;background:var(--line);margin:6px 4px}
-.theme-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:4px 6px}
-.menu-pop .tchip{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--tb);color:var(--ti);border:1px solid color-mix(in srgb,var(--ti) 18%,transparent);
-  border-radius:10px;padding:9px 10px;font-weight:700;font-size:14px;width:100%;cursor:pointer;position:relative;overflow:hidden}
-.menu-pop .tchip::after{content:"";width:16px;height:5px;border-radius:3px;background:var(--ta);flex:none}
-.menu-pop .tchip:hover{background:var(--tb);transform:translateY(-1px)}
-.menu-pop .tchip[aria-pressed="true"]{outline:2.5px solid var(--accent);outline-offset:1.5px}
 .menu-pop .confirm{display:grid;gap:6px;padding:6px 8px;font-size:14px}
 .menu-pop .confirm div{display:flex;gap:6px}
 .example-note{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));padding:10px 14px;border-radius:var(--r-sm);font-size:15px}
@@ -358,17 +349,14 @@ footer p{margin:8px 0 0}
 <body>
 <div class="wrap">
   <header class="appbar">
-    <div class="brand"><span class="logo" aria-hidden="true"><svg width="36" height="36" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#14232b"/><g><rect x="9" y="21" width="7" height="28" rx="1.6" fill="#5fcf8f"/><rect x="17" y="15" width="6" height="34" rx="1.6" fill="#a3d65f"/><rect x="24" y="19" width="8" height="30" rx="1.6" fill="#4fc3e8"/><rect x="33" y="13" width="6" height="36" rx="1.6" fill="#86a4ff"/><rect x="40" y="22" width="7" height="27" rx="1.6" fill="#bf93f5"/><rect x="50" y="18" width="6.5" height="31" rx="1.6" fill="#f283b6" transform="rotate(-14 56.5 49)"/></g><g fill="#14232b" opacity=".28"><rect x="9" y="25" width="7" height="2"/><rect x="9" y="43" width="7" height="2"/><rect x="17" y="19" width="6" height="2"/><rect x="17" y="43" width="6" height="2"/><rect x="24" y="23" width="8" height="1.6"/><rect x="24" y="26" width="8" height="1.6"/><rect x="24" y="44" width="8" height="1.6"/><rect x="33" y="17" width="6" height="2"/><rect x="33" y="43" width="6" height="2"/><rect x="40" y="26" width="7" height="2"/><rect x="40" y="43" width="7" height="2"/></g><rect x="6" y="49" width="52" height="4" rx="2" fill="#e4ecec"/></svg></span>Wordshelf</div>
-    <button type="button" class="modebtn" id="themeToggle" aria-label="Switch to dark theme" title="Switch theme">
-      <svg class="i sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
-      <svg class="i moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
-    </button>
-    <select id="theme" class="vh" tabindex="-1" aria-hidden="true">
-        <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
-        <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">Contrast</option>
-        <option value="sakura">Sakura</option><option value="mint">Mint</option><option value="lavender">Lavender</option><option value="sand">Sand</option>
-        <option value="midnight">Midnight</option><option value="coffee">Coffee</option><option value="sunset">Sunset</option><option value="nord">Nord</option>
-      </select>
+    <div class="brand"><span class="logo" aria-hidden="true"><svg width="38" height="38" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#14232b"/><path d="M14 54V27a18 18 0 0 1 36 0v27z" fill="#1f343e"/><path d="M14 54V27a18 18 0 0 1 36 0v27" fill="none" stroke="#e9eef0" stroke-width="3.2" stroke-linejoin="round"/><g><rect x="18" y="26" width="4" height="11" rx="1" fill="#5fcf8f"/><rect x="22.8" y="23.5" width="4" height="13.5" rx="1" fill="#a3d65f"/><rect x="27.6" y="25" width="4.4" height="12" rx="1" fill="#4fc3e8"/><rect x="32.8" y="22.5" width="3.6" height="14.5" rx="1" fill="#86a4ff"/><rect x="37.2" y="25.5" width="4" height="11.5" rx="1" fill="#bf93f5"/><rect x="41.6" y="24" width="3.6" height="13" rx="1" fill="#f283b6" transform="rotate(10 45.2 37)"/></g><rect x="16" y="37" width="32" height="2.4" rx="1.2" fill="#e9eef0"/><g><rect x="18" y="42" width="4.4" height="9.6" rx="1" fill="#f283b6"/><rect x="23.2" y="43.5" width="3.6" height="8.1" rx="1" fill="#4fc3e8"/><rect x="27.6" y="41.5" width="4" height="10.1" rx="1" fill="#5fcf8f"/><rect x="32.4" y="43" width="4.4" height="8.6" rx="1" fill="#bf93f5"/><rect x="37.6" y="42" width="3.6" height="9.6" rx="1" fill="#a3d65f"/><rect x="42" y="43.5" width="3.4" height="8.1" rx="1" fill="#86a4ff"/></g><rect x="11" y="51.6" width="42" height="3.4" rx="1.7" fill="#e9eef0"/></svg></span>Wordshelf</div>
+    <div class="pick themepick" title="Theme">
+    <select id="theme" aria-label="Theme">
+        <option value="auto">Automatic</option><option value="light">Morning</option><option value="dark">Night</option>
+        <option value="paper">Paper</option><option value="sakura">Sakura</option><option value="mint">Mint</option><option value="lavender">Lavender</option>
+        <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="midnight">Midnight</option><option value="coffee">Coffee</option>
+        <option value="sunset">Sunset</option><option value="nord">Nord</option><option value="contrast">Contrast</option>
+      </select></div>
   </header>
 
   <section class="intro">
@@ -447,9 +435,6 @@ footer p{margin:8px 0 0}
       <details class="menu" id="moreMenu">
         <summary aria-label="More actions"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></summary>
         <div class="menu-pop">
-          <div class="menu-sec">Theme</div>
-          <div class="theme-list" id="themeList"></div>
-          <div class="menu-sep"></div>
           <button type="button" id="printOpen" aria-expanded="false" aria-controls="printPanel"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Print or save PDF</button>
           <button type="button" id="copyAll"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>Copy list</button>
           <span id="clearWrap"><button type="button" class="danger" id="clear"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Clear all words</button></span>
@@ -1438,28 +1423,24 @@ makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{c
   return `<span class="modeicon" style="--mc:${m[1]}">${m[0]}</span>`+(short?`${esc(m[2])}`:`<span><b>${esc(m[2])}</b><small>${esc(m[3])}</small></span>`)}});
 makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
 
-/* Theme: one sun/moon button. Until it's pressed the page follows the device; afterwards it remembers light or dark */
+/* Theme: a "Theme" pill in the top bar with a list of themes, each with a soft gradient dot */
 const LIGHT_THEMES=["light","paper","rose","sakura","mint","lavender","sand"];
-const isDark=()=>{const t=$("#theme").value; return t==="auto"?matchMedia("(prefers-color-scheme: dark)").matches:!LIGHT_THEMES.includes(t)};
-// each theme button is painted in that theme's own colors: [background, text, accent]
-const THEME_COLORS={light:["#f2f5f4","#14232b","#2350d8"],dark:["#0f1618","#e4ecec","#86a4ff"],paper:["#efe8dc","#2b2217","#9a3b1e"],ocean:["#081a2b","#e3f0fb","#4fd1c5"],
-  forest:["#0f1a14","#e6efe8","#e2b44c"],rose:["#fbf0f2","#2e1a22","#c2306a"],contrast:["#000000","#ffffff","#ffe14d"],sakura:["#fff5f7","#3a1f2a","#e0457b"],
-  mint:["#eefaf4","#0f2b20","#12935f"],lavender:["#f5f2fd","#231a3a","#6d4fd8"],sand:["#f6f1e7","#2f2a20","#b7791f"],midnight:["#0d0b1f","#ece9ff","#a78bfa"],
-  coffee:["#1a1410","#f1e7dc","#d9a066"],sunset:["#1c1020","#fbe9ee","#ff8a5c"],nord:["#242933","#eceff4","#88c0d0"]};
-function drawThemeList(){
-  const cur=$("#theme").value;
-  $("#themeList").innerHTML=[...$("#theme").options].filter(o=>o.value!=="auto").map(o=>{const [bg,ink,acc]=THEME_COLORS[o.value];
-    return `<button type="button" class="tchip" data-t="${o.value}" aria-pressed="${o.value===cur}" style="--tb:${bg};--ti:${ink};--ta:${acc}">${esc(o.textContent)}</button>`}).join("");
+// [background, card, accent] used to paint each theme's dot
+const THEME_COLORS={light:["#e9f1ff","#ffffff","#2350d8"],dark:["#0f1618","#24343a","#86a4ff"],paper:["#efe8dc","#fbf7f0","#9a3b1e"],ocean:["#081a2b","#1d4a6b","#4fd1c5"],
+  forest:["#0f1a14","#24412f","#e2b44c"],contrast:["#000000","#333333","#ffe14d"],sakura:["#fff5f7","#ffd6e2","#e0457b"],mint:["#eefaf4","#c9f0dc","#12935f"],
+  lavender:["#f5f2fd","#ddd2fb","#6d4fd8"],midnight:["#0d0b1f","#2a2357","#a78bfa"],coffee:["#1a1410","#4a3626","#d9a066"],sunset:["#1c1020","#5b2a4a","#ff8a5c"],nord:["#242933","#3b4555","#88c0d0"]};
+const DOT_GRAD={auto:["#f6c9a8","#2a3a66"],light:["#ffffff","#9cc0ff"],dark:["#3a4a52","#0f1618"],paper:["#fbf3e4","#d9a27a"],sakura:["#fff3f6","#f28cb0"],
+  mint:["#f2fff8","#5fd3a0"],lavender:["#f6f2ff","#a993f2"],ocean:["#1d6f8f","#4fd1c5"],forest:["#1f4a30","#e2b44c"],midnight:["#1a1446","#8b6cf0"],
+  coffee:["#4a3020","#d9a066"],sunset:["#5b2a6b","#ff9a62"],nord:["#3b4555","#88c0d0"],contrast:["#000000","#ffe14d"]};
+function themeDot(t){
+  const [a,b]=DOT_GRAD[t]||DOT_GRAD.light;
+  return `<span class="tdot" style="background:linear-gradient(150deg,${a} 15%,${b} 90%)"></span>`;
 }
-$("#themeList").addEventListener("click",e=>{e.stopPropagation();const b=e.target.closest("[data-t]");if(b) applyTheme(b.dataset.t)});
-function drawToggle(){ const d=isDark(); $("#themeToggle").classList.toggle("dark",d); $("#themeToggle").setAttribute("aria-label",d?"Switch to light theme":"Switch to dark theme") }
-$("#themeToggle").addEventListener("click",()=>applyTheme(isDark()?"light":"dark"));
-
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
   if(![...$("#theme").options].some(o=>o.value===t)) t="auto";
-  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; drawToggle(); drawThemeList();
+  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; refreshDropdowns();
   try{localStorage.setItem(THEME_KEY,t)}catch{}
   requestAnimationFrame(()=>{let m=document.querySelector('meta[name="theme-color"]');
     if(!m){m=document.createElement("meta");m.name="theme-color";document.head.append(m)}
@@ -1467,6 +1448,7 @@ function applyTheme(t){
 }
 $("#theme").value=document.documentElement.dataset.wsTheme;
 $("#theme").addEventListener("change",e=>applyTheme(e.target.value));
+makeDropdown($("#theme"),{title:"Theme",item:(o,short)=>short?`${themeDot(o.value)}<span>Theme</span>`:`${themeDot(o.value)}<span class="tlabel">${esc(o.textContent)}</span>`});
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>applyTheme($("#theme").value))}catch{}
 applyTheme($("#theme").value);
 

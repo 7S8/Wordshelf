@@ -20,7 +20,7 @@ Keys are stored only in your browser and sent only to that provider. The page pi
 
 **Basic mode** reads screenshots with Tesseract.js, takes the term before the dash on each line, keeps only real words, gets CEFR levels from the CEFR-J and Octanove word lists (estimating words that aren't listed), and uses a built-in copy of Open English WordNet for definitions, with example sentences from Tatoeba, Europarl and Project Gutenberg (about 90% of A1–B2 words have one).
 
-Pick a theme (Auto, Light, Dark, Paper, Ocean, Forest, Rose, High contrast) from the top bar.
+Pick a theme from the **Theme** button in the top bar: Automatic, Morning, Night, Paper, Sakura, Mint, Lavender, Ocean, Forest, Midnight, Coffee, Sunset, Nord or Contrast.
 
 Pick a language in **Translate to** (about 100 languages, defaults to your browser language) to see each word translated: by the AI when you have a Gemini, Qwen or Claude key, otherwise by the free [MyMemory](https://mymemory.translated.net) service (daily limit). Each card also links to Google Translate for the sentences.
 
