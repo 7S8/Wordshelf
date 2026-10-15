@@ -191,7 +191,7 @@ footer{color:var(--muted);font-size:13px}
 
   <main id="shelf" style="display:grid;gap:32px"></main>
 
-  <footer>CEFR levels are estimates. Free mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://dictionaryapi.dev" target="_blank" rel="noopener">Free Dictionary API</a>, and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
+  <footer>CEFR levels are estimates. Free mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions and examples from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
 </div>
 
 <script>
@@ -351,7 +351,7 @@ async function ask(prompt,images,label){
   }
 }
 
-/* Free mode: Tesseract OCR + CEFR-J/Octanove list + Free Dictionary API */
+/* Free mode: Tesseract OCR + CEFR-J/Octanove lists + built-in Open English WordNet dictionary (no outside sites) */
 let cefrMap=null;
 async function loadCefr(){
   if(cefrMap) return cefrMap;
@@ -360,16 +360,78 @@ async function loadCefr(){
   for(const [lv,list] of Object.entries(data)) for(const w of list.split("|")) cefrMap.set(w,lv);
   return cefrMap;
 }
-// Inflected forms → base forms the word list uses (taking → take, studies → study, stopped → stop)
+// Dictionary is split by first letter; each file loads once, when first needed
+const shards={};
+function shardKey(w){const c=w[0];return c>="a"&&c<="z"?c:"0"}
+function loadShard(k){return shards[k]||=fetch("dict/"+k+".json").then(r=>r.ok?r.json():{}).catch(()=>{delete shards[k];return {}})}
+// Inflected forms → base forms (taking → take, studies → study, stopped → stop, looming → loom)
 function baseForms(w){
   const out=[w]; const add=x=>{if(x&&x.length>1&&!out.includes(x))out.push(x)};
   const m=w.match(/^(\S+)(\s.*)?$/); const h=m[1], t=m[2]||"";
   const rules=[[/ies$/,"y"],[/ied$/,"y"],[/ves$/,"f"],[/(ss|sh|ch|x|z|o)es$/,"$1"],[/s$/,""],[/ing$/,""],[/ing$/,"e"],[/ed$/,""],[/ed$/,"e"],[/d$/,""],[/er$/,""],[/est$/,""],[/ier$/,"y"],[/iest$/,"y"],[/ly$/,""],[/ily$/,"y"]];
   for(const [re,r] of rules) if(re.test(h)) add(h.replace(re,r)+t);
   const dbl=h.match(/^(.*([bdfgklmnprtv]))\2(ing|ed|er|est)$/); if(dbl) add(dbl[1]+t);
+  // phrases: also try inflecting the last word ("bond markets" → "bond market")
+  if(t){const last=w.split(" ");const lw=last.pop();for(const f of baseForms(lw).slice(1)) add(last.join(" ")+" "+f)}
   return out;
 }
 function cefrLevel(map,w){ for(const f of baseForms(w)){const l=map.get(f); if(l) return l} return "" }
+async function dictEntry(w){
+  const d=await loadShard(shardKey(w));
+  for(const f of baseForms(w)) if(d[f]) return {form:f,pos:d[f][0],ipa:d[f][1],definition:d[f][2],examples:d[f][3],zipf:d[f][4]};
+  return null;
+}
+function editDistance(a,b,max){
+  if(Math.abs(a.length-b.length)>max) return max+1;
+  let prev=Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){
+    const cur=[i]; let best=i;
+    for(let j=1;j<=b.length;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));best=Math.min(best,cur[j])}
+    if(best>max) return max+1; prev=cur;
+  }
+  return prev[b.length];
+}
+// Closest common dictionary word, for typos and misread letters ("dept" → "debt", "consolidalion" → "consolidation")
+async function closestWord(w){
+  if(w.length<4) return "";
+  const d=await loadShard(shardKey(w)); const max=w.length>=8?2:1;
+  let best="",bestD=max+1,bestZ=-1;
+  for(const k in d){
+    if(k===w||Math.abs(k.length-w.length)>max) continue;
+    const dist=editDistance(w,k,max);
+    if(dist<bestD||(dist===bestD&&d[k][4]>bestZ)){best=k;bestD=dist;bestZ=d[k][4]}
+  }
+  return bestD<=max?best:"";
+}
+const ORDER=["A1","A2","B1","B2","C1","C2"];
+const hardest=ls=>ls.reduce((a,b)=>ORDER.indexOf(b)>ORDER.indexOf(a)?b:a);
+// Words missing from both CEFR lists are at least C1: fairly common ones C1, rare ones C2
+const levelFromZipf=z=>z>=3.5?"C1":"C2";
+async function wordLevel(map,w){
+  const l=cefrLevel(map,w); if(l) return {level:l,est:false};
+  const e=await dictEntry(w); return e?{level:levelFromZipf(e.zipf),est:true}:{level:"",est:false};
+}
+async function lookupOne(map,w){
+  const e=await dictEntry(w);
+  let {level,est}=await wordLevel(map,w);
+  if(!level&&w.includes(" ")){
+    // a phrase is rated by its hardest word ("sovereign debt" → level of "sovereign")
+    const parts=(await Promise.all(w.split(" ").filter(x=>!STOP.has(x)).map(x=>wordLevel(map,x)))).filter(p=>p.level);
+    if(parts.length){level=hardest(parts.map(p=>p.level));est=true}
+  }
+  const item={word:w,level,est,pos:e?.pos||(w.includes(" ")?"phrase":""),ipa:e?.ipa||"",
+    definition:e?.definition?e.definition.replace(/^./,c=>c.toUpperCase())+".":"",examples:e?.examples||[],note:""};
+  if(!e) item.suggest=await closestWord(w);
+  return item;
+}
+async function freeLookup(list){
+  list=[...new Set(list.map(w=>w.trim().toLowerCase().replace(/\s+/g," ")).filter(Boolean))].slice(0,200);
+  if(!list.length) return null;
+  setStatus(spin("Looking up words…"));
+  let map; try{ map=await loadCefr() }catch{ setStatus("Couldn't load the word lists. Check your connection and try again.",true); return null }
+  const items=await Promise.all(list.map(w=>lookupOne(map,w)));
+  return {items};
+}
 
 let tessLoad=null;
 function loadTesseract(){
@@ -378,26 +440,38 @@ function loadTesseract(){
     sc.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";sc.onload=ok;sc.onerror=()=>{tessLoad=null;bad()};document.head.append(sc)});
 }
 const STOP=new Set("a an the and or of to in on at for by with is are was be it this that i you he she we they my your his her our their me us them not no yes adj adv noun verb adjective adverb prep pron conj sb sth smb smth etc eg ie".split(" "));
-// Pull English words and short phrases out of OCR text, one candidate per line chunk
-function extractWords(text){
-  const seen=new Set(), out=[];
+// Vocabulary lists are usually "word - meaning": take the part before the dash on each line
+function extractTerms(text){
+  const out=[], seen=new Set();
   for(const line of text.split(/\n+/)){
-    for(let chunk of line.split(/[-–—:=|;,()\[\]{}\/\\•·*]+|\t|\s{3,}/)){
-      chunk=chunk.replace(/^[\s\d.)]+/,"").replace(/[^A-Za-z' ]+/g," ").replace(/\s+/g," ").trim().toLowerCase();
-      if(!chunk) continue;
-      // trim filler words off the ends ("the cat and" → "cat"), keep short phrases like "take off" whole
-      const ws=chunk.split(" ");
-      while(ws.length>1&&STOP.has(ws[0])) ws.shift();
-      while(ws.length>1&&STOP.has(ws[ws.length-1])) ws.pop();
-      const parts=ws.length<=3?[ws.join(" ")]:ws;
-      for(const p of parts){
-        if(p.length<2||STOP.has(p)||!/[aeiouy]/.test(p)||seen.has(p)) continue;
-        seen.add(p); out.push(p);
-      }
-    }
+    let term=line.split(/\s[-–—=:]\s?|[-–—=:]\s|\t|\(/)[0];
+    term=term.replace(/^[\s\d.)•*]+/,"").replace(/[^A-Za-z' ]+/g," ").replace(/\s+/g," ").trim().toLowerCase();
+    const ws=term.split(" ").filter(Boolean);
+    while(ws.length&&STOP.has(ws[0])) ws.shift();
+    while(ws.length&&STOP.has(ws[ws.length-1])) ws.pop();
+    if(!ws.length||ws.length>3) continue;
+    const t=ws.join(" "); if(t.length<2||seen.has(t)) continue;
+    seen.add(t); out.push(t);
   }
   return out;
 }
+// Keep only real words: exact matches, or a close dictionary word when OCR misread a letter
+async function keepRealWords(cands){
+  const map=await loadCefr(); const kept=[];
+  for(const c of cands){
+    if(cefrLevel(map,c)||await dictEntry(c)){kept.push(c);continue}
+    if(c.includes(" ")){
+      // a phrase counts if every word in it is real (fixing misread words one by one)
+      const ws=[];
+      for(const w of c.split(" ")){ if(cefrLevel(map,w)||await dictEntry(w)) ws.push(w); else { const f=await closestWord(w); if(!f) break; ws.push(f) } }
+      if(ws.length===c.split(" ").length) kept.push(ws.join(" "));
+      continue;
+    }
+    const fix=await closestWord(c); if(fix) kept.push(fix);
+  }
+  return [...new Set(kept)];
+}
+
 let ocrWorker=null, ocrLog=()=>{};
 async function getOcrWorker(onProgress){
   await loadTesseract();
@@ -408,84 +482,13 @@ async function ocrImages(files){
   setStatus(spin("Loading text recognition… (only slow the first time)"));
   let worker;
   try{ worker=await getOcrWorker(()=>{}) }catch{ ocrWorker=null; setStatus("Couldn't load text recognition. Check your internet connection.",true); return null }
-  let text="";
+  let text="", conf=[];
   for(let i=0;i<files.length;i++){
     ocrLog=m=>{ if(m.status==="recognizing text") setStatus(spin(`Reading image ${i+1} of ${files.length}… ${Math.round(m.progress*100)}%`)) };
-    try{ const {data}=await worker.recognize(files[i]); text+="\n"+data.text }
+    try{ const {data}=await worker.recognize(files[i]); text+="\n"+data.text; conf.push(data.confidence) }
     catch{ setStatus(`Couldn't read image ${i+1}. Try a clearer screenshot.`,true); return null }
   }
-  return text;
-}
-// fetch with a time limit so one slow word can't hold up the whole list
-async function getJSON(url,ms=6000){
-  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),ms);
-  try{ const r=await fetch(url,{signal:ctl.signal}); return r.ok?await r.json():null }catch{ return null }finally{ clearTimeout(t) }
-}
-const cache=(()=>{let c={};try{c=JSON.parse(localStorage.getItem("wordshelf.cache"))||{}}catch{}
-  return {get:k=>c[k],set(k,v){c[k]=v;try{localStorage.setItem("wordshelf.cache",JSON.stringify(c))}catch{}}}})();
-async function dictLookup(word){
-  const d=await getJSON("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(word));
-  const e=Array.isArray(d)?d[0]:null; if(!e) return null;
-  const ipa=e.phonetic||(e.phonetics||[]).map(p=>p.text).find(Boolean)||"";
-  const m=e.meanings?.[0]; const def=m?.definitions?.[0]?.definition||"";
-  const examples=[];
-  for(const mm of e.meanings||[]) for(const dd of mm.definitions||[]) if(dd.example&&examples.length<2) examples.push(dd.example.replace(/^./,c=>c.toUpperCase()));
-  return {pos:m?.partOfSpeech||"",ipa,definition:def,examples};
-}
-// Datamuse: word frequency (per million words) and a WordNet definition, used when the CEFR lists and dictionary have nothing
-const POS={n:"noun",v:"verb",adj:"adjective",adv:"adverb"};
-async function museLookup(word){
-  const d=await getJSON("https://api.datamuse.com/words?md=dpf&max=1&sp="+encodeURIComponent(word),5000);
-  const e=Array.isArray(d)&&d[0]&&d[0].word.toLowerCase()===word?d[0]:null; if(!e) return null;
-  const f=parseFloat((e.tags||[]).find(t=>t.startsWith("f:"))?.slice(2))||0;
-  const [p,def]=(e.defs?.[0]||"").split("\t");
-  return {freq:f,pos:POS[p]||POS[(e.tags||[]).find(t=>POS[t])]||"",definition:def?def.replace(/^./,c=>c.toUpperCase())+".":""};
-}
-async function suggest(word){
-  const d=await getJSON("https://api.datamuse.com/sug?max=1&s="+encodeURIComponent(word),4000);
-  const w=Array.isArray(d)&&d[0]?.word; return w&&w.toLowerCase()!==word?w:"";
-}
-const ORDER=["A1","A2","B1","B2","C1","C2"];
-const hardest=ls=>ls.reduce((a,b)=>ORDER.indexOf(b)>ORDER.indexOf(a)?b:a);
-// A word missing from the CEFR-J A1–B2 list and the C1/C2 list is at least C1: common ones C1, rare ones C2
-const levelFromFreq=f=>f>=4?"C1":"C2";
-async function singleLevel(map,w,muse){
-  const l=cefrLevel(map,w); if(l) return {level:l,est:false};
-  const m=muse!==undefined?muse:await museLookup(w);
-  return m?{level:levelFromFreq(m.freq),est:true}:{level:"",est:false};
-}
-async function lookupOne(map,w){
-  const hit=cache.get(w); if(hit) return hit;
-  const words=w.split(" ");
-  const [d,m]=await Promise.all([dictLookup(w),museLookup(w)]);
-  let level=cefrLevel(map,w), est=false;
-  if(!level&&words.length>1){
-    // a phrase is rated by its hardest word ("sovereign debt" → level of "sovereign")
-    const parts=await Promise.all(words.filter(x=>!STOP.has(x)).map(x=>singleLevel(map,x)));
-    const got=parts.filter(p=>p.level);
-    if(got.length){level=hardest(got.map(p=>p.level));est=true}
-  }else if(!level){ const r=await singleLevel(map,w,m); level=r.level; est=r.est }
-  const item={word:w,level,est,pos:d?.pos||m?.pos||(words.length>1?"phrase":""),ipa:d?.ipa||"",
-    definition:d?.definition||m?.definition||"",examples:d?.examples||[],note:""};
-  if(!item.definition){ item.suggest=await suggest(w) } else cache.set(w,item);
-  return item;
-}
-async function freeLookup(list){
-  list=[...new Set(list.map(w=>w.trim().toLowerCase().replace(/\s+/g," ")).filter(Boolean))].slice(0,150);
-  if(!list.length) return null;
-  setStatus(spin("Loading the CEFR word list…"));
-  let map; try{ map=await loadCefr() }catch{ setStatus("Couldn't load the CEFR word list. Check your connection and try again.",true); return null }
-  const items=new Array(list.length); let done=0, next=0;
-  setStatus(spin(`Looking up words… 0 of ${list.length}`));
-  async function worker(){
-    while(next<list.length){
-      const i=next++;
-      items[i]=await lookupOne(map,list[i]);
-      setStatus(spin(`Looking up words… ${++done} of ${list.length}`));
-    }
-  }
-  await Promise.all(Array.from({length:6},worker));
-  return {items};
+  return {text,confidence:Math.min(...conf)};
 }
 
 /* Mode */
@@ -496,14 +499,15 @@ function setMode(m){
   document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
   $("#keybox").hidden=m!=="claude";
   $("#modeHelp").textContent=m==="free"
-    ?"Free, no account needed. Works best with clear typed or printed screenshots. For handwriting, type the words or switch to Claude."
+    ?"Free, no account needed. Reads typed or printed screenshots only, not handwriting. Definitions come from a built-in dictionary, and not every word has example sentences."
     :"Most accurate: reads handwriting, phrases and translations, and writes example sentences for every word. Needs an Anthropic API key.";
 }
 document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)});
 
-function showReview(list){
+function showReview(list,poor){
   $("#review").hidden=false; $("#reviewText").value=list.join("\n");
-  setStatus(`Found ${list.length} possible word${list.length===1?"":"s"}. Check the list below, then look them up.`);
+  if(poor) setStatus(`This image was hard to read (handwriting usually is). Free mode only picked out ${list.length} word${list.length===1?"":"s"}, and some may be wrong. Fix the list below, type the missing words, or switch to Claude for handwriting.`,true);
+  else setStatus(`Found ${list.length} word${list.length===1?"":"s"}. Check the list below, then look them up.`);
   $("#reviewText").focus();
 }
 $("#reviewCancel").addEventListener("click",()=>{$("#review").hidden=true;setStatus("")});
@@ -541,13 +545,15 @@ $("#recognize").addEventListener("click",async()=>{
   const btn=$("#recognize"); btn.disabled=true;
   const batch=pending.slice(0,10);
   if(mode==="free"){
-    const text=await ocrImages(batch.map(p=>p.file));
+    const ocr=await ocrImages(batch.map(p=>p.file));
+    if(!ocr){btn.disabled=false;return}
+    setStatus(spin("Checking the words against the dictionary…"));
+    const cands=extractTerms(ocr.text), list=await keepRealWords(cands);
     btn.disabled=false;
-    if(text==null) return;
-    const list=extractWords(text);
-    if(!list.length){setStatus("No English words were found. Try a clearer screenshot, or type the words.",true);return}
+    const poor=ocr.confidence<60||list.length<cands.length/2;
+    if(!list.length){setStatus("Free mode couldn't read any words in this image. If it's handwritten, type the words in the box above or switch to Claude, which reads handwriting.",true);return}
     batch.forEach(p=>URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
-    showReview(list); return;
+    showReview(list,poor); return;
   }
   const res=await ask(`The attached image${batch.length>1?"s are photos or screenshots":" is a photo or screenshot"} of a learner's English vocabulary list. It may be handwritten, messy, rotated, or mixed with another language. Read EVERY English word or phrase on it (skip numbers, dates and headings that are not vocabulary).\n\n`+RULES,
     batch.map(p=>p.file),"Reading your list… this takes about 20–60 seconds.");
