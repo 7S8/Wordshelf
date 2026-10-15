@@ -87,7 +87,42 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .pick select{border:0;background:transparent;color:var(--ink);font-weight:700;font-size:15px;padding:8px 26px 8px 2px;appearance:none;-webkit-appearance:none;cursor:pointer;min-width:0;max-width:100%;
   background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
   background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:5px 5px;background-repeat:no-repeat}
-.pick select option{color:#000;background:#fff}
+.pick select option{color:var(--ink);background:var(--raised)}
+/* custom dropdowns (the native select stays underneath for the logic) */
+.pick{position:relative}
+.pick .vh+.dd-btn{margin-left:-2px}
+.dd-btn{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--ink);font-weight:700;font-size:15px;padding:8px 8px 8px 2px;cursor:pointer;min-width:0;max-width:100%;border-radius:999px}
+.dd-btn .dd-val{display:inline-flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-btn>svg{width:14px;height:14px;flex:none;fill:none;stroke:var(--muted);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.dd-btn[aria-expanded="true"]>svg{transform:rotate(180deg)}
+.dd-pop{position:absolute;top:calc(100% + 8px);right:0;z-index:30;min-width:240px;max-width:min(340px,calc(100vw - 32px));max-height:min(420px,70vh);overflow:auto;
+  background:var(--raised);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 18px 40px -16px rgba(0,0,0,.45);padding:6px;display:grid;gap:2px;overscroll-behavior:contain}
+.dd-pop.left{right:auto;left:0}
+.dd-head{display:none}
+.dd-search{position:sticky;top:-6px;margin:-6px -6px 4px;padding:8px;background:var(--raised);border-bottom:1px solid var(--line);z-index:1}
+.dd-search input{width:100%;border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:8px 14px;color:var(--ink)}
+.dd-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:9px 10px;border-radius:10px;cursor:pointer}
+.dd-opt:hover,.dd-opt:focus-visible{background:var(--sunk);outline:none}
+.dd-opt[aria-selected="true"]{background:var(--accent-soft)}
+.dd-opt[aria-selected="true"]::after{content:"";margin-left:auto;width:16px;height:16px;flex:none;background:var(--accent);
+  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="black" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>') center/contain no-repeat;
+  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="black" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>') center/contain no-repeat}
+.dd-opt b{display:block;font-size:15px}
+.dd-opt small{display:block;color:var(--muted);font-size:13px;line-height:1.3}
+.dd-opt .sub{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
+.dd-btn .swatch{width:18px;height:18px}
+.modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:800;font-family:var(--display);font-size:15px;color:#fff;background:var(--mc)}
+.dd-btn .modeicon{width:22px;height:22px;border-radius:6px;font-size:11px}
+.dd-scrim{position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.35);display:none}
+@media (max-width:640px){
+  .dd-pop{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;min-width:0;max-height:72vh;border-radius:18px 18px 0 0;
+    padding:8px 10px calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+  .dd-head{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 8px;font-family:var(--display);font-weight:700;font-size:17px}
+  .dd-head::before{content:"";position:absolute;left:50%;top:6px;width:38px;height:4px;margin-left:-19px;border-radius:4px;background:var(--line)}
+  .dd-scrim.on{display:block}
+  .dd-opt{padding:12px 10px}
+}
 
 /* panels */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;box-shadow:var(--shadow)}
@@ -185,9 +220,10 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 12px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:var(--shadow);overflow:hidden}
 .card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--lv)}
 .card-head{display:flex;align-items:flex-start;gap:10px}
+.lvl{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--lv);background:color-mix(in srgb,var(--lv) 14%,transparent);border-radius:999px;padding:1px 8px;margin-bottom:4px}
 .card-head h3{font-size:23px;font-weight:700;line-height:1.15;letter-spacing:-.01em;overflow-wrap:anywhere;flex:1;min-width:0}
 .meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:-4px}
-.meta .est{border:1px dashed var(--line);border-radius:4px;padding:0 5px}
+.meta .est{font-style:italic}
 .say{flex:none;display:flex;gap:4px}
 .say-btn{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 9px;border-radius:999px;border:1px solid var(--line);background:var(--raised);cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:500}
 .say-btn:hover{border-color:var(--ink)}
@@ -198,12 +234,12 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .note{font-size:14px;color:var(--muted);margin:0}
 .note b{font-weight:700;color:var(--ink)}
 .ex{margin:0;padding:0;list-style:none;display:grid;gap:6px}
-.ex li{background:color-mix(in srgb,var(--lv) 9%,var(--surface));border-radius:8px;padding:7px 10px;font-style:italic;font-size:15px}
+.ex li{border-left:3px solid color-mix(in srgb,var(--lv) 55%,transparent);padding:2px 0 2px 12px;font-size:15px;color:var(--ink)}
 .ex mark{background:none;color:var(--lv);font-weight:700;font-style:normal}
 .card-foot{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
-.links{display:flex;flex-wrap:wrap;gap:4px 12px;flex:1;min-width:0}
-.links a{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:13px;font-weight:700;color:var(--muted);padding:3px 0}
-.links a:hover{color:var(--ink)}
+.links{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+.links a{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:12.5px;font-weight:700;color:var(--ink);padding:4px 10px;border-radius:999px;background:var(--sunk);border:1px solid transparent}
+.links a:hover{border-color:var(--line)}
 .links a svg{width:14px;height:14px}
 .linkish{border:0;background:none;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer}
 .del{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;align-self:flex-start}
@@ -255,11 +291,11 @@ footer p{margin:8px 0 0}
 <div class="wrap">
   <header class="appbar">
     <div class="brand"><span class="logo" aria-hidden="true">W</span>Wordshelf</div>
-    <label class="pick" title="Theme"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4.1-4-7.6-9-7.6z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg><span class="vh">Theme</span>
+    <div class="pick" title="Theme"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4.1-4-7.6-9-7.6z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg><span class="vh">Theme</span>
       <select id="theme" aria-label="Theme">
         <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
         <option value="ocean">Ocean</option><option value="forest">Forest</option><option value="rose">Rose</option><option value="contrast">High contrast</option>
-      </select></label>
+      </select></div>
   </header>
 
   <section class="intro">
@@ -271,14 +307,14 @@ footer p{margin:8px 0 0}
   <section class="panel capture" aria-label="Add words">
     <div class="panel-head">
       <h2>Add words</h2>
-      <label class="pick"><span class="lbl">Read with</span>
+      <div class="pick"><span class="lbl">Read with</span>
         <select id="modeSel" aria-label="Reading mode">
           <option value="gemini">Gemini · free key</option>
           <option value="qwen">Qwen · free key</option>
           <option value="account">Claude account</option>
           <option value="claude">Claude API key</option>
           <option value="free">Basic · no key</option>
-        </select></label>
+        </select></div>
     </div>
     <p class="mode-help" id="modeHelp"></p>
     <label class="drop" id="drop" for="file">
@@ -333,8 +369,8 @@ footer p{margin:8px 0 0}
     <div class="tools">
       <label class="search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>
         <input id="search" type="search" placeholder="Find a word" aria-label="Find a word"></label>
-      <label class="pick" title="Translate words to"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
-        <select id="lang" aria-label="Translate words to"></select></label>
+      <div class="pick" title="Translate words to"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
+        <select id="lang" aria-label="Translate words to"></select></div>
       <details class="menu" id="moreMenu">
         <summary aria-label="More actions"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></summary>
         <div class="menu-pop">
@@ -363,7 +399,7 @@ footer p{margin:8px 0 0}
 
   <main id="shelf"></main>
 
-  <footer><details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl and Project Gutenberg, and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details></footer>
+  <footer><details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details></footer>
 </div>
 
 <div id="printArea" aria-hidden="true"></div>
@@ -419,9 +455,9 @@ function card(w,i){
   const q=encodeURIComponent(w.word);
   const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
   const meta=[w.pos&&`<span>${esc(w.pos)}</span>`,w.ipa&&`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`,w.ipaUs&&`<span>US ${esc(w.ipaUs)}</span>`,
-    w.est&&`<span class="est" title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">estimated</span>`].filter(Boolean).join("");
+    w.est&&`<span class="est" title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`].filter(Boolean).join("");
   return `<article class="card" style="--lv:var(${lv.v})">
-    <div class="card-head"><h3>${esc(w.word)}</h3>
+    <div class="card-head"><div style="flex:1;min-width:0"><span class="lvl">${lv.label||lv.id}${w.est?" ≈":""}</span><h3>${esc(w.word)}</h3></div>
       <div class="say"><button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button></div></div>
     ${meta?`<div class="meta">${meta}</div>`:""}
     ${lang&&w.tr?.[lang]?`<p class="tr" lang="${lang}"><span>${lang}</span>${esc(w.tr[lang])}</p>`:""}
@@ -431,9 +467,9 @@ function card(w,i){
     <div class="card-foot"><div class="links">
       <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}UK clips</a>
       <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}US clips</a>
-      <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">Lessons</a>
+      <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">${searchIcon}Lessons</a>
       ${lang?`<a href="https://translate.google.com/?sl=en&tl=${lang}&text=${encodeURIComponent([w.word,...(w.examples||[])].join("\n"))}&op=translate" target="_blank" rel="noopener">Translate</a>`:""}
-      <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">More sentences</a></div>
+      <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">Sentences</a></div>
       <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}" title="Remove">${trashIcon}</button>
     </div></article>`;
 }
@@ -812,7 +848,7 @@ const MODE_KEY="wordshelf.mode";
 var mode=(()=>{try{return localStorage.getItem(MODE_KEY)}catch{return null}})()||"gemini";
 function setMode(m){
   mode=m; try{localStorage.setItem(MODE_KEY,m)}catch{}
-  $("#modeSel").value=m;
+  $("#modeSel").value=m; refreshDropdowns();
   $("#keybox").hidden=m==="free"||m==="account";
   $("#accountBox").hidden=m!=="account";
   $("#modeHelp").textContent={
@@ -1137,14 +1173,62 @@ async function fillMissing(useLocal){
   if(items) setStatus(n?`Added sentences for ${n} word${n===1?"":"s"}.`:"No sentences came back. Try again.",!n);
 }
 // Called whenever words are added: write sentences right away if that can happen without asking
-function autoFill(){
+/* Wiktionary: free, no key, and has usage examples for many words, including rare ones */
+const wikiTried=new Set();
+const stripHtml=h=>new DOMParser().parseFromString(String(h||""),"text/html").body.textContent.replace(/\s+/g," ").trim();
+async function wiktionaryExamples(w){
+  const d=await getJSON("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURIComponent(w.word.replace(/ /g,"_"))+"?redirect=true",7000);
+  const senses=(d?.en||[]);
+  // prefer the sense whose part of speech matches the card
+  senses.sort((a,b)=>((b.partOfSpeech||"").toLowerCase()===(w.pos||"").toLowerCase())-((a.partOfSpeech||"").toLowerCase()===(w.pos||"").toLowerCase()));
+  const out=[]; let def="";
+  for(const s of senses) for(const df of s.definitions||[]){
+    if(!def&&df.definition) def=stripHtml(df.definition);
+    const exs=[...(df.parsedExamples||[]).map(x=>x.example),...(df.examples||[])];
+    for(let e of exs){
+      e=stripHtml(e).replace(/^[“"']|[”"']$/g,"");
+      const n=e.split(" ").length;
+      if(n<4||n>30||out.includes(e)) continue;
+      e=e[0].toUpperCase()+e.slice(1); if(!/[.!?]$/.test(e)) e+=".";
+      if(usesWord([e],w.word).length) out.push(e);
+      if(out.length>=2) return {examples:out,def};
+    }
+  }
+  return {examples:out,def};
+}
+async function fillFromWiktionary(){
+  const list=needSentences().filter(w=>!wikiTried.has(w.word)).slice(0,60);
+  if(!list.length) return 0;
+  list.forEach(w=>wikiTried.add(w.word));
+  setStatus(spin(`Finding example sentences… 0 of ${list.length}`));
+  let i=0,done=0,n=0;
+  async function worker(){
+    while(i<list.length){
+      const w=list[i++]; const r=await wiktionaryExamples(w).catch(()=>null);
+      if(r?.examples.length&&!(w.examples||[]).length){w.examples=r.examples;n++}
+      if(r?.def&&!w.definition){w.definition=r.def;w.suggest=""}
+      setStatus(spin(`Finding example sentences… ${++done} of ${list.length}`));
+    }
+  }
+  await Promise.all([worker(),worker(),worker(),worker()]);
+  store.set(words);
+  setStatus(n?`Found example sentences for ${n} word${n===1?"":"s"}.`:"");
+  return n;
+}
+async function autoFill(){
   if(filling||!needSentences().length) return;
+  if(needSentences().some(w=>!wikiTried.has(w.word))){
+    filling=true; render();
+    try{ await fillFromWiktionary() } finally { filling=false; render() }
+    if(!needSentences().length) return;
+  }
   if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
   let local=false; try{local=localStorage.getItem("wordshelf.localModel")==="1"}catch{}
   if(local) return fillMissing(true);
   $("#fillConfirm").hidden=false;   // first time without a key: ask once before the download
 }
-$("#fillGo").addEventListener("click",()=>{
+$("#fillGo").addEventListener("click",async()=>{
+  if(needSentences().some(w=>!wikiTried.has(w.word))){ await autoFill(); return }
   if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
   $("#fillConfirm").hidden=false;   // no key saved: offer the on-device model
 });
@@ -1220,10 +1304,63 @@ async function autoTranslate(){
   if(lang!==forLang) autoTranslate();
 }
 
+/* Dropdowns: a designed menu on top of each native <select> (which keeps the value and change events) */
+const chevron='<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+var dropdowns=[];
+let openDd=null;
+const scrim=document.createElement("div"); scrim.className="dd-scrim"; document.body.append(scrim);
+scrim.addEventListener("click",()=>openDd?.close());
+function makeDropdown(sel,{item,title,search,align}){
+  const wrap=sel.closest(".pick");
+  sel.classList.add("vh"); sel.tabIndex=-1; sel.setAttribute("aria-hidden","true");
+  const btn=document.createElement("button"); btn.type="button"; btn.className="dd-btn";
+  btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false"); btn.setAttribute("aria-label",sel.getAttribute("aria-label")||title);
+  const pop=document.createElement("div"); pop.className="dd-pop"+(align==="left"?" left":""); pop.hidden=true; pop.setAttribute("role","listbox");
+  wrap.append(btn,pop);
+  const refresh=()=>{const o=sel.selectedOptions[0]; if(o) btn.innerHTML=`<span class="dd-val">${item(o,true)}</span>${chevron}`};
+  function build(q=""){
+    const ql=q.trim().toLowerCase();
+    const opts=[...sel.options].filter(o=>!ql||o.textContent.toLowerCase().includes(ql)||(o.title||"").toLowerCase().includes(ql)||o.value.toLowerCase()===ql);
+    pop.querySelector(".dd-list").innerHTML=opts.map(o=>`<button type="button" class="dd-opt" role="option" data-v="${esc(o.value)}" aria-selected="${o.value===sel.value}">${item(o,false)}</button>`).join("")||`<p class="note" style="padding:8px 10px">Nothing found.</p>`;
+  }
+  pop.innerHTML=`<div class="dd-head">${esc(title)}<button type="button" class="btn small dd-close">Done</button></div>${search?`<div class="dd-search"><input type="search" placeholder="Search" aria-label="Search ${esc(title)}"></div>`:""}<div class="dd-list" style="display:grid;gap:2px"></div>`;
+  const dd={
+    open(){ openDd?.close(); build(); pop.hidden=false; btn.setAttribute("aria-expanded","true"); scrim.classList.add("on"); openDd=dd;
+      const cur=pop.querySelector('[aria-selected="true"]'); cur?.scrollIntoView({block:"nearest"});
+      (search&&matchMedia("(min-width:641px)").matches?pop.querySelector(".dd-search input"):cur||pop.querySelector(".dd-opt"))?.focus({preventScroll:true}) },
+    close(){ pop.hidden=true; btn.setAttribute("aria-expanded","false"); scrim.classList.remove("on"); if(openDd===dd) openDd=null; const si=pop.querySelector(".dd-search input"); if(si) si.value="" },
+    refresh};
+  btn.addEventListener("click",()=>pop.hidden?dd.open():dd.close());
+  pop.addEventListener("click",e=>{
+    if(e.target.closest(".dd-close")) return dd.close();
+    const o=e.target.closest(".dd-opt"); if(!o) return;
+    sel.value=o.dataset.v; sel.dispatchEvent(new Event("change",{bubbles:true})); refresh(); dd.close(); btn.focus();
+  });
+  pop.querySelector(".dd-search input")?.addEventListener("input",e=>build(e.target.value));
+  pop.addEventListener("keydown",e=>{
+    const items=[...pop.querySelectorAll(".dd-opt")]; const i=items.indexOf(document.activeElement);
+    if(e.key==="Escape"){dd.close();btn.focus()}
+    else if(e.key==="ArrowDown"){e.preventDefault();(items[i+1]||items[0])?.focus()}
+    else if(e.key==="ArrowUp"){e.preventDefault();(items[i-1]||items[items.length-1])?.focus()}
+  });
+  sel.addEventListener("change",refresh);
+  refresh(); dropdowns.push(dd); return dd;
+}
+document.addEventListener("click",e=>{ if(openDd&&!e.target.closest(".pick")&&!e.target.closest(".dd-scrim")) openDd.close() });
+function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
+
+const SWATCH={auto:["#f2f5f4","#0f1618"],light:["#f2f5f4","#2350d8"],dark:["#0f1618","#86a4ff"],paper:["#efe8dc","#9a3b1e"],ocean:["#081a2b","#4fd1c5"],forest:["#0f1a14","#e2b44c"],rose:["#fbf0f2","#c2306a"],contrast:["#000","#ffe14d"]};
+makeDropdown($("#theme"),{title:"Theme",item:o=>`<span class="swatch" style="--s1:${SWATCH[o.value][0]};--s2:${SWATCH[o.value][1]}"></span><b>${esc(o.textContent)}</b>`});
+const MODE_INFO={gemini:["G","#2f6fe4","Gemini","Free Google key · reads handwriting"],qwen:["Q","#6a46d8","Qwen","Free OpenRouter key · reads handwriting"],
+  account:["C","#c46a3c","Claude account","Opens Wordshelf on claude.ai · no key"],claude:["C","#a14e2a","Claude API","Paid key · most accurate"],free:["B","#5b6b71","Basic","No key · typed or printed text only"]};
+makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{const m=MODE_INFO[o.value];
+  return `<span class="modeicon" style="--mc:${m[1]}">${m[0]}</span>`+(short?`${esc(m[2])}`:`<span><b>${esc(m[2])}</b><small>${esc(m[3])}</small></span>`)}});
+makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
+
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
-  document.documentElement.dataset.wsTheme=t;
+  document.documentElement.dataset.wsTheme=t; $("#theme").value=t; refreshDropdowns();
   try{localStorage.setItem(THEME_KEY,t)}catch{}
   requestAnimationFrame(()=>{let m=document.querySelector('meta[name="theme-color"]');
     if(!m){m=document.createElement("meta");m.name="theme-color";document.head.append(m)}
