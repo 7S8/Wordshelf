@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Upload a screenshot of your vocabulary list and get every word sorted by CEFR level, with definitions, example sentences and YouTube clips.">
 <title>Wordshelf CEFR</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
 <script>try{document.documentElement.dataset.wsTheme=localStorage.getItem("wordshelf.theme")||"auto"}catch{document.documentElement.dataset.wsTheme="auto"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,8 +75,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 /* app bar + intro */
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:6px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em}
-.logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:18px;
-  background:linear-gradient(135deg,var(--a1),var(--b1) 40%,var(--c1) 75%,var(--c2))}
+.logo{width:36px;height:36px;display:block;flex:none}
+.logo svg{display:block;border-radius:10px;box-shadow:0 2px 8px -3px rgba(0,0,0,.35)}
 .intro{display:grid;gap:10px}
 .intro h1{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.025em;line-height:1.08;max-width:22ch}
 .intro p{margin:0;color:var(--muted);max-width:60ch}
@@ -110,6 +112,10 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .dd-opt b{display:block;font-size:15px}
 .dd-opt small{display:block;color:var(--muted);font-size:13px;line-height:1.3}
 .dd-opt .sub{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.tprev{flex:none;width:44px;height:30px;border-radius:6px;overflow:hidden;box-shadow:0 0 0 1px rgba(127,127,127,.35);position:relative;display:block}
+.tprev svg{display:block}
+.tprev.auto>span{position:absolute;inset:0;overflow:hidden}
+.tprev.auto>span:last-child{clip-path:polygon(100% 0,100% 100%,0 100%)}
 .swatch{width:26px;height:26px;border-radius:50%;flex:none;border:1px solid rgba(127,127,127,.35);background:linear-gradient(135deg,var(--s1) 50%,var(--s2) 50%)}
 .dd-btn .swatch{width:18px;height:18px}
 .modeicon{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;font-weight:700;font-family:var(--body);font-size:15px;color:#fff;background:var(--mc)}
@@ -291,7 +297,7 @@ footer p{margin:8px 0 0}
 <body>
 <div class="wrap">
   <header class="appbar">
-    <div class="brand"><span class="logo" aria-hidden="true">W</span>Wordshelf</div>
+    <div class="brand"><span class="logo" aria-hidden="true"><svg width="36" height="36" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#14232b"/><g><rect x="9" y="21" width="7" height="28" rx="1.6" fill="#5fcf8f"/><rect x="17" y="15" width="6" height="34" rx="1.6" fill="#a3d65f"/><rect x="24" y="19" width="8" height="30" rx="1.6" fill="#4fc3e8"/><rect x="33" y="13" width="6" height="36" rx="1.6" fill="#86a4ff"/><rect x="40" y="22" width="7" height="27" rx="1.6" fill="#bf93f5"/><rect x="50" y="18" width="6.5" height="31" rx="1.6" fill="#f283b6" transform="rotate(-14 56.5 49)"/></g><g fill="#14232b" opacity=".28"><rect x="9" y="25" width="7" height="2"/><rect x="9" y="43" width="7" height="2"/><rect x="17" y="19" width="6" height="2"/><rect x="17" y="43" width="6" height="2"/><rect x="24" y="23" width="8" height="1.6"/><rect x="24" y="26" width="8" height="1.6"/><rect x="24" y="44" width="8" height="1.6"/><rect x="33" y="17" width="6" height="2"/><rect x="33" y="43" width="6" height="2"/><rect x="40" y="26" width="7" height="2"/><rect x="40" y="43" width="7" height="2"/></g><rect x="6" y="49" width="52" height="4" rx="2" fill="#e4ecec"/></svg></span>Wordshelf</div>
     <div class="pick" title="Theme"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4.1-4-7.6-9-7.6z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg><span class="vh">Theme</span>
       <select id="theme" aria-label="Theme">
         <option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option><option value="paper">Paper</option>
@@ -1350,8 +1356,16 @@ function makeDropdown(sel,{item,title,search,align}){
 document.addEventListener("click",e=>{ if(openDd&&!e.target.closest(".pick")&&!e.target.closest(".dd-scrim")) openDd.close() });
 function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
 
-const SWATCH={auto:["#f2f5f4","#0f1618"],light:["#f2f5f4","#2350d8"],dark:["#0f1618","#86a4ff"],paper:["#efe8dc","#9a3b1e"],ocean:["#081a2b","#4fd1c5"],forest:["#0f1a14","#e2b44c"],rose:["#fbf0f2","#c2306a"],contrast:["#000","#ffe14d"]};
-makeDropdown($("#theme"),{title:"Theme",item:o=>`<span class="swatch" style="--s1:${SWATCH[o.value][0]};--s2:${SWATCH[o.value][1]}"></span><b>${esc(o.textContent)}</b>`});
+// [background, card, text, accent] for a small preview of each theme
+const THEMES={light:["#f2f5f4","#ffffff","#14232b","#2350d8"],dark:["#0f1618","#1c282b","#e4ecec","#86a4ff"],paper:["#efe8dc","#fbf7f0","#2b2217","#9a3b1e"],
+  ocean:["#081a2b","#132c44","#e3f0fb","#4fd1c5"],forest:["#0f1a14","#1b2c22","#e6efe8","#e2b44c"],rose:["#fbf0f2","#ffffff","#2e1a22","#c2306a"],contrast:["#000000","#0a0a0a","#ffffff","#ffe14d"]};
+const THEME_NOTE={auto:"Follows your device",light:"Clean and bright",dark:"Easy on the eyes",paper:"Warm, like a notebook",ocean:"Deep blue",forest:"Dark green and gold",rose:"Soft pink",contrast:"Maximum readability"};
+function themePreview(t){
+  const one=([bg,card,ink,acc])=>`<svg viewBox="0 0 44 30" width="44" height="30"><rect width="44" height="30" rx="6" fill="${bg}"/><rect x="5" y="6" width="34" height="18" rx="3.5" fill="${card}" stroke="${ink}" stroke-opacity=".12"/><rect x="9" y="10" width="16" height="2.6" rx="1.3" fill="${ink}"/><rect x="9" y="15" width="22" height="2" rx="1" fill="${ink}" opacity=".45"/><rect x="9" y="19" width="10" height="2.6" rx="1.3" fill="${acc}"/></svg>`;
+  if(t!=="auto") return `<span class="tprev">${one(THEMES[t])}</span>`;
+  return `<span class="tprev auto"><span>${one(THEMES.light)}</span><span>${one(THEMES.dark)}</span></span>`;
+}
+makeDropdown($("#theme"),{title:"Theme",item:(o,short)=>short?`<b>${esc(o.textContent)}</b>`:`${themePreview(o.value)}<span><b>${esc(o.textContent)}</b><small>${THEME_NOTE[o.value]}</small></span>`});
 const MODE_INFO={gemini:["G","#2f6fe4","Gemini","Free Google key · reads handwriting"],qwen:["Q","#6a46d8","Qwen","Free OpenRouter key · reads handwriting"],
   account:["C","#c46a3c","Claude account","Opens Wordshelf on claude.ai · no key"],claude:["C","#a14e2a","Claude API","Paid key · most accurate"],free:["B","#5b6b71","Basic","No key · typed or printed text only"]};
 makeDropdown($("#modeSel"),{title:"Reading mode",align:"left",item:(o,short)=>{const m=MODE_INFO[o.value];
