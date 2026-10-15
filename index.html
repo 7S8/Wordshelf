@@ -395,41 +395,51 @@ async function askGemini(key,prompt,images){
   }
 }
 
-/* Qwen via OpenRouter's free models. Picks a free Qwen model that accepts images (or text only when no image is sent) */
-const qwenModels={};
-async function pickQwenModel(needImages){
+/* Qwen via OpenRouter's free models. OpenRouter's free line-up changes often, so build a list of candidates:
+   free Qwen models first, then other free models that can read images, then a few known names, and try them in turn */
+const FALLBACK_VISION=["qwen/qwen2.5-vl-72b-instruct:free","qwen/qwen2.5-vl-32b-instruct:free","google/gemma-3-27b-it:free",
+  "meta-llama/llama-4-maverick:free","mistralai/mistral-small-3.2-24b-instruct:free","openrouter/free"];
+const FALLBACK_TEXT=["qwen/qwen3-235b-a22b:free","qwen/qwen3-30b-a3b:free",...FALLBACK_VISION];
+const orCandidates={};
+let orGood=null;
+async function openRouterCandidates(needImages){
   const k=needImages?"vision":"text";
-  if(qwenModels[k]) return qwenModels[k];
-  const r=await fetch("https://openrouter.ai/api/v1/models");
-  const list=r.ok?(await r.json()).data||[]:[];
-  const free=list.filter(m=>/^qwen\//.test(m.id)&&(m.id.endsWith(":free")||(m.pricing&&+m.pricing.prompt===0&&+m.pricing.completion===0)));
-  const vision=free.filter(m=>(m.architecture?.input_modalities||[]).includes("image")||/vl/i.test(m.id));
-  const pool=needImages?vision:free;
+  if(orCandidates[k]) return orCandidates[k];
+  let list=[];
+  try{ const r=await fetch("https://openrouter.ai/api/v1/models"); if(r.ok) list=(await r.json()).data||[] }catch{}
+  const isFree=m=>m.id.endsWith(":free")||(m.pricing&&+m.pricing.prompt===0&&+m.pricing.completion===0);
+  const sees=m=>(m.architecture?.input_modalities||[]).includes("image");
   const size=m=>Math.max(0,...(m.id.match(/(\d+)b/gi)||["0"]).map(x=>parseInt(x)));
-  pool.sort((a,b)=>size(b)-size(a)||(b.created||0)-(a.created||0));
-  qwenModels[k]=pool[0]?.id||null;
-  return qwenModels[k];
+  const free=list.filter(m=>isFree(m)&&m.id!=="openrouter/auto"&&(!needImages||sees(m)));
+  free.sort((a,b)=>(/^qwen\//.test(b.id)-/^qwen\//.test(a.id))||size(b)-size(a)||(b.created||0)-(a.created||0));
+  const ids=[...free.map(m=>m.id),...(needImages?FALLBACK_VISION:FALLBACK_TEXT)];
+  return orCandidates[k]=[...new Set(ids)];
 }
 async function askQwen(key,prompt,images){
-  try{
-    const model=await pickQwenModel((images||[]).length>0);
-    if(!model) return fail("OpenRouter has no free Qwen model for this right now. Switch to Gemini, or try again later.");
-    const content=[{type:"text",text:prompt+"\n\n"+JSON_SHAPE}];
-    for(const f of images||[]){const im=await prepImage(f);content.push({type:"image_url",image_url:{url:`data:${im.media_type};base64,${im.data}`}})}
-    const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",
-      headers:{"content-type":"application/json","authorization":"Bearer "+key,"X-Title":"Wordshelf"},
-      body:JSON.stringify({model,messages:[{role:"user",content}],temperature:0.3})});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok) throw {status:r.status,data};
+  const needImages=(images||[]).length>0;
+  const content=[{type:"text",text:prompt+"\n\n"+JSON_SHAPE}];
+  try{ for(const f of images||[]){const im=await prepImage(f);content.push({type:"image_url",image_url:{url:`data:${im.media_type};base64,${im.data}`}})} }
+  catch{ return fail("Couldn't prepare the image. Try a JPG or PNG.") }
+  let cands=await openRouterCandidates(needImages);
+  if(orGood&&cands.includes(orGood)) cands=[orGood,...cands.filter(c=>c!==orGood)];
+  let lastErr="";
+  for(const model of cands.slice(0,6)){
+    setStatus(spin(`Reading with ${model.replace(/:free$/,"")}…`));
+    let r,data;
+    try{
+      r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",
+        headers:{"content-type":"application/json","authorization":"Bearer "+key,"X-Title":"Wordshelf"},
+        body:JSON.stringify({model,messages:[{role:"user",content}],temperature:0.3})});
+      data=await r.json().catch(()=>({}));
+    }catch{ return netFail() }
+    if(r.status===401){$("#keybox").open=true;return fail("That OpenRouter key was rejected. Check it in the box below.")}
+    if(r.status===402) return fail("OpenRouter says this key has no credit for that model. Free models should still work: try again, or switch to Gemini.");
+    if(!r.ok||data.error){ lastErr=data?.error?.message||String(r.status); continue }  // model gone, busy or rate-limited: try the next one
     const res=parseJSONReply(data.choices?.[0]?.message?.content||"");
-    return res||fail("Qwen's answer came back in the wrong format. Press the button again.");
-  }catch(e){
-    if(e?.status==null) return netFail();
-    const m=e.data?.error?.message||"";
-    if(e.status===401){$("#keybox").open=true;return fail("That OpenRouter key was rejected. Check it in the box below.")}
-    if(e.status===429) return fail("Qwen's free limit is used up for now. Try again later, or switch to Gemini.");
-    return fail("Qwen request failed: "+(m||e.status));
+    if(res&&(res.items||Array.isArray(res))){ orGood=model; return res }
+    lastErr="answer was not in the expected format";
   }
+  return fail(`None of OpenRouter's free models could do this right now (${lastErr}). Free models are often busy or hit their daily limit. Switch to Gemini, or try again later.`);
 }
 
 async function askClaude(key,prompt,images){
@@ -617,7 +627,7 @@ function setMode(m){
   $("#accountBox").hidden=m!=="account";
   $("#modeHelp").textContent={
     gemini:"Free with a Google key. Reads handwriting, phrases and translations, and writes example sentences for every word.",
-    qwen:"Free with an OpenRouter key. Reads handwriting and writes examples. Free Qwen models can be slow or busy.",
+    qwen:"Free with an OpenRouter key. Uses a free Qwen model, or another free model when no Qwen can read images. Free models can be slow or busy.",
     claude:"Most accurate. Reads handwriting, phrases and translations. Needs an Anthropic API key (paid per use).",
     account:"Have a Claude account (claude.ai) but no API key? Use the claude.ai version of Wordshelf, which runs on your account.",
     free:"No key needed, but basic: reads typed or printed text only (not handwriting), uses a built-in dictionary, and many words have no example sentence."}[m];
