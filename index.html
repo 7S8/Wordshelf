@@ -111,6 +111,16 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .keyrow{display:flex;flex-wrap:wrap;gap:8px}
 .keyrow input{flex:1 1 260px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
 .keybox p{margin:0;font-size:14px;color:var(--muted)}
+.mode{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mode .lbl{font-size:14px;color:var(--muted);margin-right:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--sunk)}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.mode-help{font-size:14px;color:var(--muted);margin:0;flex-basis:100%}
+.review{display:grid;gap:8px;background:var(--sunk);border-radius:var(--r);padding:14px}
+.review label{font-weight:700}
+.review small{color:var(--muted)}
+.review textarea{width:100%;min-height:160px;resize:vertical;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--mono);font-size:14px;line-height:1.6}
 footer{color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -127,9 +137,17 @@ footer{color:var(--muted);font-size:13px}
   </header>
 
   <section class="capture" aria-label="Add words">
+    <div class="mode">
+      <span class="lbl">Reading mode</span>
+      <div class="seg" role="group" aria-label="Reading mode">
+        <button type="button" data-mode="free" aria-pressed="true">Free</button>
+        <button type="button" data-mode="claude" aria-pressed="false">Claude</button>
+      </div>
+      <p class="mode-help" id="modeHelp"></p>
+    </div>
     <label class="drop" id="drop" for="file">
       <strong>Drop your vocabulary screenshot here</strong>
-      <small>or click to choose photos · you can also paste an image with Ctrl/⌘+V · handwriting works</small>
+      <small>or click to choose photos · you can also paste an image with Ctrl/⌘+V</small>
     </label>
     <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
     <div class="thumbs" id="thumbs"></div>
@@ -142,6 +160,12 @@ footer{color:var(--muted);font-size:13px}
       </form>
     </div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
+    <div class="review" id="review" hidden>
+      <label for="reviewText">Check the words we found</label>
+      <small>Fix spelling mistakes, delete anything that isn't vocabulary, and add missing words. One word or phrase per line.</small>
+      <textarea id="reviewText" spellcheck="true"></textarea>
+      <div class="row"><button class="btn primary" id="reviewGo" type="button">Look up these words</button><button class="btn" id="reviewCancel" type="button">Cancel</button></div>
+    </div>
     <details class="keybox" id="keybox">
       <summary id="keySummary">Anthropic API key</summary>
       <p>Word recognition uses Claude. Paste your own API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. It is stored only in this browser and sent only to Anthropic. Each scan costs a few cents on your account.</p>
@@ -166,7 +190,7 @@ footer{color:var(--muted);font-size:13px}
 
   <main id="shelf" style="display:grid;gap:32px"></main>
 
-  <footer>CEFR levels are estimates based on typical learner word lists (like the English Vocabulary Profile). YouGlish links play YouTube clips at the moment someone says the word.</footer>
+  <footer>CEFR levels are estimates. Free mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://dictionaryapi.dev" target="_blank" rel="noopener">Free Dictionary API</a>, and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
 </div>
 
 <script>
@@ -174,6 +198,8 @@ const LEVELS=[
   {id:"A1",name:"Beginner",v:"--a1"},{id:"A2",name:"Elementary",v:"--a2"},
   {id:"B1",name:"Intermediate",v:"--b1"},{id:"B2",name:"Upper intermediate",v:"--b2"},
   {id:"C1",name:"Advanced",v:"--c1"},{id:"C2",name:"Proficient",v:"--c2"}];
+const UNRATED={id:"",label:"?",name:"Not on the CEFR list",v:"--muted"};
+const GROUPS=[...LEVELS,UNRATED];
 const EXAMPLES=[
   {word:"apple",pos:"noun",ipa:"/ˈæp.əl/",level:"A1",definition:"A round fruit with red, green or yellow skin.",examples:["I eat an apple every morning.","She cut the apple into four pieces."],note:""},
   {word:"borrow",pos:"verb",ipa:"/ˈbɒr.əʊ/",level:"A2",definition:"To take something from someone and give it back later.",examples:["Can I borrow your pen for a minute?","He borrowed some money from his brother."],note:""},
@@ -208,36 +234,37 @@ const searchIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const speakIcon='<svg viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 
 function card(w,i){
-  const lv=LEVELS.find(l=>l.id===w.level)||LEVELS[2];
+  const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED;
   const q=encodeURIComponent(w.word);
   const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
   return `<article class="card" style="--lv:var(${lv.v})">
     <div class="card-top"><div style="min-width:0"><h3>${esc(w.word)}</h3>
       <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${esc(w.ipa)}</span>`:""}</div></div>
       <button class="icon-btn" data-say="${i}" aria-label="Pronounce ${esc(w.word)}" title="Pronounce">${speakIcon}</button></div>
-    <p class="def">${esc(w.definition)}</p>
+    ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found. Check the spelling.</p>`}
     ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
     ${exs?`<ul class="ex">${exs}</ul>`:""}
     <div class="links">
       <a href="https://youglish.com/pronounce/${q}/english" target="_blank" rel="noopener">${ytIcon}Hear it in YouTube clips</a>
       <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">${searchIcon}YouTube lessons</a>
+      <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">More sentences</a>
       <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}">Remove</button>
     </div></article>`;
 }
 
 function render(){
   $("#exampleNote").hidden=!words.some(w=>w.example);
-  const counts=Object.fromEntries(LEVELS.map(l=>[l.id,words.filter(w=>w.level===l.id).length]));
+  const counts=Object.fromEntries(GROUPS.map(l=>[l.id,words.filter(w=>(w.level||"")===l.id).length]));
   $("#chips").innerHTML=`<button class="chip" data-f="all" aria-pressed="${filter==="all"}">All <i>${words.length}</i></button>`+
-    LEVELS.map(l=>`<button class="chip" data-f="${l.id}" style="--lv:var(${l.v})" aria-pressed="${filter===l.id}">${l.id} <i>${counts[l.id]}</i></button>`).join("");
+    GROUPS.filter(l=>l.id||counts[""]).map(l=>`<button class="chip" data-f="${l.id}" style="--lv:var(${l.v})" aria-pressed="${filter===l.id}">${l.label||l.id} <i>${counts[l.id]}</i></button>`).join("");
   const q=query.trim().toLowerCase();
-  const shown=words.map((w,i)=>({w,i})).filter(({w})=>(filter==="all"||w.level===filter)&&(!q||w.word.toLowerCase().includes(q)||(w.note||"").toLowerCase().includes(q)));
+  const shown=words.map((w,i)=>({w,i})).filter(({w})=>(filter==="all"||(w.level||"")===filter)&&(!q||w.word.toLowerCase().includes(q)||(w.note||"").toLowerCase().includes(q)));
   if(!words.length){$("#shelf").innerHTML=`<div class="empty">Your shelf is empty. Upload a screenshot of your vocabulary or type a few words above.</div>`;return}
   if(!shown.length){$("#shelf").innerHTML=`<div class="empty">No words match this filter.</div>`;return}
-  $("#shelf").innerHTML=LEVELS.map(l=>{
-    const g=shown.filter(({w})=>w.level===l.id).sort((a,b)=>a.w.word.localeCompare(b.w.word));
+  $("#shelf").innerHTML=GROUPS.map(l=>{
+    const g=shown.filter(({w})=>(w.level||"")===l.id).sort((a,b)=>a.w.word.localeCompare(b.w.word));
     if(!g.length) return "";
-    return `<section class="level" style="--lv:var(${l.v})"><div class="level-head"><span class="tag">${l.id}</span><h2>${l.name}</h2><span class="n">${g.length} word${g.length>1?"s":""}</span></div>
+    return `<section class="level" style="--lv:var(${l.v})"><div class="level-head"><span class="tag">${l.label||l.id}</span><h2>${l.name}</h2><span class="n">${g.length} word${g.length>1?"s":""}</span></div>
       <div class="grid">${g.map(({w,i})=>card(w,i)).join("")}</div></section>`;
   }).join("");
 }
@@ -248,7 +275,7 @@ const spin=t=>`<span class="spin" aria-hidden="true"></span>${esc(t)}`;
 function addWords(items){
   const clean=(Array.isArray(items)?items:[]).filter(x=>x&&typeof x.word==="string"&&x.word.trim()).map(x=>({
     word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),
-    level:LEVELS.some(l=>l.id===String(x.level).toUpperCase())?String(x.level).toUpperCase():"B1",
+    level:LEVELS.some(l=>l.id===String(x.level).toUpperCase())?String(x.level).toUpperCase():"",
     definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
   let base=words.filter(w=>!w.example);
   let added=0;
@@ -323,6 +350,126 @@ async function ask(prompt,images,label){
   }
 }
 
+/* Free mode: Tesseract OCR + CEFR-J/Octanove list + Free Dictionary API */
+let cefrMap=null;
+async function loadCefr(){
+  if(cefrMap) return cefrMap;
+  const data=await (await fetch("cefr-words.json")).json();
+  cefrMap=new Map();
+  for(const [lv,list] of Object.entries(data)) for(const w of list.split("|")) cefrMap.set(w,lv);
+  return cefrMap;
+}
+// Inflected forms → base forms the word list uses (taking → take, studies → study, stopped → stop)
+function baseForms(w){
+  const out=[w]; const add=x=>{if(x&&x.length>1&&!out.includes(x))out.push(x)};
+  const m=w.match(/^(\S+)(\s.*)?$/); const h=m[1], t=m[2]||"";
+  const rules=[[/ies$/,"y"],[/ied$/,"y"],[/ves$/,"f"],[/(ss|sh|ch|x|z|o)es$/,"$1"],[/s$/,""],[/ing$/,""],[/ing$/,"e"],[/ed$/,""],[/ed$/,"e"],[/d$/,""],[/er$/,""],[/est$/,""],[/ier$/,"y"],[/iest$/,"y"],[/ly$/,""],[/ily$/,"y"]];
+  for(const [re,r] of rules) if(re.test(h)) add(h.replace(re,r)+t);
+  const dbl=h.match(/^(.*([bdfgklmnprtv]))\2(ing|ed|er|est)$/); if(dbl) add(dbl[1]+t);
+  return out;
+}
+function cefrLevel(map,w){ for(const f of baseForms(w)){const l=map.get(f); if(l) return l} return "" }
+
+let tessLoad=null;
+function loadTesseract(){
+  if(window.Tesseract) return Promise.resolve();
+  return tessLoad||=new Promise((ok,bad)=>{const sc=document.createElement("script");
+    sc.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";sc.onload=ok;sc.onerror=()=>{tessLoad=null;bad()};document.head.append(sc)});
+}
+const STOP=new Set("a an the and or of to in on at for by with is are was be it this that i you he she we they my your his her our their me us them not no yes adj adv noun verb adjective adverb prep pron conj sb sth smb smth etc eg ie".split(" "));
+// Pull English words and short phrases out of OCR text, one candidate per line chunk
+function extractWords(text){
+  const seen=new Set(), out=[];
+  for(const line of text.split(/\n+/)){
+    for(let chunk of line.split(/[-–—:=|;,()\[\]{}\/\\•·*]+|\t|\s{3,}/)){
+      chunk=chunk.replace(/^[\s\d.)]+/,"").replace(/[^A-Za-z' ]+/g," ").replace(/\s+/g," ").trim().toLowerCase();
+      if(!chunk) continue;
+      // trim filler words off the ends ("the cat and" → "cat"), keep short phrases like "take off" whole
+      const ws=chunk.split(" ");
+      while(ws.length>1&&STOP.has(ws[0])) ws.shift();
+      while(ws.length>1&&STOP.has(ws[ws.length-1])) ws.pop();
+      const parts=ws.length<=3?[ws.join(" ")]:ws;
+      for(const p of parts){
+        if(p.length<2||STOP.has(p)||!/[aeiouy]/.test(p)||seen.has(p)) continue;
+        seen.add(p); out.push(p);
+      }
+    }
+  }
+  return out;
+}
+async function ocrImages(files){
+  setStatus(spin("Loading text recognition… (first time takes a few seconds)"));
+  try{ await loadTesseract() }catch{ setStatus("Couldn't load text recognition. Check your internet connection.",true); return null }
+  let text="";
+  for(let i=0;i<files.length;i++){
+    try{
+      const {data}=await Tesseract.recognize(files[i],"eng",{logger:m=>{
+        if(m.status==="recognizing text") setStatus(spin(`Reading image ${i+1} of ${files.length}… ${Math.round(m.progress*100)}%`));
+      }});
+      text+="\n"+data.text;
+    }catch{ setStatus(`Couldn't read image ${i+1}. Try a clearer screenshot.`,true); return null }
+  }
+  return text;
+}
+async function dictLookup(word){
+  try{
+    const r=await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(word));
+    if(!r.ok) return null;
+    const d=await r.json(); const e=d[0]; if(!e) return null;
+    const ipa=e.phonetic||(e.phonetics||[]).map(p=>p.text).find(Boolean)||"";
+    const m=e.meanings?.[0]; const def=m?.definitions?.[0]?.definition||"";
+    const examples=[];
+    for(const mm of e.meanings||[]) for(const dd of mm.definitions||[]) if(dd.example&&examples.length<2) examples.push(dd.example.replace(/^./,c=>c.toUpperCase()));
+    return {pos:m?.partOfSpeech||"",ipa,definition:def,examples};
+  }catch{ return null }
+}
+async function freeLookup(list){
+  list=[...new Set(list.map(w=>w.trim().toLowerCase()).filter(Boolean))].slice(0,150);
+  if(!list.length) return null;
+  setStatus(spin("Loading the CEFR word list…"));
+  let map; try{ map=await loadCefr() }catch{ setStatus("Couldn't load the CEFR word list. Check your connection and try again.",true); return null }
+  const items=new Array(list.length); let done=0, next=0;
+  async function worker(){
+    while(next<list.length){
+      const i=next++, w=list[i];
+      const d=await dictLookup(w);
+      items[i]={word:w,level:cefrLevel(map,w),pos:d?.pos||"",ipa:d?.ipa||"",definition:d?.definition||"",examples:d?.examples||[],note:""};
+      setStatus(spin(`Looking up words… ${++done} of ${list.length}`));
+    }
+  }
+  await Promise.all([worker(),worker(),worker(),worker()]);
+  return {items};
+}
+
+/* Mode */
+const MODE_KEY="wordshelf.mode";
+let mode=(()=>{try{return localStorage.getItem(MODE_KEY)}catch{return null}})()||(getKey()?"claude":"free");
+function setMode(m){
+  mode=m; try{localStorage.setItem(MODE_KEY,m)}catch{}
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
+  $("#keybox").hidden=m!=="claude";
+  $("#modeHelp").textContent=m==="free"
+    ?"Free, no account needed. Works best with clear typed or printed screenshots. For handwriting, type the words or switch to Claude."
+    :"Most accurate: reads handwriting, phrases and translations, and writes example sentences for every word. Needs an Anthropic API key.";
+}
+document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)});
+
+function showReview(list){
+  $("#review").hidden=false; $("#reviewText").value=list.join("\n");
+  setStatus(`Found ${list.length} possible word${list.length===1?"":"s"}. Check the list below, then look them up.`);
+  $("#reviewText").focus();
+}
+$("#reviewCancel").addEventListener("click",()=>{$("#review").hidden=true;setStatus("")});
+$("#reviewGo").addEventListener("click",async()=>{
+  const btn=$("#reviewGo"); btn.disabled=true;
+  const res=await freeLookup($("#reviewText").value.split(/[\n,]+/));
+  btn.disabled=false;
+  if(!res) return;
+  const {added,total}=addWords(res.items);
+  $("#review").hidden=true;
+  setStatus(`Added ${total} word${total>1?"s":""}${added<total?` (${total-added} were already on your shelf)`:""}.`);
+});
+
 /* Images */
 function addFiles(list){
   for(const f of list){ if(!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) continue; pending.push({file:f,url:URL.createObjectURL(f)}) }
@@ -345,6 +492,15 @@ $("#thumbs").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i==null
 $("#recognize").addEventListener("click",async()=>{
   const btn=$("#recognize"); btn.disabled=true;
   const batch=pending.slice(0,10);
+  if(mode==="free"){
+    const text=await ocrImages(batch.map(p=>p.file));
+    btn.disabled=false;
+    if(text==null) return;
+    const list=extractWords(text);
+    if(!list.length){setStatus("No English words were found. Try a clearer screenshot, or type the words.",true);return}
+    batch.forEach(p=>URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
+    showReview(list); return;
+  }
   const res=await ask(`The attached image${batch.length>1?"s are photos or screenshots":" is a photo or screenshot"} of a learner's English vocabulary list. It may be handwritten, messy, rotated, or mixed with another language. Read EVERY English word or phrase on it (skip numbers, dates and headings that are not vocabulary).\n\n`+RULES,
     batch.map(p=>p.file),"Reading your list… this takes about 20–60 seconds.");
   btn.disabled=false;
@@ -359,6 +515,12 @@ $("#manualForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const v=$("#manual").value.trim(); if(!v) return;
   $("#manualBtn").disabled=true;
+  if(mode==="free"){
+    const r=await freeLookup(v.split(/[\n,;]+/));
+    $("#manualBtn").disabled=false;
+    if(!r) return;
+    const {total}=addWords(r.items); $("#manual").value=""; setStatus(`Added ${total} word${total>1?"s":""}.`); return;
+  }
   const res=await ask(`Words from a learner's vocabulary list (comma or line separated):\n${v.slice(0,4000)}\n\n`+RULES,[],"Looking up your words…");
   $("#manualBtn").disabled=false;
   if(!res) return;
@@ -368,6 +530,7 @@ $("#manualForm").addEventListener("submit",async e=>{
 
 /* API key */
 function showKeyState(){const k=getKey();$("#keySummary").textContent=k?"Anthropic API key · saved (…"+k.slice(-4)+")":"Anthropic API key · needed to recognize words";$("#apiKey").value="";if(!k)$("#keybox").open=true}
+setMode(mode);
 $("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
 $("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatus("Key removed from this browser.")});
 showKeyState();
@@ -382,7 +545,7 @@ $("#shelf").addEventListener("click",e=>{
   if(d){words.splice(+d.dataset.del,1);store.set(words);render()}
 });
 $("#copyAll").addEventListener("click",async()=>{
-  const txt=LEVELS.map(l=>{const g=words.filter(w=>w.level===l.id);return g.length?`${l.id} ${l.name}\n`+g.map(w=>`- ${w.word} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
+  const txt=GROUPS.map(l=>{const g=words.filter(w=>(w.level||"")===l.id);return g.length?`${l.label||l.id} ${l.name}\n`+g.map(w=>`- ${w.word} (${w.pos}) — ${w.definition}${w.note?` [${w.note}]`:""}\n  e.g. ${w.examples?.[0]||""}`).join("\n"):""}).filter(Boolean).join("\n\n");
   try{await navigator.clipboard.writeText(txt);setStatus("List copied. Paste it into your notes.")}catch{setStatus("Copy isn't allowed here. Select the words on the page instead.",true)}
 });
 function resetClear(){$("#clearWrap").innerHTML=`<button class="btn small" id="clear">Clear</button>`}
