@@ -13,96 +13,51 @@
 <style>
 /* Layout: app bar, an "Add words" panel, then a sticky shelf toolbar over word cards grouped A1 → C2.
    Themes: every color is a token; html[data-ws-theme] picks a palette ("auto" follows the device). */
+/* Themes are times of day in a library: the scene at the top (sky, sun or moon, shelves) and the page colors change together.
+   html[data-ws-theme]: auto (Morning by day / Night in dark mode), morning, sunset, night, twilight. */
 :root{
-  --bg:#f6f6f7; --surface:#ffffff; --raised:#ffffff; --sunk:#eeeef0; --ink:#1c1c1f; --muted:#62626b; --line:#dedee3;
-  --accent:#2563eb; --accent-ink:#ffffff; --accent-soft:#e7eefd; --focus:#2563eb; --danger:#c0264f;
+  --bg:#f0f4f8; --surface:#ffffff; --raised:#ffffff; --sunk:#e8eef5; --ink:#142235; --muted:#5a6a7e; --line:#d6dfea;
+  --accent:#1f5fa8; --accent-ink:#ffffff; --accent-soft:#e3edf8; --focus:#1f5fa8; --danger:#c0364a;
   --a1:#2f8f5b; --a2:#5f962a; --b1:#1a7ea3; --b2:#2a55c7; --c1:#7a3fc4; --c2:#b0306e; --unrated:#6b7a80;
-  --shadow:0 1px 2px rgba(20,35,43,.06),0 6px 20px -12px rgba(20,35,43,.25);
+  --sky-1:#8fbde6; --sky-2:#cfe4f3; --sky-3:#fbf1d9; --shelf:#3a4b69; --shelf-far:#93a6c0; --on-sky:#142235;
+  --orb:radial-gradient(circle at 40% 38%,#fffdf0,#fff1b8 60%,#ffe08a); --glow:rgba(255,232,160,.85); --orb-top:30px; --stars:0;
+  --shadow:0 1px 2px rgba(20,34,53,.06),0 8px 24px -12px rgba(20,34,53,.22);
   --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
   --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
   --r:14px; --r-sm:10px;
 }
-/* shared dark level colors */
-:root[data-ws-theme="dark"],:root[data-ws-theme="ocean"],:root[data-ws-theme="forest"]{
-  --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8; color-scheme:dark}
 @media (prefers-color-scheme:dark){:root[data-ws-theme="auto"]{
-  --bg:#18181b; --surface:#212125; --raised:#27272c; --sunk:#141417; --ink:#ececef; --muted:#a1a1aa; --line:#33333a;
-  --accent:#7aa2ff; --accent-ink:#0d1530; --accent-soft:#232c45; --focus:#9db8ff; --danger:#f2879f;
+  --bg:#0c141c; --surface:#121d27; --raised:#172431; --sunk:#0a1118; --ink:#e5ecef; --muted:#8fa1ac; --line:#24333f;
+  --accent:#4cc0c6; --accent-ink:#062126; --accent-soft:#12333a; --focus:#7fd6da; --danger:#ef7f8a;
   --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.6); color-scheme:dark}}
-:root[data-ws-theme="dark"]{
-  --bg:#18181b; --surface:#212125; --raised:#27272c; --sunk:#141417; --ink:#ececef; --muted:#a1a1aa; --line:#33333a;
-  --accent:#7aa2ff; --accent-ink:#0d1530; --accent-soft:#232c45; --focus:#9db8ff; --danger:#f2879f;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.6)}
-:root[data-ws-theme="paper"]{
-  --bg:#efe8dc; --surface:#fbf7f0; --raised:#fffdf8; --sunk:#e6ddcd; --ink:#2b2217; --muted:#6f6352; --line:#d8ccb8;
-  --accent:#9a3b1e; --accent-ink:#fff8f0; --accent-soft:#f3e0d4; --focus:#9a3b1e; --danger:#a0283f;
-  --a1:#3f7d4a; --a2:#6c7d23; --b1:#25708a; --b2:#3b4fa3; --c1:#6f3d97; --c2:#9a2d5a; --unrated:#7d7262;
-  --shadow:0 1px 2px rgba(60,40,10,.08),0 6px 18px -12px rgba(60,40,10,.3)}
-:root[data-ws-theme="ocean"]{
-  --bg:#081a2b; --surface:#0e2438; --raised:#132c44; --sunk:#071625; --ink:#e3f0fb; --muted:#8fa9bf; --line:#1f3a55;
-  --accent:#4fd1c5; --accent-ink:#04201d; --accent-soft:#103a40; --focus:#7ee6dc; --danger:#ff8fa3;
-  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.7)}
-:root[data-ws-theme="forest"]{
-  --bg:#0f1a14; --surface:#16241c; --raised:#1b2c22; --sunk:#0c1510; --ink:#e6efe8; --muted:#9bb0a2; --line:#2a3d31;
-  --accent:#e2b44c; --accent-ink:#2a1e04; --accent-soft:#3a3218; --focus:#f0cb73; --danger:#f2879f;
-  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.7)}
-:root[data-ws-theme="rose"]{
-  --bg:#fbf0f2; --surface:#ffffff; --raised:#ffffff; --sunk:#f6e3e7; --ink:#2e1a22; --muted:#7a5c66; --line:#efd3da;
-  --accent:#c2306a; --accent-ink:#ffffff; --accent-soft:#fbe0ea; --focus:#c2306a; --danger:#b0223f;
-  --shadow:0 1px 2px rgba(80,20,40,.06),0 6px 20px -12px rgba(80,20,40,.25)}
-:root[data-ws-theme="black"]{
-  --bg:#000000; --surface:#111113; --raised:#17171a; --sunk:#0a0a0b; --ink:#f2f2f4; --muted:#9a9aa3; --line:#26262b;
-  --accent:#5b8cff; --accent-ink:#ffffff; --accent-soft:#16213d; --focus:#82a7ff; --danger:#ff7a93;
+  --sky-1:#070f1d; --sky-2:#15284a; --sky-3:#3a4a78; --shelf:#04070c; --shelf-far:#1b2640; --on-sky:#e5ecef;
+  --orb:radial-gradient(circle at 38% 36%,#ffffff,#dfe6ff 55%,#b9c6f0); --glow:rgba(160,180,255,.35); --orb-top:34px; --stars:.9;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.55); color-scheme:dark}}
+:root[data-ws-theme="night"]{
+  --bg:#0c141c; --surface:#121d27; --raised:#172431; --sunk:#0a1118; --ink:#e5ecef; --muted:#8fa1ac; --line:#24333f;
+  --accent:#4cc0c6; --accent-ink:#062126; --accent-soft:#12333a; --focus:#7fd6da; --danger:#ef7f8a;
   --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8;
-  --shadow:none; color-scheme:dark}
-:root[data-ws-theme="contrast"]{
-  --bg:#000000; --surface:#000000; --raised:#0a0a0a; --sunk:#000000; --ink:#ffffff; --muted:#e0e0e0; --line:#ffffff;
-  --accent:#ffe14d; --accent-ink:#000000; --accent-soft:#2b2600; --focus:#ffe14d; --danger:#ff7a7a;
-  --a1:#6dff9e; --a2:#d4ff5c; --b1:#5cdcff; --b2:#9db4ff; --c1:#d9a6ff; --c2:#ff8cc6; --unrated:#ffffff;
-  --shadow:none; color-scheme:dark}
-/* more themes: light ones keep the light level colors, dark ones use the dark set */
-:root[data-ws-theme="midnight"],:root[data-ws-theme="coffee"],:root[data-ws-theme="sunset"],:root[data-ws-theme="nord"]{
-  --a1:#5fcf8f; --a2:#a3d65f; --b1:#4fc3e8; --b2:#86a4ff; --c1:#bf93f5; --c2:#f283b6; --unrated:#93a3a8; color-scheme:dark}
-:root[data-ws-theme="sakura"]{
-  --bg:#fff5f7; --surface:#ffffff; --raised:#ffffff; --sunk:#fde8ee; --ink:#3a1f2a; --muted:#8a6573; --line:#f6d5df;
-  --accent:#e0457b; --accent-ink:#ffffff; --accent-soft:#fde0ea; --focus:#e0457b; --danger:#c02848;
-  --shadow:0 1px 2px rgba(120,30,60,.06),0 6px 20px -12px rgba(120,30,60,.25)}
-:root[data-ws-theme="mint"]{
-  --bg:#eefaf4; --surface:#ffffff; --raised:#ffffff; --sunk:#dcf3e7; --ink:#0f2b20; --muted:#557366; --line:#c9e8d8;
-  --accent:#12935f; --accent-ink:#ffffff; --accent-soft:#d4f2e3; --focus:#12935f; --danger:#b4235a;
-  --shadow:0 1px 2px rgba(10,60,40,.06),0 6px 20px -12px rgba(10,60,40,.25)}
-:root[data-ws-theme="lavender"]{
-  --bg:#f5f2fd; --surface:#ffffff; --raised:#ffffff; --sunk:#ebe5fa; --ink:#231a3a; --muted:#6b6187; --line:#ddd3f4;
-  --accent:#6d4fd8; --accent-ink:#ffffff; --accent-soft:#e7e0fb; --focus:#6d4fd8; --danger:#b4235a;
-  --shadow:0 1px 2px rgba(50,30,110,.06),0 6px 20px -12px rgba(50,30,110,.25)}
-:root[data-ws-theme="sand"]{
-  --bg:#f6f1e7; --surface:#fffdf8; --raised:#ffffff; --sunk:#ece3d2; --ink:#2f2a20; --muted:#776c58; --line:#e2d7c2;
-  --accent:#b7791f; --accent-ink:#ffffff; --accent-soft:#f6e6c8; --focus:#b7791f; --danger:#a0283f;
-  --shadow:0 1px 2px rgba(80,60,20,.07),0 6px 18px -12px rgba(80,60,20,.28)}
-:root[data-ws-theme="midnight"]{
-  --bg:#0d0b1f; --surface:#17142e; --raised:#1d1938; --sunk:#0a0818; --ink:#ece9ff; --muted:#a39fc4; --line:#2c2750;
-  --accent:#a78bfa; --accent-ink:#160f33; --accent-soft:#2a2150; --focus:#c4b5fd; --danger:#fb7185;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -14px rgba(0,0,0,.7)}
-:root[data-ws-theme="coffee"]{
-  --bg:#1a1410; --surface:#241c16; --raised:#2b221b; --sunk:#14100c; --ink:#f1e7dc; --muted:#b5a594; --line:#3b2f25;
-  --accent:#d9a066; --accent-ink:#2a1a0b; --accent-soft:#3d2c1d; --focus:#e8b781; --danger:#f2879f;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -14px rgba(0,0,0,.7)}
+  --sky-1:#070f1d; --sky-2:#15284a; --sky-3:#3a4a78; --shelf:#04070c; --shelf-far:#1b2640; --on-sky:#e5ecef;
+  --orb:radial-gradient(circle at 38% 36%,#ffffff,#dfe6ff 55%,#b9c6f0); --glow:rgba(160,180,255,.35); --orb-top:34px; --stars:.9;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.55); color-scheme:dark}
 :root[data-ws-theme="sunset"]{
-  --bg:#1c1020; --surface:#28172c; --raised:#301c35; --sunk:#160c19; --ink:#fbe9ee; --muted:#c6a3b4; --line:#43283f;
-  --accent:#ff8a5c; --accent-ink:#2b0f05; --accent-soft:#4a2530; --focus:#ffab88; --danger:#ff7a9c;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -14px rgba(0,0,0,.7)}
-:root[data-ws-theme="nord"]{
-  --bg:#242933; --surface:#2e3440; --raised:#353c4a; --sunk:#20242d; --ink:#eceff4; --muted:#a3adbf; --line:#434c5e;
-  --accent:#88c0d0; --accent-ink:#1d2430; --accent-soft:#38495a; --focus:#8fbcbb; --danger:#bf616a;
-  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -14px rgba(0,0,0,.6)}
+  --bg:#eef1f2; --surface:#fbfcfc; --raised:#ffffff; --sunk:#e5eaec; --ink:#16222c; --muted:#5b6b76; --line:#d3dbdf;
+  --accent:#0d7480; --accent-ink:#ffffff; --accent-soft:#dcefef; --focus:#0d7480; --danger:#b5313c;
+  --sky-1:#6f97be; --sky-2:#e6a888; --sky-3:#f6d6b3; --shelf:#26304a; --shelf-far:#66708c; --on-sky:#16222c;
+  --orb:radial-gradient(circle at 45% 40%,#fff3d6,#ffc98a 60%,#f59a6a); --glow:rgba(255,190,130,.85); --orb-top:70px; --stars:0}
+:root[data-ws-theme="twilight"]{
+  --bg:#f6eef2; --surface:#fffafc; --raised:#ffffff; --sunk:#f1e3ea; --ink:#2a1824; --muted:#7a6070; --line:#ebd7e0;
+  --accent:#a2316a; --accent-ink:#ffffff; --accent-soft:#f8e1ec; --focus:#a2316a; --danger:#b0223f;
+  --sky-1:#7d68b0; --sky-2:#e58aa6; --sky-3:#ffd3c4; --shelf:#3a2142; --shelf-far:#8c6a93; --on-sky:#fffafc;
+  --orb:radial-gradient(circle at 42% 38%,#fffaf3,#ffe0d0 60%,#ffc0b0); --glow:rgba(255,200,215,.7); --orb-top:52px; --stars:.35;
+  --shadow:0 1px 2px rgba(42,24,36,.06),0 8px 24px -12px rgba(42,24,36,.22)}
 *{box-sizing:border-box}
 html,body{margin:0}
 [hidden]{display:none!important}
 img{max-width:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
-.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:max(12px,env(safe-area-inset-top,0px)) 64px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
 .wrap>*{min-width:0}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -110,6 +65,24 @@ button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--accent)}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* the scene: sky, sun or moon, stars and a library shelf silhouette */
+.scene{position:relative;overflow:hidden;isolation:isolate;color:var(--on-sky);background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 62%,var(--sky-3) 100%);transition:background .4s}
+.scene-inner{position:relative;z-index:2;max-width:1040px;margin:0 auto;display:grid;gap:18px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:max(12px,env(safe-area-inset-top,0px)) 150px}
+.stars{position:absolute;inset:0 0 30% 0;z-index:0;pointer-events:none;opacity:var(--stars);transition:opacity .4s;
+  background-image:radial-gradient(1.4px 1.4px at 8% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 18% 58%,#fff 50%,transparent 51%),radial-gradient(1.6px 1.6px at 27% 12%,#fff 50%,transparent 51%),
+  radial-gradient(1px 1px at 36% 40%,#fff 50%,transparent 51%),radial-gradient(1.3px 1.3px at 47% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 55% 52%,#fff 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 63% 28%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 71% 9%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 79% 46%,#fff 50%,transparent 51%),
+  radial-gradient(1.6px 1.6px at 88% 20%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 94% 60%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 4% 70%,#fff 50%,transparent 51%)}
+.orb{position:absolute;z-index:0;right:max(8%,calc(50% - 470px));top:calc(var(--orb-top) + 40px);width:64px;height:64px;border-radius:50%;background:var(--orb);box-shadow:0 0 70px 26px var(--glow);transition:top .6s,background .4s,box-shadow .4s}
+.shelves{position:absolute;left:0;right:0;bottom:0;width:100%;height:150px;z-index:1}
+.scene .brand,.scene .intro h1{color:var(--on-sky)}
+.scene .intro p,.scene .ladder em{color:color-mix(in srgb,var(--on-sky) 82%,transparent)}
+.scene .ladder span{background:color-mix(in srgb,var(--surface) 70%,transparent);color:var(--lv)}
+.scene .pick{background:color-mix(in srgb,var(--surface) 72%,transparent);border-color:color-mix(in srgb,var(--on-sky) 25%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.wrap{position:relative;z-index:3;margin-top:-34px}
+@media (max-width:640px){.scene-inner{padding-bottom:120px}.shelves{height:120px}.orb{width:44px;height:44px;right:26px;top:auto;bottom:82px}}
 
 /* app bar + intro */
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px 2px}
@@ -365,21 +338,28 @@ footer p{margin:8px 0 0}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="appbar">
+<header class="scene">
+  <div class="stars" aria-hidden="true"></div>
+  <div class="orb" aria-hidden="true"></div>
+  <svg class="shelves" id="shelves" viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="scene-inner">
+  <div class="appbar">
     <div class="brand"><span class="logo" aria-hidden="true"><svg width="34" height="34" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#01579b" d="M118.03 102.32L72.29 123c-2.82 1.33-5.76 1.2-8.46-.36L6.09 93.32c-1.65-1.06-2.14-2.61-2.04-3.69s.35-2.25 3.25-3.09l4.28-1.58l57.92 31.57l41.16-16.82z"/><path fill="#f5f5f5" d="M71.74 119.69a7.95 7.95 0 0 1-7.26-.26L8.11 91.03c-.8-.44-1.04-1.45-.56-2.23c1.24-2.05 3.52-8.53-.24-13.91l63.66 30.65z"/><path fill="#94c6d6" d="m115.59 99.98l-43.85 19.71c-1.45.63-4.34 1.75-7.67-.49c2.63.19 4.48-.9 5.43-2.67c.93-1.72.65-4.54-.48-6.13c-.69-.96-2.54-2.49-3.35-3.35L113.1 88.5c4.2-1.73 8.14.86 8.77 4.01c.7 3.56-3.84 6.47-6.28 7.47"/><path fill="#01579b" d="m117.78 86.96l-45.27 20.2c-2.85 1.13-6.04.98-8.77-.4L5.9 77.38c-.56-.28-1.39-1.05-1.72-2.1c-.54-1.75.14-3.95 2.19-4.65l62.68 31.95l42.92-18.37z"/><path fill="#0091ea" d="m121.19 89.89l-4.93-1.79l-10.16.59l-33.58 14.99c-2.85 1.13-6.04.98-8.77-.4L5.9 73.91c-1.49-.76-1.17-2.97.47-3.28l41.69-18.65c1.19-.22 2.41-.09 3.52.38l59.49 28.36s9.45 6.47 10.12 9.17"/><path fill="#616161" d="M105.53 88.98s6.26-2.45 11.18-2.23s6.63 3.67 6.63 3.67c-.93-4.23-5.3-6.39-5.3-6.39l-65-32.73c-.45-.19-2.11-.58-4.66.47c-2.06.85-8.79 4-8.79 4z"/><path fill="#424242" d="M123.62 91.22c-.47-1.87-1.63-3.87-3.77-4.84c-2.82-1.27-6.84-.94-9.41.4l-4.91 2.18v3.46l6.21-2.76c6.04-2.69 8.72 1.34 8.95 2.29c.96 3.87-.9 6.11-6.39 8.63l-8.92 4.02v3.48l10.26-4.57c4.54-1.82 9.72-5.24 7.98-12.29"/><path fill="#01579b" d="M33.01 90.31L15.74 66.44l2.71-1.21l19.43 26.7zm22.15 11l-3.08-2.44l53.45-10.91v1.75l-7.49 2.84z"/><path fill="#f44336" d="M14.8 46.18L82.31 34.9l29.49 32.47c1.49 1.57.68 4.17-1.44 4.6l-69.7 14.3z"/><path fill="#c62828" d="M110.36 69.17L41.14 83.19l-.22 3.3l69.44-14.24c1.96-.41 2.78-2.65 1.71-4.23c-.38.56-.96 1-1.71 1.15m3.73 15.13c.73 1.16.07 2.69-1.27 2.96L49.1 100.18c-3.83.79-7.59-1.72-7.93-5.62c-.29-3.3 1.94-6.29 5.19-6.97l61.28-13.76z"/><path fill="#616161" d="M55.59 80.1L30.21 43.78l-14.48 3.83c-3.35 3.33-2.1 8.8-2.1 8.8S35.8 91.99 39.3 96.54s8.61 3.84 8.61 3.84l8.63-1.74l-.9-16.1z"/><path fill="#424242" d="M55.59 80.34L43.4 82.86c-3.33.75-3.93 3.88-3.93 3.88L10.04 44.57s-4.19 5.07-1.41 9.38L39.3 96.54c3.35 4.77 8.61 3.88 8.61 3.88l8.63-1.74l-.89-15.78z"/><path fill="#b9e4ea" d="M110.25 83c.31.68-.09 1.47-.82 1.62L48.5 97.12c-3.83.79-6.54-1.75-6.4-5.21c.18-4.37 2.63-6.22 5.87-6.89l61.23-12.51s-2.08 2.34-.49 6.72c.54 1.51 1.12 2.85 1.54 3.77"/><path fill="none" stroke="#424242" stroke-miterlimit="10" stroke-width="2.071" d="M45.21 83.7L19.1 46.76"/><path fill="#424242" d="M47.26 67.95L13.68 51.03l-1.36 2.68l38.8 19.77z"/><path fill="#c62828" d="m108.79 64.03l-2.46-2.7L68.5 78.69L47.26 68.18l3.62 5.18l14.07 7.19l10.48-1.61z"/><path fill="#3e8938" d="M118.02 57.35L72.29 78.03c-2.82 1.33-5.76 1.2-8.46-.36L6.09 48.35c-1.65-1.06-2.14-2.61-2.04-3.69s.35-2.25 3.25-3.09l2.71-1l59.32 29.11l48.17-19.93z"/><path fill="#f5f5f5" d="M71.73 74.72a7.95 7.95 0 0 1-7.26-.26L8.1 46.06c-.8-.44-1.04-1.45-.56-2.23c1.24-2.05 3.52-8.53-.24-13.91l62.24 31.66z"/><path fill="#94c6d6" d="M115.58 55.01L71.73 74.72c-1.45.63-4.34 1.75-7.67-.49c2.63.19 4.48-.9 5.43-2.67c.93-1.72.65-4.54-.48-6.13c-.69-.96-2.54-2.49-3.35-3.35l47.43-18.55c4.2-1.73 8.14.86 8.77 4.01c.7 3.56-3.84 6.47-6.28 7.47"/><path fill="#3e8938" d="m117.78 41.99l-45.27 20.2c-2.85 1.13-6.04.98-8.77-.4L5.89 32.41c-.6-.3-1.5-1.07-1.79-2.16c-.43-1.62.13-3.75 2.26-4.59l53.01-11.23z"/><path fill="#56b750" d="m121.18 44.92l-4.93-1.79l-10.16.59l-33.58 14.99c-2.85 1.13-6.04.98-8.77-.4L5.89 28.93c-1.49-.76-.96-2.77.47-3.28l41.7-18.64c1.19-.22 2.41-.09 3.52.38l59.49 28.36s9.44 6.46 10.11 9.17"/><path fill="#616161" d="M105.53 44s5.21-1.83 10.13-1.61s7.69 3.05 7.69 3.05c-1.01-4.52-5.3-6.39-5.3-6.39l-65-32.73c-.45-.19-2.11-.58-4.66.47c-2.06.85-8.79 4-8.79 4z"/><path fill="#424242" d="M111.48 41.86L44.97 8.31l2.2-.99l67.64 33.9z"/><path fill="#424242" d="M123.61 46.25c-.47-1.87-1.26-3.68-3.49-4.62c-2.85-1.2-5.45-1.45-9.69.18l-4.91 2.18v3.46l6.21-2.76c3.15-1.48 7.79-1.16 8.95 2.29c1.27 3.78-.9 6.11-6.39 8.63l-8.92 4.02v3.48l10.26-4.57c4.55-1.82 9.73-5.24 7.98-12.29"/></svg></span>Wordshelf</div>
     <div class="pick themepick" title="Theme">
     <select id="theme" aria-label="Theme">
-        <option value="auto">Automatic</option><option value="light">Light</option><option value="paper">Sepia</option>
-        <option value="dark">Dark</option><option value="black">Black</option>
+        <option value="auto">Automatic</option><option value="morning">Morning</option><option value="sunset">Sunset</option>
+        <option value="night">Night</option><option value="twilight">Twilight</option>
       </select></div>
-  </header>
+  </div>
 
   <section class="intro">
     <h1>Turn any vocabulary list into a study shelf</h1>
     <p>Upload a photo, screenshot or document. Every word gets a CEFR level, a definition, a translation, example sentences, and British and American pronunciation.</p>
     <div class="ladder" aria-label="CEFR levels from beginner to proficient"><span style="--lv:var(--a1)">A1</span><span style="--lv:var(--a2)">A2</span><span style="--lv:var(--b1)">B1</span><span style="--lv:var(--b2)">B2</span><span style="--lv:var(--c1)">C1</span><span style="--lv:var(--c2)">C2</span><em>beginner → proficient</em></div>
   </section>
+  </div>
+</header>
+<div class="wrap">
 
   <section class="panel capture" aria-label="Add words">
     <div class="panel-head">
@@ -476,7 +456,7 @@ footer p{margin:8px 0 0}
 
   <main id="shelf"></main>
 
-  <footer><span class="ver">Version 15 Oct · 13:05</span><details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details></footer>
+  <footer><span class="ver">Version 15 Oct · 13:40</span><details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details></footer>
 </div>
 
 <div id="printArea" aria-hidden="true"></div>
@@ -1440,16 +1420,37 @@ makeDropdown($("#modeSel"),{title:"Reading mode",item:(o,short)=>{const m=MODE_I
 makeDropdown($("#lang"),{title:"Translate words to",search:true,item:(o,short)=>short?`${esc(o.value?o.textContent:"No translation")}`:`<span><b>${esc(o.textContent)}</b>${o.title&&o.title.toLowerCase()!==o.textContent.toLowerCase()?`<span class="sub">${esc(o.title)}</span>`:""}</span>`});
 
 /* Theme: a "Theme" pill in the top bar with a list of themes, each with a soft gradient dot */
-const LIGHT_THEMES=["light","paper"];
+const LIGHT_THEMES=["morning","sunset","twilight"];
 // [background, card, accent] used to paint each theme's dot
 const THEME_COLORS={light:["#e9f1ff","#ffffff","#2350d8"],dark:["#0f1618","#24343a","#86a4ff"],paper:["#efe8dc","#fbf7f0","#9a3b1e"],ocean:["#081a2b","#1d4a6b","#4fd1c5"],
   forest:["#0f1a14","#24412f","#e2b44c"],contrast:["#000000","#333333","#ffe14d"],sakura:["#fff5f7","#ffd6e2","#e0457b"],mint:["#eefaf4","#c9f0dc","#12935f"],
   lavender:["#f5f2fd","#ddd2fb","#6d4fd8"],midnight:["#0d0b1f","#2a2357","#a78bfa"],coffee:["#1a1410","#4a3626","#d9a066"],sunset:["#1c1020","#5b2a4a","#ff8a5c"],nord:["#242933","#3b4555","#88c0d0"]};
-const DOT_BG={light:"#ffffff",paper:"#f1e7d6",dark:"#2a2a2f",black:"#000000"};
-function themeDot(t){
-  const bg=t==="auto"?"linear-gradient(135deg,#ffffff 0 45%,#2a2a2f 55% 100%)":DOT_BG[t]||"#fff";
-  return `<span class="tdot" style="background:${bg}"></span>`;
-}
+const SKY={auto:"linear-gradient(135deg,#8fbde6 0 48%,#15284a 52% 100%)",morning:"linear-gradient(180deg,#8fbde6,#fbf1d9)",
+  sunset:"linear-gradient(180deg,#6f97be,#e6a888)",night:"linear-gradient(180deg,#070f1d,#3a4a78)",twilight:"linear-gradient(180deg,#7d68b0,#e58aa6)"};
+function themeDot(t){ return `<span class="tdot" style="background:${SKY[t]||SKY.morning}"></span>` }
+
+/* Library silhouette: a back row of tall books and a front shelf of smaller ones (same drawing every visit) */
+(function drawShelves(){
+  let seed=11; const r=()=>(seed=(seed*9301+49297)%233280)/233280;
+  const out=[];
+  const book=(x,base,w,h,fill,band,lean)=>{
+    const y=base-h, tr=lean?` transform="rotate(${lean.toFixed(1)} ${(x+w).toFixed(1)} ${base})"`:"";
+    let g=`<g${tr}><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="1.8" fill="${fill}"/>`;
+    // two thin bands near the top and bottom of the spine make it read as a book
+    g+=`<rect x="${(x+1.5).toFixed(1)}" y="${(y+h*.14).toFixed(1)}" width="${(w-3).toFixed(1)}" height="1.6" fill="${band}"/><rect x="${(x+1.5).toFixed(1)}" y="${(y+h*.8).toFixed(1)}" width="${(w-3).toFixed(1)}" height="1.6" fill="${band}"/></g>`;
+    return g;
+  };
+  // back shelf (higher, lighter): plank at y=120
+  for(let x=-8;x<1450;){ const w=10+r()*12, h=44+r()*36, lean=r()<.06?-(10+r()*8):0;
+    out.push(book(x,120,w,h,"var(--shelf-far)","color-mix(in srgb,var(--sky-3) 35%,transparent)",lean)); x+=w+(lean?8:1+r()*1.5); if(r()<.04) x+=24+r()*30; }
+  out.push(`<rect x="0" y="120" width="1440" height="7" fill="var(--shelf-far)"/>`);
+  // front shelf: plank at y=190
+  for(let x=-6;x<1450;){ if(r()<.05){ x+=28+r()*36; continue }
+    const w=12+r()*14, h=38+r()*30, lean=r()<.08?12+r()*8:0;
+    out.push(book(x,190,w,h,"var(--shelf)","color-mix(in srgb,var(--sky-2) 30%,transparent)",lean)); x+=w+(lean?h*.32:1+r()*1.5); }
+  out.push(`<rect x="0" y="190" width="1440" height="10" fill="var(--shelf)"/>`);
+  $("#shelves").innerHTML=out.join("");
+})();
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
