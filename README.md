@@ -38,3 +38,7 @@ It's a single static file: open `index.html` in a browser, or serve the folder w
 - Example sentences from [Tatoeba](https://tatoeba.org) ([CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/)), the [Europarl corpus](https://www.statmt.org/europarl/) and [Project Gutenberg](https://www.gutenberg.org) public-domain books.
 - Documents are read in the browser with [pdf.js](https://mozilla.github.io/pdf.js/), [mammoth.js](https://github.com/mwilliamson/mammoth.js) and [SheetJS](https://sheetjs.com) (including its compound-file reader for .doc) and [JSZip](https://stuk.github.io/jszip/).
 - Text recognition by [Tesseract.js](https://github.com/naptha/tesseract.js).
+
+---
+
+Created by Nuramatova Sakinat Ibnuabasovna. © 2026 Wordshelf. All rights reserved.
