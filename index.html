@@ -84,14 +84,18 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
   radial-gradient(1px 1px at 36% 40%,#fff 50%,transparent 51%),radial-gradient(1.3px 1.3px at 47% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 55% 52%,#fff 50%,transparent 51%),
   radial-gradient(1.5px 1.5px at 63% 28%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 71% 9%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 79% 46%,#fff 50%,transparent 51%),
   radial-gradient(1.6px 1.6px at 88% 20%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 94% 60%,#fff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 4% 70%,#fff 50%,transparent 51%)}
-.orb{position:absolute;z-index:0;right:max(8%,calc(50% - 470px));top:calc(var(--orb-top) + 40px);width:64px;height:64px;border-radius:50%;background:var(--orb);box-shadow:0 0 70px 26px var(--glow);transition:top .6s,background .4s,box-shadow .4s}
+.orb{position:absolute;z-index:0;right:max(8%,calc(50% - 470px));bottom:18px;width:64px;height:64px;border-radius:50%;background:var(--orb);box-shadow:0 0 70px 26px var(--glow);transition:background .4s,box-shadow .4s;
+  animation:rise 18s ease-in-out infinite alternate}
+@keyframes rise{0%{transform:translateY(34px)}100%{transform:translateY(-120px)}}
+@keyframes rise-sm{0%{transform:translateY(30px)}100%{transform:translateY(-70px)}}
+@media (prefers-reduced-motion:reduce){.orb{animation:none;transform:translateY(-70px)}}
 .shelves{position:absolute;left:0;right:0;bottom:0;width:100%;height:96px;z-index:1}
 .scene .brand,.scene .intro h1{color:var(--on-sky)}
 .scene .intro p,.scene .ladder em{color:color-mix(in srgb,var(--on-sky) 82%,transparent)}
 .scene .ladder span{background:color-mix(in srgb,var(--surface) 70%,transparent);color:var(--lv)}
 .scene .pick{background:color-mix(in srgb,var(--surface) 72%,transparent);border-color:color-mix(in srgb,var(--on-sky) 25%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .wrap{position:relative;z-index:3;margin-top:-12px}
-@media (max-width:640px){.scene-inner{padding-bottom:96px}.shelves{height:80px}.orb{width:40px;height:40px;right:44px;top:auto;bottom:44px}}
+@media (max-width:640px){.scene-inner{padding-bottom:96px}.shelves{height:80px}.orb{width:44px;height:44px;right:40px;bottom:10px;animation-name:rise-sm}}
 
 /* app bar + intro */
 .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px 2px}
@@ -480,7 +484,7 @@ footer p{margin:8px 0 0}
     <div class="credit-sig">Nuramatova Sakinat Ibnuabasovna</div>
     <div class="credit-note">© 2026 Wordshelf · All rights reserved · Not affiliated with Cambridge English or the Council of Europe</div>
     <details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details>
-    <span class="ver">Version 15 Oct · 14:35</span>
+    <span class="ver">Version 15 Oct · 14:50</span>
   </footer>
 </div>
 
@@ -1455,7 +1459,7 @@ const SKY={auto:"linear-gradient(135deg,#8fbde6 0 48%,#15284a 52% 100%)",morning
 function themeDot(t){ return `<span class="tdot" style="background:${SKY[t]||SKY.morning}"></span>` }
 
 /* Library silhouette: a back row of tall books and a front shelf of smaller ones (same drawing every visit) */
-(function drawShelves(){
+function drawShelves(gap){
   let seed=11; const r=()=>(seed=(seed*9301+49297)%233280)/233280;
   const out=[];
   const book=(x,base,w,h,fill,band,lean)=>{
@@ -1467,6 +1471,7 @@ function themeDot(t){ return `<span class="tdot" style="background:${SKY[t]||SKY
   };
   // front shelf: plank at y=190, packed with books, now and then a small stack lying flat
   for(let x=-6;x<1450;){
+    if(gap&&x+20>gap[0]&&x<gap[1]){ x=gap[1]; continue }   // leave a window for the sun or moon
     if(r()<.05){                                            // a stack of 4–6 books lying flat
       const n=4+Math.floor(r()*3), sw=36+r()*20; let y=190;
       for(let k=0;k<n;k++){ const bh=7+r()*3, bw=sw-r()*8, bx=x+(sw-bw)/2+(r()-.5)*4;
@@ -1479,7 +1484,17 @@ function themeDot(t){ return `<span class="tdot" style="background:${SKY[t]||SKY
   }
   out.push(`<rect x="0" y="190" width="1440" height="10" fill="var(--shelf)"/>`);
   $("#shelves").innerHTML=out.join("");
-})();
+}
+// The sun or moon rises in a gap in the books: find where it sits and redraw the shelf around it
+function placeShelfGap(){
+  const svg=$("#shelves"), orb=document.querySelector(".orb");
+  const sr=svg.getBoundingClientRect(), or=orb.getBoundingClientRect();
+  const scale=Math.max(sr.width/1440, sr.height/90), off=(sr.width-1440*scale)/2;   // preserveAspectRatio slice
+  const cx=(or.left+or.width/2-sr.left-off)/scale, half=(or.width/2+14)/scale;
+  drawShelves([cx-half,cx+half]);
+}
+placeShelfGap();
+let gapTimer; addEventListener("resize",()=>{clearTimeout(gapTimer);gapTimer=setTimeout(placeShelfGap,150)});
 /* Themes */
 const THEME_KEY="wordshelf.theme";
 function applyTheme(t){
