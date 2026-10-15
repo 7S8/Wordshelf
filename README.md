@@ -12,7 +12,8 @@ Upload a photo or screenshot of your English vocabulary list (handwriting works)
 |---|---|---|---|
 | **Gemini** (default) | Free key from [Google AI Studio](https://aistudio.google.com/apikey), no card | Yes | 2 for every word |
 | **Qwen** | Free key from [OpenRouter](https://openrouter.ai/settings/keys); free models have daily limits | Yes | 2 for every word |
-| **Claude** | Paid Anthropic API key from [console.anthropic.com](https://console.anthropic.com/settings/keys) | Yes, most accurate | 2 for every word |
+| **Claude account** | Your claude.ai account, no key: opens [Wordshelf on claude.ai](https://claude.ai/artifact/Jh8aBwWKWLGvDPcpPvPz4N), which runs on the visitor's own Claude plan | Yes | 2 for every word |
+| **Claude API** | Paid Anthropic API key from [console.anthropic.com](https://console.anthropic.com/settings/keys) | Yes, most accurate | 2 for every word |
 | **Basic** | No key at all | No, typed or printed text only | Only when the built-in dictionary has one |
 
 Keys are stored only in your browser and sent only to that provider. The page picks the newest suitable model automatically (Gemini Flash, or the largest free Qwen vision model on OpenRouter).

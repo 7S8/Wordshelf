@@ -112,6 +112,9 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .keyrow{display:flex;flex-wrap:wrap;gap:8px}
 .keyrow input{flex:1 1 260px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
 .keybox p,.keyhelp{margin:0;font-size:14px;color:var(--muted)}
+.accountbox{display:grid;gap:10px;justify-items:start;border-top:1px solid var(--line);padding-top:14px}
+.accountbox p{margin:0;font-size:15px}
+.accountbox a.btn{text-decoration:none}
 .keyhelp ol{margin:4px 0 0;padding-left:20px;display:grid;gap:2px}
 .mode{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .mode .lbl{font-size:14px;color:var(--muted);margin-right:4px}
@@ -144,7 +147,8 @@ footer{color:var(--muted);font-size:13px}
       <div class="seg" role="group" aria-label="Reading mode">
         <button type="button" data-mode="gemini" aria-pressed="true">Gemini · free</button>
         <button type="button" data-mode="qwen" aria-pressed="false">Qwen · free</button>
-        <button type="button" data-mode="claude" aria-pressed="false">Claude</button>
+        <button type="button" data-mode="account" aria-pressed="false">Claude account</button>
+        <button type="button" data-mode="claude" aria-pressed="false">Claude API</button>
         <button type="button" data-mode="free" aria-pressed="false">Basic · no key</button>
       </div>
       <p class="mode-help" id="modeHelp"></p>
@@ -169,6 +173,10 @@ footer{color:var(--muted);font-size:13px}
       <small>Fix spelling mistakes, delete anything that isn't vocabulary, and add missing words. One word or phrase per line.</small>
       <textarea id="reviewText" spellcheck="true"></textarea>
       <div class="row"><button class="btn primary" id="reviewGo" type="button">Look up these words</button><button class="btn" id="reviewCancel" type="button">Cancel</button></div>
+    </div>
+    <div class="accountbox" id="accountBox" hidden>
+      <p>Use Wordshelf inside claude.ai with your own Claude account. No API key needed: sign in to Claude (or create an account), then upload your screenshot there. It counts toward your Claude plan's usage.</p>
+      <a class="btn primary" href="https://claude.ai/artifact/Jh8aBwWKWLGvDPcpPvPz4N" target="_blank" rel="noopener">Open Wordshelf on claude.ai</a>
     </div>
     <details class="keybox" id="keybox">
       <summary id="keySummary">API key</summary>
@@ -337,6 +345,7 @@ async function prepImage(file){
 }
 
 async function ask(prompt,images,label){
+  if(mode==="account"){setStatus("With a Claude account, scanning happens on claude.ai. Use the Open Wordshelf on claude.ai button below.",true);return null}
   const key=getKey();
   if(!key){$("#keybox").open=true;$("#apiKey").focus();setStatus(`Add your ${PROVIDERS[mode].keyName} below first. It's free for Gemini and Qwen.`,true);return null}
   setStatus(spin(label));
@@ -604,13 +613,15 @@ var mode=(()=>{try{return localStorage.getItem(MODE_KEY)}catch{return null}})()|
 function setMode(m){
   mode=m; try{localStorage.setItem(MODE_KEY,m)}catch{}
   document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
-  $("#keybox").hidden=m==="free";
+  $("#keybox").hidden=m==="free"||m==="account";
+  $("#accountBox").hidden=m!=="account";
   $("#modeHelp").textContent={
     gemini:"Free with a Google key. Reads handwriting, phrases and translations, and writes example sentences for every word.",
     qwen:"Free with an OpenRouter key. Reads handwriting and writes examples. Free Qwen models can be slow or busy.",
     claude:"Most accurate. Reads handwriting, phrases and translations. Needs an Anthropic API key (paid per use).",
+    account:"Have a Claude account (claude.ai) but no API key? Use the claude.ai version of Wordshelf, which runs on your account.",
     free:"No key needed, but basic: reads typed or printed text only (not handwriting), uses a built-in dictionary, and many words have no example sentence."}[m];
-  if(m!=="free") showKeyState();
+  if(PROVIDERS[m]) showKeyState();
 }
 document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)});
 
