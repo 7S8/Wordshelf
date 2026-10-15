@@ -1,10 +1,10 @@
 # Wordshelf
 
-Upload a photo or screenshot of your English vocabulary list (handwriting works). Wordshelf reads every word and sorts it by CEFR level (A1–C2), with:
+Upload a photo, screenshot, PDF, Word (.docx), Excel (.xlsx/.xls), CSV or text file of your English vocabulary list (handwriting works in the AI modes). Wordshelf reads every word and sorts it by CEFR level (A1–C2), with:
 
-- a simple definition, part of speech and pronunciation
+- a simple definition, part of speech, and British and American pronunciation (IPA plus UK/US read-aloud buttons)
 - two example sentences
-- links to YouTube clips where people say the word (via YouGlish) and to YouTube lessons about it
+- links to YouTube clips of British and American speakers saying the word (via YouGlish) and to YouTube lessons about it
 
 ## Reading modes
 
@@ -18,7 +18,7 @@ Upload a photo or screenshot of your English vocabulary list (handwriting works)
 
 Keys are stored only in your browser and sent only to that provider. The page picks the newest suitable model automatically (Gemini Flash, or the largest free Qwen vision model on OpenRouter).
 
-**Basic mode** reads screenshots with Tesseract.js, takes the term before the dash on each line, keeps only real words, gets CEFR levels from the CEFR-J and Octanove word lists (estimating words that aren't listed), and uses a built-in copy of Open English WordNet for definitions.
+**Basic mode** reads screenshots with Tesseract.js, takes the term before the dash on each line, keeps only real words, gets CEFR levels from the CEFR-J and Octanove word lists (estimating words that aren't listed), and uses a built-in copy of Open English WordNet for definitions, with example sentences from Tatoeba, Europarl and Project Gutenberg (about 90% of A1–B2 words have one).
 
 Your word list is saved in your browser.
 
@@ -31,4 +31,6 @@ It's a single static file: open `index.html` in a browser, or serve the folder w
 - CEFR-J Wordlist Version 1.5, compiled by Yukio Tono, Tokyo University of Foreign Studies ([openlanguageprofiles/olp-en-cefrj](https://github.com/openlanguageprofiles/olp-en-cefrj)).
 - Octanove Vocabulary Profile C1/C2 1.0 by Octanove Labs, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). `cefr-words.json` combines both lists and is shared under the same license.
 - Definitions and examples from [Open English WordNet](https://en-word.net) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), based on Princeton WordNet ([WordNet License](https://wordnet.princeton.edu/license-and-commercial-use)). The files in `dict/` are derived from it. Word frequencies from [wordfreq](https://github.com/rspeer/wordfreq).
+- Example sentences from [Tatoeba](https://tatoeba.org) ([CC BY 2.0 FR](https://creativecommons.org/licenses/by/2.0/fr/)), the [Europarl corpus](https://www.statmt.org/europarl/) and [Project Gutenberg](https://www.gutenberg.org) public-domain books.
+- Documents are read in the browser with [pdf.js](https://mozilla.github.io/pdf.js/), [mammoth.js](https://github.com/mwilliamson/mammoth.js) and [SheetJS](https://sheetjs.com).
 - Text recognition by [Tesseract.js](https://github.com/naptha/tesseract.js).

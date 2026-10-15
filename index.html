@@ -53,6 +53,9 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .thumbs{display:flex;flex-wrap:wrap;gap:10px}
 .thumb{position:relative;width:96px;height:96px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .doc{width:100%;height:100%;display:grid;place-content:center;gap:4px;text-align:center;background:var(--sunk);padding:6px}
+.thumb .doc b{font-family:var(--mono);font-size:13px;color:var(--accent)}
+.thumb .doc span{font-size:11px;color:var(--muted);overflow-wrap:anywhere;line-height:1.2;max-height:3.6em;overflow:hidden}
 .thumb button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;line-height:1}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .btn{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:700}
@@ -91,6 +94,10 @@ header.top p{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .meta{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
 .icon-btn{margin-left:auto;flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center}
 .icon-btn:hover{border-color:var(--ink)}
+.say{margin-left:auto;flex:none;display:flex;gap:4px}
+.say-btn{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:500}
+.say-btn:hover{border-color:var(--ink)}
+.say-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .icon-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .def{margin:0}
 .note{font-size:14px;color:var(--muted)}
@@ -154,10 +161,10 @@ footer{color:var(--muted);font-size:13px}
       <p class="mode-help" id="modeHelp"></p>
     </div>
     <label class="drop" id="drop" for="file">
-      <strong>Drop your vocabulary screenshot here</strong>
-      <small>or click to choose photos · you can also paste an image with Ctrl/⌘+V</small>
+      <strong>Drop your vocabulary list here</strong>
+      <small>photos, screenshots, PDF, Word (.docx), Excel (.xlsx, .xls), CSV or text files · click to choose, or paste an image with Ctrl/⌘+V</small>
     </label>
-    <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+    <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.pdf,.docx,.xlsx,.xls,.csv,.txt,text/plain,text/csv" multiple hidden>
     <div class="thumbs" id="thumbs"></div>
     <div class="row">
       <button class="btn primary" id="recognize" disabled>Recognize words</button>
@@ -202,7 +209,7 @@ footer{color:var(--muted);font-size:13px}
 
   <main id="shelf" style="display:grid;gap:32px"></main>
 
-  <footer>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions and examples from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
+  <footer>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl and Project Gutenberg, and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</footer>
 </div>
 
 <script>
@@ -257,13 +264,14 @@ function card(w,i){
   const exs=(w.examples||[]).map(e=>`<li>${highlight(e,w.word)}</li>`).join("");
   return `<article class="card" style="--lv:var(${lv.v})">
     <div class="card-top"><div style="min-width:0"><h3>${esc(w.word)}</h3>
-      <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${esc(w.ipa)}</span>`:""}${w.est?`<span title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`:""}</div></div>
-      <button class="icon-btn" data-say="${i}" aria-label="Pronounce ${esc(w.word)}" title="Pronounce">${speakIcon}</button></div>
+      <div class="meta">${w.pos?`<span>${esc(w.pos)}</span>`:""}${w.ipa?`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`:""}${w.ipaUs?`<span>US ${esc(w.ipaUs)}</span>`:""}${w.est?`<span title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`:""}</div></div>
+      <div class="say"><button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button></div></div>
     ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
     ${w.note?`<div class="note">From your list: <b>${esc(w.note)}</b></div>`:""}
     ${exs?`<ul class="ex">${exs}</ul>`:""}
     <div class="links">
-      <a href="https://youglish.com/pronounce/${q}/english" target="_blank" rel="noopener">${ytIcon}Hear it in YouTube clips</a>
+      <a href="https://youglish.com/pronounce/${q}/english/uk" target="_blank" rel="noopener">${ytIcon}British clips</a>
+      <a href="https://youglish.com/pronounce/${q}/english/us" target="_blank" rel="noopener">${ytIcon}American clips</a>
       <a href="https://www.youtube.com/results?search_query=${encodeURIComponent('"'+w.word+'" meaning example sentences')}" target="_blank" rel="noopener">${searchIcon}YouTube lessons</a>
       <a href="https://tatoeba.org/en/sentences/search?from=eng&query=${encodeURIComponent('="'+w.word+'"')}" target="_blank" rel="noopener">More sentences</a>
       <button class="del" data-del="${i}" aria-label="Remove ${esc(w.word)}">Remove</button>
@@ -292,7 +300,7 @@ const spin=t=>`<span class="spin" aria-hidden="true"></span>${esc(t)}`;
 
 function addWords(items){
   const clean=(Array.isArray(items)?items:[]).filter(x=>x&&typeof x.word==="string"&&x.word.trim()).map(x=>({
-    word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),
+    word:x.word.trim(),pos:String(x.pos||""),ipa:String(x.ipa||""),ipaUs:String(x.ipa_us||x.ipaUs||""),
     level:LEVELS.some(l=>l.id===String(x.level).toUpperCase())?String(x.level).toUpperCase():"",
     est:!!x.est,suggest:String(x.suggest||""),definition:String(x.definition||""),examples:(Array.isArray(x.examples)?x.examples:[]).map(String).slice(0,3),note:String(x.note||"")}));
   let base=words.filter(w=>!w.example);
@@ -311,13 +319,14 @@ For each English word or phrase, return:
 - "word": the word or phrase in English, spelling corrected if clearly misspelled (keep phrasal verbs and idioms whole)
 - "pos": part of speech (noun, verb, adjective, adverb, phrasal verb, idiom, ...)
 - "ipa": British IPA in slashes
+- "ipa_us": American IPA in slashes
 - "level": CEFR level A1, A2, B1, B2, C1 or C2, judged by the English Vocabulary Profile / Oxford 3000-5000 style lists for the word's most common meaning
 - "definition": a simple learner-friendly definition, one sentence, using words easier than the word itself
 - "examples": exactly 2 natural, everyday example sentences that use the word (different contexts)
 - "note": any translation or note written next to the word in the source, copied as written; "" if none
 Return them all in the "items" array.`;
 const JSON_SHAPE=`Reply with only JSON, no other text, in this shape:
-{"items":[{"word":"borrow","pos":"verb","ipa":"/ˈbɒr.əʊ/","level":"A2","definition":"To take something and give it back later.","examples":["Can I borrow your pen?","She borrowed a book from the library."],"note":""}]}`;
+{"items":[{"word":"borrow","pos":"verb","ipa":"/ˈbɒr.əʊ/","ipa_us":"/ˈbɑːr.oʊ/","level":"A2","definition":"To take something and give it back later.","examples":["Can I borrow your pen?","She borrowed a book from the library."],"note":""}]}`;
 // Pull a JSON object out of a reply that may have extra text or a code fence around it
 function parseJSONReply(text){
   try{return JSON.parse(text)}catch{}
@@ -327,8 +336,8 @@ function parseJSONReply(text){
 }
 
 const SCHEMA={type:"object",additionalProperties:false,required:["items"],properties:{items:{type:"array",items:{
-  type:"object",additionalProperties:false,required:["word","pos","ipa","level","definition","examples","note"],
-  properties:{word:{type:"string"},pos:{type:"string"},ipa:{type:"string"},level:{type:"string",enum:["A1","A2","B1","B2","C1","C2"]},
+  type:"object",additionalProperties:false,required:["word","pos","ipa","ipa_us","level","definition","examples","note"],
+  properties:{word:{type:"string"},pos:{type:"string"},ipa:{type:"string"},ipa_us:{type:"string"},level:{type:"string",enum:["A1","A2","B1","B2","C1","C2"]},
     definition:{type:"string"},examples:{type:"array",items:{type:"string"}},note:{type:"string"}}}}}};
 const toB64=f=>new Promise((ok,bad)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=bad;r.readAsDataURL(f)});
 // Shrink big photos before sending: keeps requests small and fast
@@ -546,10 +555,12 @@ async function lookupOne(map,w){
       level=hardest([...parts.map(p=>p.level),phrasal?"B1":"B2"]);est=true}
   }
   const item={word:w,level,est,pos:e?.pos||(w.includes(" ")?"phrase":""),ipa:e?.ipa||"",
-    definition:e?.definition?e.definition.trim().replace(/^./,c=>c.toUpperCase()).replace(/([^.!?])$/,"$1."):"",examples:e?.examples||[],note:""};
+    definition:e?.definition?e.definition.trim().replace(/^./,c=>c.toUpperCase()).replace(/([^.!?])$/,"$1."):"",examples:usesWord(e?.examples||[],e?.form||w),note:""};
   if(!e) item.suggest=await closestWord(w);
   return item;
 }
+// keep only sentences that actually contain the word
+const usesWord=(exs,w)=>exs.filter(x=>highlight(x,w)!==esc(x));
 async function freeLookup(list){
   list=[...new Set(list.map(w=>w.trim().toLowerCase().replace(/\s+/g," ")).filter(Boolean))].slice(0,200);
   if(!list.length) return null;
@@ -577,6 +588,7 @@ function extractTerms(text){
     while(ws.length&&STOP.has(ws[ws.length-1])) ws.pop();
     if(!ws.length||ws.length>3) continue;
     const t=ws.join(" "); if(t.length<2||seen.has(t)) continue;
+    if(/^(words?|terms?|meanings?|definitions?|translations?|examples?|vocabulary|vocab|page|unit|lesson|topic|english)( (list|page|words?|\d+))?$/.test(t)) continue;
     seen.add(t); out.push(t);
   }
   return out;
@@ -652,16 +664,79 @@ $("#reviewGo").addEventListener("click",async()=>{
   setStatus(`Added ${total} word${total>1?"s":""}${added<total?` (${total-added} were already on your shelf)`:""}.`);
 });
 
+/* Documents: PDF (pdf.js), Word .docx (mammoth), Excel/CSV (SheetJS), plain text. Libraries load only when needed */
+const libs={};
+function loadScript(src){return libs[src]||=new Promise((ok,bad)=>{const sc=document.createElement("script");sc.src=src;sc.onload=ok;sc.onerror=()=>{delete libs[src];bad(new Error("load"))};document.head.append(sc)})}
+const PDFJS="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+async function pdfToContent(file){
+  await loadScript(PDFJS+"pdf.min.js");
+  pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+"pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  let text="", images=[];
+  for(let n=1;n<=Math.min(pdf.numPages,30);n++){
+    const page=await pdf.getPage(n);
+    const tc=await page.getTextContent();
+    // rebuild lines from text positions so "word – meaning" rows stay together
+    let lastY=null, line="";
+    for(const it of tc.items){ const y=Math.round(it.transform[5]); if(lastY!==null&&Math.abs(y-lastY)>2){text+=line+"\n";line=""} line+=it.str+(it.hasEOL?"\n":""); lastY=y }
+    text+=line+"\n";
+    if(tc.items.map(i=>i.str).join("").trim().length<20&&images.length<6){
+      // scanned page with no text layer: turn it into an image to read
+      const vp=page.getViewport({scale:Math.min(2,1600/page.getViewport({scale:1}).width)});
+      const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;
+      await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+      images.push(await new Promise(r=>c.toBlob(r,"image/jpeg",0.9)));
+    }
+  }
+  return {text,images};
+}
+async function docToContent(p){
+  const f=p.file, ext=p.doc;
+  if(ext==="pdf") return pdfToContent(f);
+  if(ext==="txt") return {text:await f.text(),images:[]};
+  if(ext==="docx"){
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js");
+    const r=await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()});
+    return {text:r.value,images:[]};
+  }
+  // xlsx, xls, csv: each row becomes "cell - cell - cell"
+  await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+  const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});
+  let text="";
+  for(const name of wb.SheetNames){
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,blankrows:false,defval:""});
+    text+=rows.map(r=>r.map(c=>String(c).trim()).filter(Boolean).join(" - ")).filter(Boolean).join("\n")+"\n";
+  }
+  return {text,images:[]};
+}
+// Turn a batch of uploads into {text, images}; documents are read in the browser
+async function readUploads(batch){
+  let text="", images=batch.filter(p=>p.url).map(p=>p.file);
+  for(const p of batch.filter(p=>p.doc)){
+    setStatus(spin(`Opening ${p.file.name}…`));
+    try{ const c=await docToContent(p); text+=c.text+"\n"; images.push(...c.images) }
+    catch{ setStatus(`Couldn't open ${p.file.name}. Check that it isn't password-protected or damaged.`,true); return null }
+  }
+  return {text:text.trim(),images};
+}
+
 /* Images */
+const DOC_EXT=/\.(pdf|docx|xlsx|xls|csv|txt)$/i;
 function addFiles(list){
-  if(mode==="free") getOcrWorker(()=>{}).catch(()=>{ocrWorker=null});
-  for(const f of list){ if(!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) continue; pending.push({file:f,url:URL.createObjectURL(f)}) }
+  let skipped=[];
+  for(const f of list){
+    if(/^image\/(jpeg|png|webp|gif)$/.test(f.type)) pending.push({file:f,url:URL.createObjectURL(f)});
+    else if(DOC_EXT.test(f.name)) pending.push({file:f,doc:f.name.split(".").pop().toLowerCase()});
+    else skipped.push(f.name);
+  }
+  if(mode==="free"&&pending.some(p=>p.url)) getOcrWorker(()=>{}).catch(()=>{ocrWorker=null});
   drawThumbs();
+  if(skipped.length) setStatus(`Can't read ${skipped.join(", ")}. Use a photo, PDF, Word (.docx), Excel, CSV or text file. Old .doc files: save them as .docx first.`,true);
 }
 function drawThumbs(){
-  $("#thumbs").innerHTML=pending.map((p,i)=>`<div class="thumb"><img src="${p.url}" alt="Uploaded page ${i+1}"><button data-rm="${i}" aria-label="Remove image ${i+1}">×</button></div>`).join("");
+  $("#thumbs").innerHTML=pending.map((p,i)=>`<div class="thumb">${p.url?`<img src="${p.url}" alt="Uploaded image ${i+1}">`:`<div class="doc"><b>${esc(p.doc.toUpperCase())}</b><span>${esc(p.file.name)}</span></div>`}<button data-rm="${i}" aria-label="Remove file ${i+1}">×</button></div>`).join("");
   $("#recognize").disabled=!pending.length;
-  $("#recognize").textContent=pending.length>1?`Recognize words in ${pending.length} images`:"Recognize words";
+  $("#recognize").textContent=pending.length>1?`Recognize words in ${pending.length} files`:"Recognize words";
   if(pending.length) setStatus("Ready. Press the button to read the words.");
 }
 $("#file").addEventListener("change",e=>{addFiles(e.target.files);e.target.value=""});
@@ -670,29 +745,35 @@ const drop=$("#drop");
 ["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
 drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
 document.addEventListener("paste",e=>{const fs=[...(e.clipboardData?.files||[])];if(fs.length){e.preventDefault();addFiles(fs)}});
-$("#thumbs").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i==null)return;URL.revokeObjectURL(pending[i].url);pending.splice(+i,1);drawThumbs()});
+$("#thumbs").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i==null)return;if(pending[i].url)URL.revokeObjectURL(pending[i].url);pending.splice(+i,1);drawThumbs()});
 
 $("#recognize").addEventListener("click",async()=>{
   const btn=$("#recognize"); btn.disabled=true;
   const batch=pending.slice(0,10);
+  const up=await readUploads(batch);
+  if(!up){btn.disabled=false;return}
+  if(!up.text&&!up.images.length){btn.disabled=false;setStatus("These files look empty. Check them and try again.",true);return}
   if(mode==="free"){
-    const ocr=await ocrImages(batch.map(p=>p.file));
-    if(!ocr){btn.disabled=false;return}
+    let ocr={text:"",confidence:100};
+    if(up.images.length){ ocr=await ocrImages(up.images); if(!ocr){btn.disabled=false;return} }
     setStatus(spin("Checking the words against the dictionary…"));
-    const cands=extractTerms(ocr.text), list=await keepRealWords(cands);
+    const cands=extractTerms(up.text+"\n"+ocr.text), list=await keepRealWords(cands);
     btn.disabled=false;
-    const poor=ocr.confidence<60||list.length<cands.length/2;
-    if(!list.length){setStatus("Free mode couldn't read any words in this image. If it's handwritten, type the words in the box above or switch to Gemini (free), which reads handwriting.",true);return}
-    batch.forEach(p=>URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
+    const poor=up.images.length>0&&(ocr.confidence<60||list.length<cands.length/2);
+    if(!list.length){setStatus("Basic mode couldn't find any words here. If it's handwritten, type the words in the box above or switch to Gemini (free), which reads handwriting.",true);return}
+    batch.forEach(p=>p.url&&URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
     showReview(list,poor); return;
   }
-  const res=await ask(`The attached image${batch.length>1?"s are photos or screenshots":" is a photo or screenshot"} of a learner's English vocabulary list. It may be handwritten, messy, rotated, or mixed with another language. Read EVERY English word or phrase on it (skip numbers, dates and headings that are not vocabulary).\n\n`+RULES,
-    batch.map(p=>p.file),"Reading your list… this takes about 20–60 seconds.");
+  const parts=[];
+  if(up.images.length) parts.push(`The attached image${up.images.length>1?"s are photos, screenshots or scanned pages":" is a photo, screenshot or scanned page"} of a learner's English vocabulary list. It may be handwritten, messy, rotated, or mixed with another language.`);
+  if(up.text) parts.push(`Text from the learner's vocabulary document${up.images.length?" (read it together with the images)":""}. It may be a "word - meaning" list, a table with columns, or mixed with another language:\n"""\n${up.text.slice(0,40000)}\n"""`);
+  const res=await ask(parts.join("\n\n")+`\n\nFind EVERY English vocabulary word or phrase the learner is studying (skip numbers, dates, headings and the meanings themselves).\n\n`+RULES,
+    up.images,"Reading your list… this takes about 20–60 seconds.");
   btn.disabled=false;
   if(!res) return;
   const {added,total}=addWords(res.items||res);
   if(!total){setStatus("No English words were found in that image. Try a clearer or closer photo.",true);return}
-  batch.forEach(p=>URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
+  batch.forEach(p=>p.url&&URL.revokeObjectURL(p.url)); pending=pending.slice(batch.length); drawThumbs();
   setStatus(`Found ${total} word${total>1?"s":""}${added<total?` (${total-added} already on your shelf, updated)`:""}.`);
 });
 
@@ -724,12 +805,28 @@ setMode(mode);
 $("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);geminiModel=null;showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
 $("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatus("Key removed from this browser.")});
 
+/* Pronunciation: pick a voice for the accent (en-GB or en-US), preferring natural-sounding ones */
+function pickVoice(lang){
+  const vs=speechSynthesis.getVoices().filter(v=>v.lang.replace("_","-").toLowerCase()===lang.toLowerCase());
+  const rank=v=>(/natural|neural|online|premium|enhanced/i.test(v.name)?0:/google/i.test(v.name)?1:2);
+  return vs.sort((a,b)=>rank(a)-rank(b))[0]||null;
+}
+function speak(text,lang){
+  try{
+    const u=new SpeechSynthesisUtterance(text); u.lang=lang; u.rate=0.9;
+    const v=pickVoice(lang); if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+    if(!v&&speechSynthesis.getVoices().length) setStatus(`Your device has no ${lang==="en-GB"?"British":"American"} voice installed, so it used a default voice. The YouTube clip links have real ${lang==="en-GB"?"British":"American"} speakers.`);
+  }catch{ setStatus("This browser can't speak words aloud. Use the YouTube clip links instead.",true) }
+}
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch{}
+
 /* Shelf interactions */
 $("#chips").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filter=b.dataset.f;render()});
 $("#search").addEventListener("input",e=>{query=e.target.value;render()});
 $("#shelf").addEventListener("click",e=>{
   const s=e.target.closest("[data-say]");
-  if(s){try{const u=new SpeechSynthesisUtterance(words[s.dataset.say].word);u.lang="en-GB";speechSynthesis.cancel();speechSynthesis.speak(u)}catch{} return}
+  if(s){speak(words[s.dataset.say].word,s.dataset.accent||"en-GB");return}
   const fx=e.target.closest("[data-fix]");
   if(fx){const old=words[fx.dataset.fix];words.splice(+fx.dataset.fix,1);store.set(words);render();
     $("#manual").value=old.suggest;$("#manualForm").requestSubmit();return}
@@ -749,6 +846,16 @@ $("#clearWrap").addEventListener("click",e=>{
 
 render();
 setTimeout(()=>loadCefr().catch(()=>{}),300);
+// Fill in example sentences for saved words that don't have any yet
+(async()=>{
+  let changed=false;
+  for(const w of words.filter(x=>!x.example&&!(x.examples||[]).length)){
+    const e=await dictEntry(w.word.toLowerCase()).catch(()=>null);
+    const exs=e?usesWord(e.examples,e.form):[];
+    if(exs.length){w.examples=exs;changed=true}
+  }
+  if(changed){store.set(words);render()}
+})();
 </script>
 </body>
 </html>
