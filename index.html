@@ -204,7 +204,7 @@ footer{color:var(--muted);font-size:13px}
   <div class="fill" id="fillBar" hidden>
     <span id="fillText"></span>
     <button class="btn small primary" id="fillGo" type="button">Write missing sentences</button>
-    <span id="fillConfirm" hidden>Download a small AI model (Qwen, about 500 MB, only once) to write sentences on this device?
+    <span id="fillConfirm" hidden>To write them without a key, download a small AI model (Qwen, about 500 MB, only once). After that, sentences are written automatically.
       <button class="btn small primary" id="fillYes" type="button">Download and write</button>
       <button class="btn small" id="fillNo" type="button">Cancel</button></span>
   </div>
@@ -325,6 +325,7 @@ function addWords(items){
     if(at>=0) base[at]={...base[at],...w,note:w.note||base[at].note}; else {base.push(w);added++}
   }
   words=base; store.set(words); filter="all"; render();
+  setTimeout(autoFill,0);
   return {added,total:clean.length};
 }
 
@@ -848,14 +849,15 @@ async function loadLocalModel(){
   const T=await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2");
   const gpu=!!navigator.gpu;
   const files={};
-  localGen=await T.pipeline("text-generation","onnx-community/Qwen2.5-0.5B-Instruct",{
+  const gen=await T.pipeline("text-generation","onnx-community/Qwen2.5-0.5B-Instruct",{
     device:gpu?"webgpu":"wasm",dtype:gpu?"q4f16":"q4",
     progress_callback:p=>{
       if(p.status==="progress"&&p.total){files[p.file]=[p.loaded,p.total];
         const [l,t]=Object.values(files).reduce((a,[x,y])=>[a[0]+x,a[1]+y],[0,0]);
         setStatus(spin(`Downloading the sentence model… ${Math.round(l/1e6)} of ${Math.round(t/1e6)} MB (only the first time)`))}
     }});
-  return localGen;
+  try{localStorage.setItem("wordshelf.localModel","1")}catch{}
+  return localGen=gen;
 }
 async function fillLocally(list){
   let gen;
@@ -891,6 +893,14 @@ async function fillMissing(useLocal){
   }
   store.set(words); render();
   if(items) setStatus(n?`Added sentences for ${n} word${n===1?"":"s"}.`:"No sentences came back. Try again.",!n);
+}
+// Called whenever words are added: write sentences right away if that can happen without asking
+function autoFill(){
+  if(filling||!needSentences().length) return;
+  if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
+  let local=false; try{local=localStorage.getItem("wordshelf.localModel")==="1"}catch{}
+  if(local) return fillMissing(true);
+  $("#fillConfirm").hidden=false;   // first time without a key: ask once before the download
 }
 $("#fillGo").addEventListener("click",()=>{
   if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
@@ -949,6 +959,7 @@ setTimeout(()=>loadCefr().catch(()=>{}),300);
     if(exs.length){w.examples=exs;changed=true}
   }
   if(changed){store.set(words);render()}
+  autoFill();
 })();
 </script>
 </body>
