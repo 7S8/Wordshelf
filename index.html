@@ -26,7 +26,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<script>try{document.documentElement.dataset.wsTheme=localStorage.getItem("wordshelf.theme")||"auto"}catch{document.documentElement.dataset.wsTheme="auto"}</script>
+<script>try{document.documentElement.dataset.wsTheme=localStorage.getItem("wordshelf.theme")||"auto"}catch{document.documentElement.dataset.wsTheme="auto"}
+try{const u=localStorage.getItem("wordshelf.ui");if(u&&u!=="en"){const d=document.documentElement;d.lang=u;d.classList.add("i18n-wait");if(/^(ar|fa|ur|he|ps|sd|ug|yi)$/.test(u))d.dir="rtl";setTimeout(()=>d.classList.remove("i18n-wait"),2500)}}catch{}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Great+Vibes&display=swap">
@@ -168,6 +169,14 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .tdot{width:22px;height:22px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px rgba(127,127,127,.5)}
 .dd-btn .tdot{width:18px;height:18px}
 .themepick{padding-left:10px;flex:none}
+html.i18n-wait body{visibility:hidden}
+.appbar-picks{display:flex;gap:8px;align-items:center;flex:none}
+.uipick{padding-left:10px;flex:none}
+.uipick .dd-btn{flex:none;padding-right:10px;font-weight:600}
+.uipick .dd-btn .dd-val{display:inline-flex;align-items:center;gap:6px;overflow:visible;text-overflow:clip}
+.uipick .dd-btn svg.i{width:16px;height:16px}
+@media (max-width:640px){.appbar-picks{gap:6px}.uipick{padding-left:9px}.uipick .dd-btn{padding-right:9px}.uipick .dd-btn>svg{display:none}}
+@media (max-width:420px){.brand{font-size:23px;gap:9px}.brand .logo,.brand .logo svg{width:34px;height:34px}}
 .themepick .dd-btn{flex:none;padding-right:10px}
 .themepick .dd-btn .dd-val{overflow:visible;text-overflow:clip}
 .themepick .dd-btn{font-weight:600}
@@ -401,11 +410,14 @@ footer p{margin:8px 0 0}
   <div class="scene-inner">
   <div class="appbar">
     <div class="brand"><span class="logo" aria-hidden="true"><svg width="34" height="34" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#01579b" d="M118.03 102.32L72.29 123c-2.82 1.33-5.76 1.2-8.46-.36L6.09 93.32c-1.65-1.06-2.14-2.61-2.04-3.69s.35-2.25 3.25-3.09l4.28-1.58l57.92 31.57l41.16-16.82z"/><path fill="#f5f5f5" d="M71.74 119.69a7.95 7.95 0 0 1-7.26-.26L8.11 91.03c-.8-.44-1.04-1.45-.56-2.23c1.24-2.05 3.52-8.53-.24-13.91l63.66 30.65z"/><path fill="#94c6d6" d="m115.59 99.98l-43.85 19.71c-1.45.63-4.34 1.75-7.67-.49c2.63.19 4.48-.9 5.43-2.67c.93-1.72.65-4.54-.48-6.13c-.69-.96-2.54-2.49-3.35-3.35L113.1 88.5c4.2-1.73 8.14.86 8.77 4.01c.7 3.56-3.84 6.47-6.28 7.47"/><path fill="#01579b" d="m117.78 86.96l-45.27 20.2c-2.85 1.13-6.04.98-8.77-.4L5.9 77.38c-.56-.28-1.39-1.05-1.72-2.1c-.54-1.75.14-3.95 2.19-4.65l62.68 31.95l42.92-18.37z"/><path fill="#0091ea" d="m121.19 89.89l-4.93-1.79l-10.16.59l-33.58 14.99c-2.85 1.13-6.04.98-8.77-.4L5.9 73.91c-1.49-.76-1.17-2.97.47-3.28l41.69-18.65c1.19-.22 2.41-.09 3.52.38l59.49 28.36s9.45 6.47 10.12 9.17"/><path fill="#616161" d="M105.53 88.98s6.26-2.45 11.18-2.23s6.63 3.67 6.63 3.67c-.93-4.23-5.3-6.39-5.3-6.39l-65-32.73c-.45-.19-2.11-.58-4.66.47c-2.06.85-8.79 4-8.79 4z"/><path fill="#424242" d="M123.62 91.22c-.47-1.87-1.63-3.87-3.77-4.84c-2.82-1.27-6.84-.94-9.41.4l-4.91 2.18v3.46l6.21-2.76c6.04-2.69 8.72 1.34 8.95 2.29c.96 3.87-.9 6.11-6.39 8.63l-8.92 4.02v3.48l10.26-4.57c4.54-1.82 9.72-5.24 7.98-12.29"/><path fill="#01579b" d="M33.01 90.31L15.74 66.44l2.71-1.21l19.43 26.7zm22.15 11l-3.08-2.44l53.45-10.91v1.75l-7.49 2.84z"/><path fill="#f44336" d="M14.8 46.18L82.31 34.9l29.49 32.47c1.49 1.57.68 4.17-1.44 4.6l-69.7 14.3z"/><path fill="#c62828" d="M110.36 69.17L41.14 83.19l-.22 3.3l69.44-14.24c1.96-.41 2.78-2.65 1.71-4.23c-.38.56-.96 1-1.71 1.15m3.73 15.13c.73 1.16.07 2.69-1.27 2.96L49.1 100.18c-3.83.79-7.59-1.72-7.93-5.62c-.29-3.3 1.94-6.29 5.19-6.97l61.28-13.76z"/><path fill="#616161" d="M55.59 80.1L30.21 43.78l-14.48 3.83c-3.35 3.33-2.1 8.8-2.1 8.8S35.8 91.99 39.3 96.54s8.61 3.84 8.61 3.84l8.63-1.74l-.9-16.1z"/><path fill="#424242" d="M55.59 80.34L43.4 82.86c-3.33.75-3.93 3.88-3.93 3.88L10.04 44.57s-4.19 5.07-1.41 9.38L39.3 96.54c3.35 4.77 8.61 3.88 8.61 3.88l8.63-1.74l-.89-15.78z"/><path fill="#b9e4ea" d="M110.25 83c.31.68-.09 1.47-.82 1.62L48.5 97.12c-3.83.79-6.54-1.75-6.4-5.21c.18-4.37 2.63-6.22 5.87-6.89l61.23-12.51s-2.08 2.34-.49 6.72c.54 1.51 1.12 2.85 1.54 3.77"/><path fill="none" stroke="#424242" stroke-miterlimit="10" stroke-width="2.071" d="M45.21 83.7L19.1 46.76"/><path fill="#424242" d="M47.26 67.95L13.68 51.03l-1.36 2.68l38.8 19.77z"/><path fill="#c62828" d="m108.79 64.03l-2.46-2.7L68.5 78.69L47.26 68.18l3.62 5.18l14.07 7.19l10.48-1.61z"/><path fill="#3e8938" d="M118.02 57.35L72.29 78.03c-2.82 1.33-5.76 1.2-8.46-.36L6.09 48.35c-1.65-1.06-2.14-2.61-2.04-3.69s.35-2.25 3.25-3.09l2.71-1l59.32 29.11l48.17-19.93z"/><path fill="#f5f5f5" d="M71.73 74.72a7.95 7.95 0 0 1-7.26-.26L8.1 46.06c-.8-.44-1.04-1.45-.56-2.23c1.24-2.05 3.52-8.53-.24-13.91l62.24 31.66z"/><path fill="#94c6d6" d="M115.58 55.01L71.73 74.72c-1.45.63-4.34 1.75-7.67-.49c2.63.19 4.48-.9 5.43-2.67c.93-1.72.65-4.54-.48-6.13c-.69-.96-2.54-2.49-3.35-3.35l47.43-18.55c4.2-1.73 8.14.86 8.77 4.01c.7 3.56-3.84 6.47-6.28 7.47"/><path fill="#3e8938" d="m117.78 41.99l-45.27 20.2c-2.85 1.13-6.04.98-8.77-.4L5.89 32.41c-.6-.3-1.5-1.07-1.79-2.16c-.43-1.62.13-3.75 2.26-4.59l53.01-11.23z"/><path fill="#56b750" d="m121.18 44.92l-4.93-1.79l-10.16.59l-33.58 14.99c-2.85 1.13-6.04.98-8.77-.4L5.89 28.93c-1.49-.76-.96-2.77.47-3.28l41.7-18.64c1.19-.22 2.41-.09 3.52.38l59.49 28.36s9.44 6.46 10.11 9.17"/><path fill="#616161" d="M105.53 44s5.21-1.83 10.13-1.61s7.69 3.05 7.69 3.05c-1.01-4.52-5.3-6.39-5.3-6.39l-65-32.73c-.45-.19-2.11-.58-4.66.47c-2.06.85-8.79 4-8.79 4z"/><path fill="#424242" d="M111.48 41.86L44.97 8.31l2.2-.99l67.64 33.9z"/><path fill="#424242" d="M123.61 46.25c-.47-1.87-1.26-3.68-3.49-4.62c-2.85-1.2-5.45-1.45-9.69.18l-4.91 2.18v3.46l6.21-2.76c3.15-1.48 7.79-1.16 8.95 2.29c1.27 3.78-.9 6.11-6.39 8.63l-8.92 4.02v3.48l10.26-4.57c4.55-1.82 9.73-5.24 7.98-12.29"/></svg></span>Wordshelf</div>
+    <div class="appbar-picks">
+    <div class="pick uipick" title="Site language"><select id="uiSel" aria-label="Site language"></select></div>
     <div class="pick themepick" title="Theme">
     <select id="theme" aria-label="Theme">
         <option value="auto">Automatic</option><option value="morning">Morning</option><option value="sunset">Sunset</option>
         <option value="night">Night</option><option value="twilight">Twilight</option>
       </select></div>
+    </div>
   </div>
 
   <section class="intro">
@@ -1445,13 +1457,16 @@ async function getJSON(url,ms=6000){
 /* Translation: into any language. AI key → the AI translates (best); otherwise the free MyMemory service */
 const LANGS="af sq am ar hy az eu be bn bs bg ca ceb zh-CN zh-TW co hr cs da nl eo et fi fr fy gl ka de el gu ht ha haw he hi hmn hu is ig id ga it ja jv kn kk km rw ko ku ky lo la lv lt lb mk mg ms ml mt mi mr mn my ne no ny or ps fa pl pt pa ro ru sm gd sr st sn sd si sk sl so es su sw sv tl tg ta tt te th tr tk uk ur ug uz vi cy xh yi yo zu".split(" ");
 function langName(code){ try{ return new Intl.DisplayNames(["en"],{type:"language"}).of(code)||code }catch{ return code } }
+const UI_KEY="wordshelf.ui";
+var ui=(()=>{try{return localStorage.getItem(UI_KEY)||"en"}catch{return "en"}})();
+function dispName(code){ try{ const n=new Intl.DisplayNames([ui],{type:"language"}).of(code)||code; return n[0].toLocaleUpperCase(ui)+n.slice(1) }catch{ return langName(code) } }
 function nativeName(code){ try{ return new Intl.DisplayNames([code],{type:"language"}).of(code)||"" }catch{ return "" } }
 lang=(()=>{try{const v=localStorage.getItem("wordshelf.lang");if(v!==null)return v}catch{}
   const nav=(navigator.language||"").toLowerCase(), base=nav.split("-")[0];
   if(base==="en") return ""; if(base==="zh") return nav.includes("tw")||nav.includes("hk")?"zh-TW":"zh-CN";
   return LANGS.includes(base)?base:""})();
 function fillLangs(){
-  $("#lang").innerHTML=`<option value="">No translation</option>`+[...LANGS,...(study==="en"?[]:["en"])].filter(c=>c!==study).map(c=>({c,n:langName(c),nn:nativeName(c)})).sort((a,b)=>a.n.localeCompare(b.n))
+  $("#lang").innerHTML=`<option value="">No translation</option>`+[...LANGS,...(study==="en"?[]:["en"])].filter(c=>c!==study).map(c=>({c,n:dispName(c),nn:nativeName(c)})).sort((a,b)=>a.n.localeCompare(b.n,ui))
     .map(({c,n,nn})=>`<option value="${c}" title="${esc(nn)}">${esc(n)}</option>`).join("");
   if(lang===study) lang="";
   $("#lang").value=lang;
@@ -1756,6 +1771,118 @@ function setStudy(code){
   $("#manual").placeholder=SL().sample;
   fillLangs(); refreshDropdowns(); setMode(mode); render(); track("study-"+code,"Learning "+SL().name);
   autoFill(); autoTranslate();
+}
+
+/* Interface language. The page is written in English; another language is a layer on top that swaps the visible
+   interface texts. Words, definitions, example sentences and your notes are never touched. */
+const UI_BUILTIN="ru uk kk ky uz tg tr az de fr es it pt ar fa hi zh-CN ja ko id".split(" ");
+const UI_RTL=/^(ar|fa|ur|he|ps|sd|ug|yi)$/;
+const I18N_SKIP="script,style,svg,.card h3,.def,.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li";
+let I18N=null;
+const LANG_BY_NAME=new Map([...LANGS,"en"].map(c=>[langName(c),c]));
+function compileI18n(d){
+  const t=new Map(Object.entries(d.t||{})), p=[];
+  for(const [en,out] of Object.entries(d.p||{})){
+    const kinds=[], idx=[];
+    const re=en.replace(/[.*+?^$()|[\]\\]/g,"\\$&").replace(/\{([tL]?)(\d)\}/g,(m,k,i)=>{kinds.push(k);idx.push(+i);return "(.+?)"});
+    p.push({re:new RegExp("^"+re+"$","s"),kinds,idx,out});
+  }
+  return {t,p};
+}
+function i18nText(s){
+  if(!I18N) return null;
+  const hit=I18N.t.get(s); if(hit!=null) return hit;
+  for(const {re,kinds,idx,out} of I18N.p){
+    const m=re.exec(s); if(!m) continue;
+    const vals=[];
+    idx.forEach((i,g)=>{let v=m[g+1];
+      if(kinds[g]==="t") v=I18N.t.get(v)??v;
+      else if(kinds[g]==="L"&&LANG_BY_NAME.has(v)) v=dispName(LANG_BY_NAME.get(v));
+      vals[i]=v});
+    return out.replace(/\{(\d)(?::([^}]*))?\}/g,(x,i,forms)=>{
+      const v=vals[+i]??""; if(!forms) return v;
+      const f=Object.fromEntries(forms.split(";").map(z=>z.split("=")));
+      let cat="other"; try{cat=new Intl.PluralRules(ui).select(parseFloat(v))}catch{}
+      return f[cat]??f.other??"";
+    });
+  }
+  return null;
+}
+function i18nNode(n){
+  const raw=n.nodeValue; if(!raw||!/[A-Za-z]/.test(raw)) return;
+  const el=n.parentElement; if(!el||el.closest(I18N_SKIP)) return;
+  const key=raw.replace(/\s+/g," ").trim(); const tr=i18nText(key);
+  if(tr!=null&&tr!==key) n.nodeValue=(/^\s/.test(raw)?" ":"")+tr+(/\s$/.test(raw)?" ":"");
+}
+const I18N_ATTRS=["placeholder","aria-label","title","alt"];
+function i18nAttrs(el){
+  for(const a of I18N_ATTRS){ const v=el.getAttribute(a); if(!v||!/[A-Za-z]/.test(v)) continue; const tr=i18nText(v.trim()); if(tr!=null&&tr!==v) el.setAttribute(a,tr) }
+}
+function i18nTree(root){
+  if(root.nodeType===3){ i18nNode(root); return }
+  if(root.nodeType!==1||root.closest?.("script,style")) return;
+  i18nAttrs(root); root.querySelectorAll("*").forEach(i18nAttrs);
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while(n=w.nextNode()) i18nNode(n);
+}
+function startI18n(d){
+  I18N=compileI18n(d);
+  const root=document.documentElement; root.lang=ui; root.dir=UI_RTL.test(ui)?"rtl":"ltr";
+  i18nTree(document.body);
+  new MutationObserver(ms=>{ for(const m of ms){
+    if(m.type==="characterData") i18nNode(m.target);
+    else if(m.type==="attributes") i18nAttrs(m.target);
+    else m.addedNodes.forEach(i18nTree);
+  }}).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:I18N_ATTRS});
+  root.classList.remove("i18n-wait");
+}
+// any other language: the page is translated once by the AI you set up, then kept in this browser
+async function i18nWithAi(code){
+  const src=await fetch("i18n/source.json").then(r=>r.json());
+  const all=[...src.t,...src.p];
+  const prompt=`Translate these interface texts of a vocabulary-learning website into ${langName(code)}. Natural, short app wording. Keep brand names (Wordshelf, Gemini, Qwen, Claude, Google, OpenRouter, CEFR, YouTube…) as they are. Placeholders like {0}, {t0} or {L1} are filled in by the page: in your translation write them as {0}, {1}, {2} and keep every one. Some texts are fragments around a link, keep them as fragments. Reply with only JSON: {"items":[{"i":0,"s":"..."}]}
+
+`+all.map((x,i)=>`${i}: ${x}`).join("\n");
+  const provider=["gemini","qwen","claude"].find(p=>getKey(p)); if(!provider) return null;
+  const key=getKey(provider);
+  const res=provider==="gemini"?await askGemini(key,prompt,[]):provider==="qwen"?await askQwen(key,prompt,[]):await askClaudeText(key,prompt);
+  if(!res?.items) return null;
+  const d={t:{},p:{}};
+  for(const it of res.items){ const en=all[it.i], s=String(it.s||"").trim(); if(en==null||!s) continue;
+    if(it.i<src.t.length) d.t[en]=s;
+    else { const need=(en.match(/\{[tL]?\d\}/g)||[]).map(x=>x.replace(/[tL]/,"")).sort().join(); const got=(s.match(/\{\d\}/g)||[]).sort().join();
+      if([...new Set(need.split(","))].join()===[...new Set(got.split(","))].join()) d.p[en]=s } }
+  return Object.keys(d.t).length>src.t.length/2?d:null;
+}
+const UI_LIST=["en",...UI_BUILTIN,...LANGS.filter(c=>!UI_BUILTIN.includes(c))];
+$("#uiSel").innerHTML=UI_LIST.map(c=>({c,nn:nativeName(c)||langName(c),n:langName(c)}))
+  .map(({c,nn,n})=>`<option value="${c}" title="${esc(n)}">${esc(nn[0].toLocaleUpperCase(c)+nn.slice(1))}</option>`).join("");
+$("#uiSel").value=UI_LIST.includes(ui)?ui:"en";
+const globeIcon='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>';
+makeDropdown($("#uiSel"),{title:"Site language",search:true,item:(o,short)=>short?`${globeIcon}<span>${esc(o.value.split("-")[0].toUpperCase())}</span>`
+  :`<span><b>${esc(o.textContent)}</b>${o.value!=="en"&&o.title?`<span class="sub">${esc(o.title)}${UI_BUILTIN.includes(o.value)?"":" · AI"}</span>`:""}</span>`});
+$("#uiSel").addEventListener("change",async e=>{
+  const code=e.target.value; let cached=null; try{cached=localStorage.getItem("wordshelf.ui."+code)}catch{}
+  if(code!=="en"&&!UI_BUILTIN.includes(code)&&!cached){
+    if(!["gemini","qwen","claude"].some(p=>getKey(p))){
+      e.target.value=ui; refreshDropdowns();
+      setStatus(i18nText(`To show the page in ${langName(code)}, add a free Gemini key (or another AI key) in "Read with": the page is translated once and saved.`)||`To show the page in ${langName(code)}, add a free Gemini key (or another AI key) in "Read with": the page is translated once and saved.`,true);
+      $("#status").scrollIntoView({behavior:"smooth",block:"center"}); return }
+    setStatus(spin(`Translating the page into ${langName(code)}…`)); $("#status").scrollIntoView({behavior:"smooth",block:"center"});
+    const d=await i18nWithAi(code).catch(()=>null);
+    if(!d){ e.target.value=ui; refreshDropdowns(); setStatus("Couldn't translate the page. Try again later.",true); return }
+    try{localStorage.setItem("wordshelf.ui."+code,JSON.stringify(d))}catch{}
+  }
+  try{localStorage.setItem(UI_KEY,code)}catch{}
+  track("ui-"+code,"Site language "+langName(code)); location.reload();
+});
+// show the language names in the list of languages you can learn in the interface language
+[...$("#studySel").options].forEach(o=>{o.textContent=dispName(o.value)}); refreshDropdowns();
+if(ui!=="en"){
+  (async()=>{
+    let d=null;
+    try{ d=UI_BUILTIN.includes(ui)?await fetch("i18n/"+ui+".json").then(r=>r.ok?r.json():null):JSON.parse(localStorage.getItem("wordshelf.ui."+ui)||"null") }catch{}
+    if(d) startI18n(d); else document.documentElement.classList.remove("i18n-wait");
+  })();
 }
 $("#studySel").value=study; $("#manual").placeholder=SL().sample;
 $("#studySel").addEventListener("change",e=>setStudy(e.target.value));
