@@ -176,7 +176,7 @@ html.i18n-wait body{visibility:hidden}
 .uipick .dd-btn .dd-val{display:inline-flex;align-items:center;gap:6px;overflow:visible;text-overflow:clip}
 .uipick .dd-btn svg.i{width:16px;height:16px}
 @media (max-width:640px){.appbar-picks{gap:6px}.uipick{padding-left:9px}.uipick .dd-btn{padding-right:9px}.uipick .dd-btn>svg{display:none}}
-@media (max-width:420px){.brand{font-size:23px;gap:9px}.brand .logo,.brand .logo svg{width:34px;height:34px}}
+@media (max-width:420px){.brand{font-size:22px;gap:8px}.brand .logo,.brand .logo svg{width:32px;height:32px}.uipick{padding-left:10px}.uipick .dd-btn{padding-right:10px}.uipick .dd-val span{display:none}}
 .themepick .dd-btn{flex:none;padding-right:10px}
 .themepick .dd-btn .dd-val{overflow:visible;text-overflow:clip}
 .themepick .dd-btn{font-weight:600}
@@ -208,6 +208,8 @@ html.i18n-wait body{visibility:hidden}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;box-shadow:var(--shadow)}
 .panel-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 .panel-head h2{font-size:20px;font-weight:700}
+/* heading and reading-mode picker stay on one row; a long name shortens instead of wrapping */
+.panel-head{flex-wrap:nowrap}.panel-head h2{white-space:nowrap;flex:none}.panel-head .pick{min-width:0;flex:none}.panel-head .lbl{white-space:nowrap}.panel-head.tight .lbl{display:none}.appbar.tight .themepick .dd-val>span:not(.tdot){display:none}
 .mode-help{font-size:14px;color:var(--muted);margin:-4px 0 0}
 .drop{border:2px dashed var(--line);border-radius:var(--r-sm);padding:22px 16px;text-align:center;background:var(--sunk);cursor:pointer;transition:border-color .15s,background .15s;display:grid;gap:4px;justify-items:center}
 .drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
@@ -323,6 +325,7 @@ html.stuck body::before{opacity:1}
 .tr{margin:0;font-size:17px;font-weight:700;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;color:var(--ink)}
 .tr span{font-family:var(--mono);font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--lv);background:color-mix(in srgb,var(--lv) 14%,transparent);border-radius:4px;padding:1px 6px}
 .def{margin:0}
+.def-tr{margin:-4px 0 0;color:var(--muted);font-size:15px}
 .note{font-size:14px;color:var(--muted);margin:0}
 .note b{font-weight:700;color:var(--ink)}
 .ex{margin:0;padding:0;list-style:none;display:grid;gap:6px}
@@ -596,7 +599,7 @@ function card(w,i){
       <div class="say"><button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button></div></div>
     ${meta?`<div class="meta"${dirA}>${meta}</div>`:""}
     ${lang&&w.tr?.[lang]?`<p class="tr" lang="${lang}"><span>${lang}</span>${esc(w.tr[lang])}</p>`:""}
-    ${w.definition?`<p class="def">${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
+    ${w.definition?`<p class="def">${esc(w.definition)}</p>${lang&&w.defTr?.[lang]?`<p class="def-tr" lang="${lang}" dir="auto">${esc(w.defTr[lang])}</p>`:""}`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
     ${w.note?`<p class="note">From your list: <b>${esc(w.note)}</b></p>`:""}
     ${exs?`<ul class="ex">${exs}</ul>`:`<p class="note">No example sentence yet.</p>`}
     <div class="mynote" data-note="${i}">${w.myNote
@@ -1432,9 +1435,10 @@ $("#lang").addEventListener("change",e=>{lang=e.target.value;if(lang)track("tran
 var translating=false;
 const upgraded=new Set();
 const hasAiKey=()=>["gemini","qwen","claude"].some(p=>getKey(p));
-const needTranslation=()=>lang?words.filter(w=>!w.example&&(!w.tr?.[lang]||(hasAiKey()&&w.trSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)))):[];
+const needDef=w=>w.definition&&(!w.defTr?.[lang]||(hasAiKey()&&w.defSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)));
+const needTranslation=()=>lang?words.filter(w=>!w.example&&(!w.tr?.[lang]||needDef(w)||(hasAiKey()&&w.trSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)))):[];
 async function translateWithKey(provider,list){
-  const prompt=`Translate each English word or phrase into ${langName(lang)} for a language learner. Give the most common equivalent(s) for the meaning described, comma-separated, short. Reply with only JSON: {"items":[{"word":"...","translation":"..."}]}
+  const prompt=`Translate each English word or phrase into ${langName(lang)} for a language learner. Give the most common equivalent(s) for the meaning described, comma-separated, short. Also translate the definition given after the colon into natural ${langName(lang)} ("definition"; "" if there is none). Reply with only JSON: {"items":[{"word":"...","translation":"...","definition":"..."}]}
 
 `+list.map(w=>`- ${w.word}${w.pos||w.definition?` (${[w.pos,w.definition].filter(Boolean).join(": ")})`:""}`).join("\n");
   const key=getKey(provider); setStatus(spin(`Translating into ${langName(lang)} with ${PROVIDERS[provider].name}…`));
@@ -1455,18 +1459,29 @@ function cleanTranslation(t,target){
 }
 async function translateFree(list){
   const out=[]; let i=0, done=0, stop="";
+  // the definition, as a whole sentence
+  async function defFree(w){
+    if(!w.definition||w.defTr?.[lang]||stop) return;
+    const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(w.definition.slice(0,450))}&langpair=en|${encodeURIComponent(lang)}`,9000);
+    if(d?.quotaFinished||d?.responseStatus==429){stop="limit";return}
+    const t=String(d?.responseData?.translatedText||"").trim();
+    if(t&&!/MYMEMORY WARNING|INVALID|QUERY LENGTH/i.test(t)&&t.toLowerCase()!==w.definition.toLowerCase()&&(!SCRIPT[lang]||SCRIPT[lang].test(t)))
+      out.push({word:w.word,definition:t,src:"free"});
+  }
   async function worker(){
     while(i<list.length&&!stop){
       const w=list[i++];
+      if(w.tr?.[lang]){ await defFree(w); setStatus(spin(`Translating into ${langName(lang)}… ${++done} of ${list.length}`)); continue }
       // bare "curb" comes back as the noun (kerb); "to curb" gives the verb
       // translate the dictionary form ("workflows" → "workflow"); verbs as "to …" so "curb" isn't read as a noun
       const base=(await dictEntry(w.word.toLowerCase()).catch(()=>null))?.form||w.word;
-      const q=/verb/i.test(w.pos||"")&&!/^to /i.test(base)?"to "+base:base;
+      const q=/(^|\s)verb\b/i.test(w.pos||"")&&!/^to /i.test(base)?"to "+base:base;
       const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|${encodeURIComponent(lang)}`,8000);
       if(d?.quotaFinished||d?.responseStatus==429){stop="limit";break}
       const t=d?.responseData?.translatedText;
       const c=cleanTranslation(t,lang).replace(/^(to|zu|à|a|para)\s+/i,"");
       if(c&&c.toLowerCase()!==q.toLowerCase()) out.push({word:w.word,translation:c,src:"free"});
+      if(!stop) await defFree(w);
       setStatus(spin(`Translating into ${langName(lang)}… ${++done} of ${list.length}`));
     }
   }
@@ -1484,11 +1499,12 @@ async function autoTranslate(){
     let items=provider?await translateWithKey(provider,list):null;
     if(provider) list.forEach(w=>upgraded.add(w.word+"|"+forLang));
     // without a working AI, only fill words that have no translation yet (don't replace one free answer with another)
-    if(!items) items=await translateFree(list.filter(w=>!w.tr?.[forLang]));
+    if(!items) items=await translateFree(list.filter(w=>!w.tr?.[forLang]||(w.definition&&!w.defTr?.[forLang])));
     let n=0;
     for(const it of items||[]){
       const w=words.find(x=>x.word.toLowerCase()===String(it.word||"").toLowerCase());
       if(w&&it.translation){ w.tr={...(w.tr||{}),[forLang]:String(it.translation)}; w.trSrc={...(w.trSrc||{}),[forLang]:it.src||"ai"}; n++ }
+      if(w&&it.definition&&w.definition){ w.defTr={...(w.defTr||{}),[forLang]:String(it.definition)}; w.defSrc={...(w.defSrc||{}),[forLang]:it.src||"ai"} }
     }
     store.set(words); render();
     if(n&&!/limit/.test($("#status").textContent)) setStatus(`Translated ${n} word${n===1?"":"s"} into ${langName(forLang)}.`);
@@ -1676,7 +1692,7 @@ $("#ppGo").addEventListener("click",()=>{
   $("#printArea").innerHTML=`<h1>Vocabulary list</h1><div class="pa-sub">${esc(levelsLabel)} · ${total} word${total===1?"":"s"} · ${new Date().toLocaleDateString()}</div>`+
     groups.map(({g,ws},i)=>`<section class="pa-lv${o.brk&&i?" newpage":""}" style="--pc:var(${g.v})"><h2><span class="tag">${g.label||g.id}</span>${esc(g.name)}<span class="n">${ws.length} word${ws.length===1?"":"s"}</span></h2>`+
       ws.map(w=>`<div class="pa-w"><b>${esc(w.word)}</b><span class="pa-meta">${esc(w.pos||"")}${o.ipa&&w.ipa?` · ${w.ipaUs?"UK ":""}${esc(w.ipa)}`:""}${o.ipa&&w.ipaUs?` · US ${esc(w.ipaUs)}`:""}</span>`+
-        (o.def&&w.definition?`<p class="pa-def">${esc(w.definition)}</p>`:"")+
+        (o.def&&w.definition?`<p class="pa-def">${esc(w.definition)}</p>`+(lang&&w.defTr?.[lang]?`<p class="pa-def">${esc(w.defTr[lang])}</p>`:""):"")+
         (lang&&w.tr?.[lang]?`<p class="pa-note">${esc(langName(lang))}: <b>${esc(w.tr[lang])}</b></p>`:"")+
         (o.note&&w.note?`<p class="pa-note">From my list: ${esc(w.note)}</p>`:"")+
         (o.note&&w.myNote?`<p class="pa-note">My notes: ${esc(w.myNote)}</p>`:"")+
@@ -1706,6 +1722,10 @@ $("#clearWrap").addEventListener("click",e=>{
     for(const [l,t] of Object.entries(w.tr||{})){ if(w.trSrc?.[l]==="ai") continue; const c=cleanTranslation(t,l);
       if(c!==t){ if(c) w.tr[l]=c; else delete w.tr[l]; changed=true } }
   }
+  // once: free translations of adverbs were made as verbs ("about" → "to about" → "примерно до"); redo them
+  let fixed=false; try{fixed=localStorage.getItem("wordshelf.fix.adverb")==="1"}catch{}
+  if(!fixed){ for(const w of words) if(/adverb/i.test(w.pos||"")) for(const l of Object.keys(w.tr||{})) if(w.trSrc?.[l]!=="ai"){ delete w.tr[l]; changed=true }
+    try{localStorage.setItem("wordshelf.fix.adverb","1")}catch{} }
   if(changed) store.set(words);
 })();
 // cover the status-bar strip only once the toolbar is pinned (not over the sky at the top of the page)
@@ -1723,7 +1743,7 @@ $("#clearWrap").addEventListener("click",e=>{
    interface texts. Words, definitions, example sentences and your notes are never touched. */
 const UI_BUILTIN="ru uk kk ky uz tg tr az de fr es it pt ar fa hi zh-CN ja ko id".split(" ");
 const UI_RTL=/^(ar|fa|ur|he|ps|sd|ug|yi)$/;
-const I18N_SKIP="script,style,svg,.card h3,.def,.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li,#uiSel,[data-noi18n]";
+const I18N_SKIP="script,style,svg,.card h3,.def,.def-tr,.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li,#uiSel,[data-noi18n]";
 let I18N=null;
 const LANG_BY_NAME=new Map([...LANGS,"en"].map(c=>[langName(c),c]));
 function compileI18n(d){
@@ -1831,6 +1851,15 @@ if(ui!=="en"){
     if(d) startI18n(d); else document.documentElement.classList.remove("i18n-wait");
   })();
 }
+// if "Read with" and the heading don't fit on one row (long words in some languages), drop the label
+// (the same for the top bar: the theme button keeps only its colour dot)
+function fitRow(h){ h.classList.remove("tight");
+  const left=Math.max(0,h.getBoundingClientRect().left), avail=Math.min(h.clientWidth,document.documentElement.clientWidth-2*left);
+  const kids=[...h.children], need=kids.reduce((a,k)=>a+k.scrollWidth,0)+10*(kids.length-1); h.classList.toggle("tight",need>avail) }
+const fitPanelHead=()=>document.querySelectorAll(".panel-head,.appbar").forEach(fitRow);
+addEventListener("resize",fitPanelHead);
+document.querySelectorAll(".panel-head,.appbar").forEach(h=>new MutationObserver(()=>requestAnimationFrame(fitPanelHead)).observe(h,{subtree:true,childList:true,characterData:true}));
+document.fonts?.ready.then(fitPanelHead); fitPanelHead();
 render();
 setTimeout(()=>loadCefr().catch(()=>{}),300);
 // Fill in example sentences for saved words that don't have any yet
