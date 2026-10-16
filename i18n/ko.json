@@ -213,7 +213,10 @@
   "Latin American": "라틴아메리카",
   "Egyptian Arabic": "이집트 아랍어",
   "British": "영국식",
-  "American": "미국식"
+  "American": "미국식",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "키가 필요 없지만 기본 모드예요: 인쇄된 글자만 읽어요(손글씨 불가). 레벨은 단어가 얼마나 자주 쓰이는지로 추정하고, 뜻(영어)과 예문은 위키낱말사전에서 가져와요.",
+  "Other languages: word frequencies from": "기타 언어: 단어 빈도 출처",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "단어 {0}개에 예문이 없어요.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "내 메모: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "페이지를 {0}로 번역하는 중…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "페이지를 {0}로 보려면 \"읽기 방식\"에서 무료 Gemini 키(또는 다른 AI 키)를 추가하세요. 페이지는 한 번 번역된 후 저장돼요."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "페이지를 {0}로 보려면 \"읽기 방식\"에서 무료 Gemini 키(또는 다른 AI 키)를 추가하세요. 페이지는 한 번 번역된 후 저장돼요.",
+  "Translating into {L0}…": "{0}(으)로 번역하는 중…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "{0}을(를) 번역하지 못했어요. {1}(으)로 입력하거나 Gemini(무료)를 사용하세요."
  }
 }

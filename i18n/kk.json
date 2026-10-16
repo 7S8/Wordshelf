@@ -213,7 +213,10 @@
   "Latin American": "Латынамерикалық",
   "Egyptian Arabic": "Египеттік",
   "British": "Британдық",
-  "American": "Америкалық"
+  "American": "Америкалық",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Кілт қажет емес, бірақ режим қарапайым: тек баспа мәтінін оқиды (қолжазбаны емес). Деңгей сөздің қаншалықты жиі кездесетініне қарай анықталады; мағыналары (ағылшынша) мен мысалдар Уикисөздіктен алынады.",
+  "Other languages: word frequencies from": "Басқа тілдер: сөз жиілігі мына жерден",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөзде мысал сөйлем жоқ.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "Жазбаларым: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "Бет аударылуда: {0}…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Беттің «{0}» нұсқасын көрсету үшін «Оқу құралы» бөлімінде тегін Gemini кілтін (немесе басқа ЖИ кілтін) қосыңыз: бет бір рет аударылып, сақталады."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Беттің «{0}» нұсқасын көрсету үшін «Оқу құралы» бөлімінде тегін Gemini кілтін (немесе басқа ЖИ кілтін) қосыңыз: бет бір рет аударылып, сақталады.",
+  "Translating into {L0}…": "{0} тіліне аударып жатырмын…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "Аудару мүмкін болмады: {0}. {1} тілінде енгізіңіз немесе Gemini пайдаланыңыз (тегін)."
  }
 }

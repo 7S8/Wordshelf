@@ -213,7 +213,10 @@
   "Latin American": "амрикоии лотинӣ",
   "Egyptian Arabic": "арабии мисрӣ",
   "British": "бритониёӣ",
-  "American": "амрикоӣ"
+  "American": "амрикоӣ",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Калид лозим нест, аммо ҳолат оддӣ аст: танҳо матни чопиро мехонад (на дастнависро). Сатҳ аз рӯи он ки калима чӣ қадар маъмул аст, муайян мешавад; маъноҳо (ба забони англисӣ) ва мисолҳо аз Викилуғат гирифта мешаванд.",
+  "Other languages: word frequencies from": "Забонҳои дигар: басомади калимаҳо аз",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "Барои {0} калима ҷумлаи намунавӣ нест.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "Қайдҳои ман: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "Тарҷумаи саҳифа ба забони {0}…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Барои намоиши саҳифа бо забони {0}, дар «Хондан бо» калиди ройгони Gemini (ё калиди дигари зеҳни сунъӣ) илова кунед: саҳифа як бор тарҷума ва нигоҳ дошта мешавад."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Барои намоиши саҳифа бо забони {0}, дар «Хондан бо» калиди ройгони Gemini (ё калиди дигари зеҳни сунъӣ) илова кунед: саҳифа як бор тарҷума ва нигоҳ дошта мешавад.",
+  "Translating into {L0}…": "Ба забони {0} тарҷума мекунам…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "Тарҷума нашуд: {0}. Онҳоро бо забони {1} нависед ё Gemini-ро истифода баред (ройгон)."
  }
 }

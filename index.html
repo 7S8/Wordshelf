@@ -538,7 +538,7 @@ footer p{margin:8px 0 0}
     <div class="credit-made">Made with <span>♥</span> by</div>
     <div class="credit-sig">Nuramatova Sakinat Ibnuabasovna</div>
     <div class="credit-note">© 2026 Wordshelf · All rights reserved · Not affiliated with Cambridge English or the Council of Europe</div>
-    <details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.</p></details>
+    <details><summary>Sources and credits</summary><p>CEFR levels are estimates. Basic mode uses the <a href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noopener">CEFR-J Wordlist 1.5</a> (Tono Laboratory, TUFS) and the Octanove Vocabulary Profile C1/C2 (CC BY-SA 4.0), definitions from <a href="https://en-word.net" target="_blank" rel="noopener">Open English WordNet</a> (CC BY 4.0, based on Princeton WordNet), example sentences from <a href="https://tatoeba.org" target="_blank" rel="noopener">Tatoeba</a> (CC BY 2.0 FR), Europarl, Project Gutenberg and <a href="https://en.wiktionary.org" target="_blank" rel="noopener">Wiktionary</a> (CC BY-SA 4.0), logo artwork from <a href="https://github.com/googlefonts/noto-emoji" target="_blank" rel="noopener">Noto Emoji</a> (Apache 2.0), and text recognition by <a href="https://github.com/naptha/tesseract.js" target="_blank" rel="noopener">Tesseract.js</a>. YouGlish links play YouTube clips at the moment someone says the word.<span> Other languages: word frequencies from <a href="https://github.com/hermitdave/FrequencyWords" target="_blank" rel="noopener">FrequencyWords</a> (OpenSubtitles 2018, CC BY-SA 4.0).</span></p></details>
   </footer>
 </div>
 
@@ -966,10 +966,67 @@ async function lookupOne(map,w){
 }
 // keep only sentences that actually contain the word
 const usesWord=(exs,w)=>exs.filter(x=>highlight(x,w)!==esc(x));
+/* Basic mode for German, French, Spanish, Italian and Arabic: the level is estimated from how common the word is
+   (30,000 most frequent words, from OpenSubtitles), the meaning and examples come from Wiktionary */
+const freqs={};
+function loadFreq(l){ return freqs[l]||=fetch("freq/"+l+".txt").then(r=>{if(!r.ok)throw 0;return r.text()}).then(t=>new Map(t.split("\n").map((w,i)=>[w,i+1]))).catch(e=>{delete freqs[l];throw e}) }
+const levelFromRank=r=>r<=800?"A1":r<=1800?"A2":r<=3500?"B1":r<=7000?"B2":r<=14000?"C1":"C2";
+const ARTICLES=/^(der|die|das|den|dem|des|ein|eine|le|la|les|l'|l’|un|une|des|el|los|las|una|unos|unas|il|lo|gli|i|uno|un')\s*/i;
+const arPlain=w=>w.replace(/[\u064B-\u0652\u0670\u0640]/g,"");
+function freqKey(w){ w=w.toLowerCase().trim(); if(study==="ar") return arPlain(w); return w.replace(ARTICLES,"").trim() }
+function freqRank(map,w){
+  const k=freqKey(w); if(map.has(k)) return map.get(k);
+  if(study==="ar"){ for(const pre of ["ال","و","ب","ل","وال","بال"]) if(k.startsWith(pre)&&map.has(k.slice(pre.length))) return map.get(k.slice(pre.length)) }
+  return 0;
+}
+async function closestFreq(map,w){
+  const k=freqKey(w); if(k.length<4) return "";
+  const max=k.length>=8?2:1; let best="",bd=max+1,br=1e9;
+  for(const [x,r] of map){ if(Math.abs(x.length-k.length)>max) continue; const d=editDistance(k,x,max); if(d<bd||(d===bd&&r<br)){best=x;bd=d;br=r} }
+  return bd<=max?best:"";
+}
+async function wiktionaryEntry(w){
+  const base=w.replace(ARTICLES,"").trim();
+  const tries=[...new Set([w,base,study==="de"?base[0].toUpperCase()+base.slice(1):base,study==="ar"?arPlain(base):base])];
+  for(const t of tries){
+    const d=await getJSON("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURIComponent(t.replace(/ /g,"_"))+"?redirect=true",7000);
+    const senses=d?.[study]; if(senses?.length) return {title:t,senses};
+  }
+  return null;
+}
+async function lookupOther(map,w){
+  const parts=w.split(" ").filter(x=>!ARTICLES.test(x+" ")||w.split(" ").length===1);
+  const ranks=(w.split(" ").length>1?parts:[w]).map(x=>freqRank(map,x));
+  const rank=ranks.every(Boolean)?Math.max(...ranks):0;
+  const e=await wiktionaryEntry(w).catch(()=>null);
+  const item={word:w,level:rank?levelFromRank(rank):"",est:!!rank,pos:"",ipa:"",definition:"",examples:[],note:""};
+  if(e){
+    const s0=e.senses[0]; item.pos=(s0.partOfSpeech||"").toLowerCase();
+    // German nouns are written with a capital letter
+    if(study==="de"&&item.pos==="noun"&&e.title[0]!==e.title[0].toLowerCase()) item.word=w.replace(/(^|\s)(\S+)$/,(m,a,b)=>a+b[0].toUpperCase()+b.slice(1));
+    for(const s of e.senses) for(const df of s.definitions||[]){
+      if(!item.definition&&df.definition){ const t=stripHtml(df.definition); if(t) item.definition=t.replace(/^./,c=>c.toUpperCase()).replace(/([^.!?])$/,"$1.") }
+      for(let x of [...(df.parsedExamples||[]).map(y=>y.example),...(df.examples||[])]){
+        x=stripHtml(x).replace(/^[“"'«]|[”"'»]$/g,""); if(x.split(" ").length<3||item.examples.includes(x)) continue;
+        if(item.examples.length<2&&usesWord([x],item.word).length) item.examples.push(x);
+      }
+    }
+  }
+  if(!rank&&!e) item.suggest=await closestFreq(map,w);
+  return item;
+}
 async function freeLookup(list){
   list=[...new Set(list.map(w=>w.trim().toLowerCase().replace(/\s+/g," ")).filter(Boolean))].slice(0,200);
   if(!list.length) return null;
   setStatus(spin("Looking up words…"));
+  if(study!=="en"){
+    let map; try{ map=await loadFreq(study) }catch{ setStatus("Couldn't load the word lists. Check your connection and try again.",true); return null }
+    const items=new Array(list.length); let i=0;
+    const worker=async()=>{ while(i<list.length){ const k=i++; items[k]=await lookupOther(map,list[k]) } };
+    await Promise.all([worker(),worker(),worker(),worker()]);
+    list.forEach(w=>wikiTried.add(w));   // Wiktionary was already asked for these words
+    return {items};
+  }
   let map; try{ map=await loadCefr() }catch{ setStatus("Couldn't load the word lists. Check your connection and try again.",true); return null }
   const items=await Promise.all(list.map(w=>lookupOne(map,w)));
   return {items};
@@ -984,6 +1041,7 @@ function loadTesseract(){
 const STOP=new Set("a an the and or of to in on at for by with is are was be it this that i you he she we they my your his her our their me us them not no yes adj adv noun verb adjective adverb prep pron conj sb sth smb smth etc eg ie".split(" "));
 // Vocabulary lists are usually "word - meaning": take the part before the dash on each line
 function extractTerms(text){
+  if(study!=="en") return extractTermsOther(text);
   const out=[], seen=new Set();
   for(const line of text.split(/\n+/)){
     let term=line.split(/\s[-–—=:]\s?|[-–—=:]\s|\t|\(/)[0];
@@ -998,8 +1056,29 @@ function extractTerms(text){
   }
   return out;
 }
+function extractTermsOther(text){
+  const out=[], seen=new Set();
+  for(const line of text.split(/\n+/)){
+    let term=line.split(/\s[-–—=:]\s?|[-–—=:]\s|\t|\(/)[0];
+    term=term.replace(/^[\s\d.)•*]+/,"").replace(/[^\p{L}\p{M}'’ ]+/gu," ").replace(/\s+/g," ").trim();
+    if(study==="ar") term=arPlain(term); else term=term.toLowerCase();
+    const ws=term.split(" ").filter(Boolean);
+    if(!ws.length||ws.length>3) continue;
+    // "word - перевод": skip lines that are only in another alphabet (the meanings)
+    if(study==="ar"?!/[\u0621-\u064A]/.test(term):!/[a-zà-ÿ]/i.test(term)) continue;
+    const t=ws.join(" "); if(t.length<2||seen.has(t)) continue;
+    seen.add(t); out.push(t);
+  }
+  return out;
+}
 // Keep only real words: exact matches, or a close dictionary word when OCR misread a letter
 async function keepRealWords(cands){
+  if(study!=="en"){
+    const map=await loadFreq(study), kept=[];
+    for(const c of cands){ if(c.split(" ").every(x=>ARTICLES.test(x+" ")||freqRank(map,x))){kept.push(c);continue}
+      if(!c.includes(" ")){ const f=await closestFreq(map,c); if(f) kept.push(f) } }
+    return [...new Set(kept)];
+  }
   const map=await loadCefr(); const kept=[];
   for(const c of cands){
     if(cefrLevel(map,c)||await dictEntry(c)){kept.push(c);continue}
@@ -1015,10 +1094,12 @@ async function keepRealWords(cands){
   return [...new Set(kept)];
 }
 
-let ocrWorker=null, ocrLog=()=>{};
+let ocrWorker=null, ocrLang="", ocrLog=()=>{};
+const OCR_LANG={en:"eng",de:"deu",fr:"fra",es:"spa",it:"ita",ar:"ara"};
 async function getOcrWorker(onProgress){
   await loadTesseract();
-  ocrWorker||=Tesseract.createWorker("eng",1,{logger:m=>ocrLog(m)});
+  if(ocrLang!==study){ const old=ocrWorker; ocrWorker=null; ocrLang=study; old?.then(w=>w.terminate()).catch(()=>{}) }
+  ocrWorker||=Tesseract.createWorker(OCR_LANG[study]||"eng",1,{logger:m=>ocrLog(m)});
   ocrLog=onProgress; return ocrWorker;
 }
 async function ocrImages(files){
@@ -1047,7 +1128,8 @@ function setMode(m){
     qwen:"Free with an OpenRouter key. Uses a free Qwen model, or another free model when no Qwen can read images. Free models can be slow or busy.",
     claude:"Most accurate. Reads handwriting, phrases and translations. Needs an Anthropic API key (paid per use).",
     account:"Have a Claude account (claude.ai) but no API key? Use the claude.ai version of Wordshelf, which runs on your account.",
-    free:"No key needed, but basic: reads typed or printed text only (not handwriting), uses a built-in dictionary, and many words have no example sentence."}[m]+(m==="free"&&study!=="en"?" Basic mode is English only.":"");
+    free:study==="en"?"No key needed, but basic: reads typed or printed text only (not handwriting), uses a built-in dictionary, and many words have no example sentence."
+      :"No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary."}[m];
   if(PROVIDERS[m]) showKeyState();
 }
 $("#modeSel").addEventListener("change",e=>setMode(e.target.value));
@@ -1229,8 +1311,7 @@ drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
 document.addEventListener("paste",e=>{const fs=[...(e.clipboardData?.files||[])];if(fs.length){e.preventDefault();addFiles(fs)}});
 $("#thumbs").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i==null)return;if(pending[i].url)URL.revokeObjectURL(pending[i].url);pending.splice(+i,1);drawThumbs()});
 
-const basicEnglishOnly=()=>{ if(mode!=="free"||study==="en") return false;
-  setStatus(`Basic mode only works for English. Choose Gemini (free) in "Read with" to learn ${SL().name}.`,true); return true };
+const basicEnglishOnly=()=>false;
 $("#recognize").addEventListener("click",async()=>{
   if(basicEnglishOnly()) return;
   const btn=$("#recognize"); btn.disabled=true; track("scan-"+mode,"Scan ("+mode+")");
@@ -1271,20 +1352,27 @@ $("#manualForm").addEventListener("submit",async e=>{
     // words typed in Russian (or another Cyrillic language) are translated to English first; the original goes in the note
     const terms=v.split(/[\n,;]+/).map(t=>t.trim()).filter(Boolean), notes={};
     const foreign=terms.filter(t=>/[\u0400-\u04FF]/.test(t));
-    if(foreign.length) setStatus(spin("Translating into English…"));
+    if(foreign.length) setStatus(spin(study==="en"?"Translating into English…":`Translating into ${SL().name}…`));
     const fixed=await Promise.all(terms.map(async t=>{
       if(!foreign.includes(t)) return t;
       const src=/[іїєґ]/i.test(t)?"uk":/[әғқңөұүһ]/i.test(t)?"kk":"ru";
-      const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(t)}&langpair=${src}|en`,8000);
-      const e=String(d?.responseData?.translatedText||"").trim().toLowerCase().replace(/^(to|a|an|the)\s+/,"").replace(/[.!?]+$/,"");
-      if(!e||/[\u0400-\u04FF]|mymemory/i.test(e)) return "";
-      notes[e]=t; return e;
+      // a typo can make the translator give the word back untranslated: try with repeated letters fixed
+      const lower=t.toLowerCase();
+      const variants=[...new Set([lower,lower.replace(/(.)\1{2,}/g,"$1$1"),lower.replace(/(.)\1+/g,"$1"),lower.replace(/ё/g,"е"),lower.replace(/(.)\1{2,}/g,"$1").replace(/е/g,"ё")])];
+      for(const q of variants){
+        const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${src}|${study}`,8000);
+        let e=String(d?.responseData?.translatedText||"").trim().replace(/[.!?]+$/,"");
+        if(study==="en") e=e.toLowerCase().replace(/^(to|a|an|the)\s+/,""); else if(study!=="ar"&&study!=="de") e=e.toLowerCase();
+        if(!e||/[\u0400-\u04FF]|mymemory/i.test(e)) continue;
+        notes[e.toLowerCase()]=t; return e;
+      }
+      return "";
     }));
     const missed=terms.filter((t,i)=>!fixed[i]);
     const r=await freeLookup(fixed.filter(Boolean));
     $("#manualBtn").disabled=false;
-    if(!r){ if(missed.length) setStatus(`Couldn't translate ${missed.join(", ")}. Type them in English, or use Gemini (free).`,true); return }
-    for(const it of r.items) if(notes[it.word]) it.note=notes[it.word];
+    if(!r){ if(missed.length) setStatus(study==="en"?`Couldn't translate ${missed.join(", ")}. Type them in English, or use Gemini (free).`:`Couldn't translate ${missed.join(", ")}. Type them in ${SL().name}, or use Gemini (free).`,true); return }
+    for(const it of r.items) if(notes[it.word.toLowerCase()]) it.note=notes[it.word.toLowerCase()];
     const {total}=addWords(r.items); $("#manual").value="";
     setStatus(`Added ${total} word${total>1?"s":""}.`+(missed.length?` Couldn't translate ${missed.join(", ")}.`:""),!!missed.length); return;
   }

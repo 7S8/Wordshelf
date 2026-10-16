@@ -213,7 +213,10 @@
   "Latin American": "آمریکای لاتین",
   "Egyptian Arabic": "عربی مصری",
   "British": "بریتانیایی",
-  "American": "آمریکایی"
+  "American": "آمریکایی",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "کلید لازم نیست، اما حالت ساده است: فقط متن چاپی را می‌خواند (نه دست‌نویس). سطح بر اساس رایج بودن واژه تخمین زده می‌شود؛ معنی‌ها (به انگلیسی) و مثال‌ها از ویکی‌واژه می‌آیند.",
+  "Other languages: word frequencies from": "زبان‌های دیگر: بسامد واژه‌ها از",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018، CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} واژه جملهٔ نمونه ندارد.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "یادداشت‌های من: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "در حال ترجمهٔ صفحه به {0}…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "برای نمایش صفحه به زبان {0}، یک کلید رایگان Gemini (یا کلید هوش مصنوعی دیگری) در «خواندن با» اضافه کنید: صفحه یک بار ترجمه و ذخیره می‌شود."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "برای نمایش صفحه به زبان {0}، یک کلید رایگان Gemini (یا کلید هوش مصنوعی دیگری) در «خواندن با» اضافه کنید: صفحه یک بار ترجمه و ذخیره می‌شود.",
+  "Translating into {L0}…": "در حال ترجمه به {0}…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "ترجمهٔ {0} ممکن نشد. آن‌ها را به {1} بنویسید یا از Gemini استفاده کنید (رایگان)."
  }
 }

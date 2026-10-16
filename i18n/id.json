@@ -213,7 +213,10 @@
   "Latin American": "Amerika Latin",
   "Egyptian Arabic": "Arab Mesir",
   "British": "Britania",
-  "American": "Amerika"
+  "American": "Amerika",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Tidak perlu kunci, tetapi mode dasar: hanya membaca teks cetak (bukan tulisan tangan). Level diperkirakan dari seberapa umum kata itu; arti (dalam bahasa Inggris) dan contoh diambil dari Wiktionary.",
+  "Other languages: word frequencies from": "Bahasa lain: frekuensi kata dari",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} kata belum punya contoh kalimat.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "Catatanku: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "Menerjemahkan halaman ke bahasa {0}…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Untuk menampilkan halaman dalam bahasa {0}, tambahkan kunci Gemini gratis (atau kunci AI lain) di \"Baca dengan\": halaman diterjemahkan sekali lalu disimpan."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Untuk menampilkan halaman dalam bahasa {0}, tambahkan kunci Gemini gratis (atau kunci AI lain) di \"Baca dengan\": halaman diterjemahkan sekali lalu disimpan.",
+  "Translating into {L0}…": "Menerjemahkan ke {0}…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "Tidak bisa menerjemahkan {0}. Ketik dalam {1}, atau gunakan Gemini (gratis)."
  }
 }

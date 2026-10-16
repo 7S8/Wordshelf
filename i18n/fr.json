@@ -213,7 +213,10 @@
   "Latin American": "espagnol d'Amérique latine",
   "Egyptian Arabic": "arabe égyptien",
   "British": "anglais britannique",
-  "American": "anglais américain"
+  "American": "anglais américain",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Aucune clé nécessaire, mais mode simple : ne lit que le texte imprimé (pas l'écriture manuscrite). Le niveau est estimé selon la fréquence du mot ; les sens (en anglais) et les exemples viennent du Wiktionnaire.",
+  "Other languages: word frequencies from": "Autres langues : fréquences des mots issues de",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:one=mot n'a;many=mots n'ont;other=mots n'ont} pas de phrase d'exemple.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "Mes notes : {0}",
   "{L0}:": "{0} :",
   "Translating the page into {L0}…": "Traduction de la page ({0})…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Pour afficher la page dans cette langue ({0}), ajoutez une clé Gemini gratuite (ou une autre clé d'IA) dans « Lire avec » : la page est traduite une fois puis enregistrée."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Pour afficher la page dans cette langue ({0}), ajoutez une clé Gemini gratuite (ou une autre clé d'IA) dans « Lire avec » : la page est traduite une fois puis enregistrée.",
+  "Translating into {L0}…": "Traduction ({0})…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "Impossible de traduire {0}. Saisissez-les en {1} ou utilisez Gemini (gratuit)."
  }
 }

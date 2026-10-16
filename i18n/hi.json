@@ -213,7 +213,10 @@
   "Latin American": "लैटिन अमेरिकी",
   "Egyptian Arabic": "मिस्री अरबी",
   "British": "ब्रिटिश",
-  "American": "अमेरिकी"
+  "American": "अमेरिकी",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "कुंजी की ज़रूरत नहीं, पर यह बुनियादी मोड है: सिर्फ़ छपा हुआ टेक्स्ट पढ़ता है (हाथ से लिखा नहीं)। स्तर इस से अनुमानित होता है कि शब्द कितना आम है; अर्थ (अंग्रेज़ी में) और उदाहरण विक्षनरी से आते हैं।",
+  "Other languages: word frequencies from": "अन्य भाषाएँ: शब्द-आवृत्ति स्रोत",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)।"
  },
  "p": {
   "{0} word has no example sentence.": "{0} शब्द का कोई उदाहरण वाक्य नहीं है।",
@@ -282,6 +285,8 @@
   "My notes: {0}": "मेरे नोट्स: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "पेज का {0} में अनुवाद हो रहा है…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "पेज को {0} में दिखाने के लिए \"इससे पढ़ें\" में मुफ़्त Gemini कुंजी (या कोई दूसरी AI कुंजी) जोड़ें: पेज का एक बार अनुवाद होकर सेव हो जाता है।"
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "पेज को {0} में दिखाने के लिए \"इससे पढ़ें\" में मुफ़्त Gemini कुंजी (या कोई दूसरी AI कुंजी) जोड़ें: पेज का एक बार अनुवाद होकर सेव हो जाता है।",
+  "Translating into {L0}…": "{0} में अनुवाद हो रहा है…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "{0} का अनुवाद नहीं हो सका। इन्हें {1} में लिखें या Gemini (मुफ़्त) इस्तेमाल करें।"
  }
 }

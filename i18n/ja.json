@@ -213,7 +213,10 @@
   "Latin American": "ラテンアメリカ",
   "Egyptian Arabic": "エジプト・アラビア語",
   "British": "イギリス英語",
-  "American": "アメリカ英語"
+  "American": "アメリカ英語",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "キー不要ですが基本モードです：印刷された文字のみ読み取ります（手書きは不可）。レベルは単語の使用頻度から推定し、意味（英語）と例文はウィクショナリーから取得します。",
+  "Other languages: word frequencies from": "その他の言語：単語の頻度データは",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "（OpenSubtitles 2018、CC BY-SA 4.0）を使用しています。"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 語に例文がありません。",
@@ -282,6 +285,8 @@
   "My notes: {0}": "メモ：{0}",
   "{L0}:": "{0}：",
   "Translating the page into {L0}…": "ページを{0}に翻訳しています…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "ページを{0}で表示するには、「読み取り方法」で無料の Gemini キー（または他の AI キー）を追加してください。ページは一度翻訳されると保存されます。"
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "ページを{0}で表示するには、「読み取り方法」で無料の Gemini キー（または他の AI キー）を追加してください。ページは一度翻訳されると保存されます。",
+  "Translating into {L0}…": "{0}に翻訳しています…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "{0} を翻訳できませんでした。{1}で入力するか、Gemini（無料）を使ってください。"
  }
 }

@@ -213,7 +213,10 @@
   "Latin American": "拉丁美洲",
   "Egyptian Arabic": "埃及阿拉伯语",
   "British": "英式",
-  "American": "美式"
+  "American": "美式",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "无需密钥，但功能基础：只能识别印刷文字（不支持手写）。等级根据单词的常见程度估算；释义（英文）和例句来自维基词典。",
+  "Other languages: word frequencies from": "其他语言：词频数据来自",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "（OpenSubtitles 2018，CC BY-SA 4.0）。"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 个单词没有例句。",
@@ -282,6 +285,8 @@
   "My notes: {0}": "我的笔记：{0}",
   "{L0}:": "{0}：",
   "Translating the page into {L0}…": "正在将页面翻译成{0}…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "要以{0}显示页面，请在“识别方式”中添加免费的 Gemini 密钥（或其他 AI 密钥）：页面只需翻译一次并会被保存。"
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "要以{0}显示页面，请在“识别方式”中添加免费的 Gemini 密钥（或其他 AI 密钥）：页面只需翻译一次并会被保存。",
+  "Translating into {L0}…": "正在翻译成{0}…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "无法翻译：{0}。请用{1}输入，或使用 Gemini（免费）。"
  }
 }

@@ -213,7 +213,10 @@
   "Latin American": "lateinamerikanisches Spanisch",
   "Egyptian Arabic": "ägyptisches Arabisch",
   "British": "britisches Englisch",
-  "American": "amerikanisches Englisch"
+  "American": "amerikanisches Englisch",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Kein Schlüssel nötig, aber einfach: liest nur gedruckten Text (keine Handschrift). Das Niveau wird danach geschätzt, wie häufig ein Wort ist; Bedeutungen (auf Englisch) und Beispiele kommen aus dem Wiktionary.",
+  "Other languages: word frequencies from": "Andere Sprachen: Worthäufigkeiten aus",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:one=Wort hat;other=Wörter haben} keinen Beispielsatz.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "Meine Notizen: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "Seite wird auf {0} übersetzt…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Um die Seite auf {0} anzuzeigen, füge unter „Lesen mit“ einen kostenlosen Gemini-Schlüssel (oder einen anderen KI-Schlüssel) hinzu: Die Seite wird einmal übersetzt und gespeichert."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Um die Seite auf {0} anzuzeigen, füge unter „Lesen mit“ einen kostenlosen Gemini-Schlüssel (oder einen anderen KI-Schlüssel) hinzu: Die Seite wird einmal übersetzt und gespeichert.",
+  "Translating into {L0}…": "Wird übersetzt ({0})…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "{0} konnte nicht übersetzt werden. Gib die Wörter auf {1} ein oder nutze Gemini (kostenlos)."
  }
 }

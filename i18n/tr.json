@@ -213,7 +213,10 @@
   "Latin American": "Latin Amerika",
   "Egyptian Arabic": "Mısır Arapçası",
   "British": "İngiliz",
-  "American": "Amerikan"
+  "American": "Amerikan",
+  "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Anahtar gerekmez ama basit moddur: yalnızca basılı metni okur (el yazısını değil). Seviye, kelimenin ne kadar yaygın olduğuna göre tahmin edilir; anlamlar (İngilizce) ve örnekler Vikisözlük'ten alınır.",
+  "Other languages: word frequencies from": "Diğer diller: kelime sıklıkları kaynağı",
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} kelimenin örnek cümlesi yok.",
@@ -282,6 +285,8 @@
   "My notes: {0}": "Notlarım: {0}",
   "{L0}:": "{0}:",
   "Translating the page into {L0}…": "Sayfa çevriliyor: {0}…",
-  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Sayfayı bu dilde ({0}) göstermek için \"Okuma yöntemi\" bölümüne ücretsiz bir Gemini anahtarı (veya başka bir yapay zekâ anahtarı) ekleyin: sayfa bir kez çevrilir ve kaydedilir."
+  "To show the page in {L0}, add a free Gemini key (or another AI key) in \"Read with\": the page is translated once and saved.": "Sayfayı bu dilde ({0}) göstermek için \"Okuma yöntemi\" bölümüne ücretsiz bir Gemini anahtarı (veya başka bir yapay zekâ anahtarı) ekleyin: sayfa bir kez çevrilir ve kaydedilir.",
+  "Translating into {L0}…": "{0} diline çevriliyor…",
+  "Couldn't translate {0}. Type them in {L1}, or use Gemini (free).": "Çevrilemedi: {0}. Bunları {1} yazın veya Gemini kullanın (ücretsiz)."
  }
 }
