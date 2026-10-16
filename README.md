@@ -26,6 +26,10 @@ Pick a language in **Translate to** (about 100 languages, defaults to your brows
 
 Your word list is saved in your browser. Use **Print** to print (or save as PDF) all levels or only the ones you choose, with or without definitions, sentences, pronunciation and notes.
 
+## FreeLLMAPI (optional)
+
+Choose **FreeLLMAPI · your server** in "Read with" to use your own [FreeLLMAPI](https://github.com/tashfeenahmed/freellmapi) router, which joins the free plans of many AI services and switches to the next one when a limit is reached. Enter its address (for example `http://localhost:3001/v1`) and its unified key. The browser talks to it directly, so it must be reachable from the device you use (the same computer, or an HTTPS address) and allow requests from this site (CORS).
+
 ## Languages
 
 - **Type words in Russian** (or another language): they are added in English (typos like doubled letters are fixed first), with the original kept as a note.

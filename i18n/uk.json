@@ -216,7 +216,22 @@
   "American": "Американський",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Ключ не потрібен, але режим простий: читає лише друкований текст (не рукописний). Рівень визначається за тим, наскільки поширене слово; значення (англійською) і приклади беруться з Вікісловника.",
   "Other languages: word frequencies from": "Інші мови: частотність слів із",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
+  "FreeLLMAPI · your server": "FreeLLMAPI · ваш сервер",
+  "Many free AI services in one. Needs your own FreeLLMAPI server.": "Багато безкоштовних ШІ-сервісів в одному. Потрібен ваш власний сервер FreeLLMAPI.",
+  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "Ваш власний сервер FreeLLMAPI: безкоштовні тарифи багатьох ШІ-сервісів в одному, з перемиканням на наступний, коли один вичерпує ліміт. Читає рукописний текст і пише речення та переклади.",
+  "FreeLLMAPI key": "Ключ FreeLLMAPI",
+  "Server address, e.g. http://localhost:3001/v1": "Адреса сервера, наприклад http://localhost:3001/v1",
+  "FreeLLMAPI server address": "Адреса сервера FreeLLMAPI",
+  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI об’єднує безкоштовні тарифи багатьох ШІ-сервісів (Gemini, Groq, Mistral, OpenRouter та інших) під однією адресою і перемикається на наступний, коли ліміт вичерпано.",
+  "Install it from": "Встановіть його з",
+  "(desktop app or Docker) and add your free keys there.": "(застосунок для комп’ютера або Docker) і додайте туди свої безкоштовні ключі.",
+  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "Вставте нижче адресу сервера та єдиний ключ зі сторінки Keys. Вони зберігаються лише в цьому браузері.",
+  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "Не вдалося зв’язатися з вашим сервером FreeLLMAPI. Перевірте, що він запущений, адреса правильна і сервер дозволяє запити з цього сайту (CORS).",
+  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "Ваш сервер FreeLLMAPI відхилив ключ. Перевірте його в полі нижче.",
+  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "На вашому сервері FreeLLMAPI немає моделі, яка читає зображення. Додайте до нього ключ Gemini або введіть слова вручну.",
+  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "Усі безкоштовні моделі на вашому сервері FreeLLMAPI перевантажені або вичерпали ліміт. Спробуйте ще раз за хвилину.",
+  "The answer came back in the wrong format. Press the button again.": "Відповідь прийшла в неправильному форматі. Натисніть кнопку ще раз."
  },
  "p": {
   "{0} word has no example sentence.": "Без прикладу речення: {0} {0:one=слово;few=слова;many=слів;other=слова}.",

@@ -216,7 +216,22 @@
   "American": "americano",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Não precisa de chave, mas é básico: lê só texto impresso (não manuscrito). O nível é estimado pela frequência da palavra; os significados (em inglês) e os exemplos vêm do Wikcionário.",
   "Other languages: word frequencies from": "Outros idiomas: frequências de palavras de",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
+  "FreeLLMAPI · your server": "FreeLLMAPI · seu servidor",
+  "Many free AI services in one. Needs your own FreeLLMAPI server.": "Vários serviços de IA grátis em um só. Precisa do seu próprio servidor FreeLLMAPI.",
+  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "Seu próprio servidor FreeLLMAPI: os planos grátis de vários serviços de IA em um só, passando para o próximo quando um atinge o limite. Lê letra de mão e escreve frases e traduções.",
+  "FreeLLMAPI key": "Chave do FreeLLMAPI",
+  "Server address, e.g. http://localhost:3001/v1": "Endereço do servidor, ex.: http://localhost:3001/v1",
+  "FreeLLMAPI server address": "Endereço do servidor FreeLLMAPI",
+  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "O FreeLLMAPI junta os planos grátis de vários serviços de IA (Gemini, Groq, Mistral, OpenRouter e outros) em um só endereço e passa para o próximo quando um limite é atingido.",
+  "Install it from": "Instale a partir de",
+  "(desktop app or Docker) and add your free keys there.": "(app para desktop ou Docker) e adicione suas chaves grátis lá.",
+  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "Cole abaixo o endereço do servidor e a chave unificada da página Keys dele. Eles ficam neste navegador.",
+  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "Não foi possível acessar seu servidor FreeLLMAPI. Verifique se ele está rodando, se o endereço está certo e se ele permite solicitações deste site (CORS).",
+  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "Seu servidor FreeLLMAPI recusou a chave. Confira na caixa abaixo.",
+  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "Seu servidor FreeLLMAPI não tem nenhum modelo que leia imagens. Adicione uma chave do Gemini a ele ou digite as palavras.",
+  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "Todos os modelos grátis do seu servidor FreeLLMAPI estão ocupados ou no limite. Tente de novo em um minuto.",
+  "The answer came back in the wrong format. Press the button again.": "A resposta veio no formato errado. Aperte o botão de novo."
  },
  "p": {
   "{0} word has no example sentence.": "{0} palavra está sem frase de exemplo.",

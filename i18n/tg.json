@@ -216,7 +216,22 @@
   "American": "амрикоӣ",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Калид лозим нест, аммо ҳолат оддӣ аст: танҳо матни чопиро мехонад (на дастнависро). Сатҳ аз рӯи он ки калима чӣ қадар маъмул аст, муайян мешавад; маъноҳо (ба забони англисӣ) ва мисолҳо аз Викилуғат гирифта мешаванд.",
   "Other languages: word frequencies from": "Забонҳои дигар: басомади калимаҳо аз",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
+  "FreeLLMAPI · your server": "FreeLLMAPI · сервери шумо",
+  "Many free AI services in one. Needs your own FreeLLMAPI server.": "Бисёр хадамоти ройгони зеҳни сунъӣ дар як ҷо. Сервери худи шумо бо FreeLLMAPI лозим аст.",
+  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "Сервери худи шумо бо FreeLLMAPI: нақшаҳои ройгони бисёр хадамоти зеҳни сунъӣ дар як ҷо, вақте ки яке ба ҳудуд мерасад, ба дигараш мегузарад. Дастнависро мехонад ва ҷумлаҳо ва тарҷумаҳо менависад.",
+  "FreeLLMAPI key": "Калиди FreeLLMAPI",
+  "Server address, e.g. http://localhost:3001/v1": "Суроғаи сервер, масалан http://localhost:3001/v1",
+  "FreeLLMAPI server address": "Суроғаи сервери FreeLLMAPI",
+  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI нақшаҳои ройгони бисёр хадамоти зеҳни сунъиро (Gemini, Groq, Mistral, OpenRouter ва ғайра) дар як суроға муттаҳид мекунад ва вақте ки ҳудуд тамом мешавад, ба дигараш мегузарад.",
+  "Install it from": "Онро аз ин ҷо насб кунед:",
+  "(desktop app or Docker) and add your free keys there.": "(барномаи мизи корӣ ё Docker) ва калидҳои ройгони худро дар он ҷо илова кунед.",
+  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "Суроғаи сервер ва калиди ягонаро аз саҳифаи Keys-и он дар поён гузоред. Онҳо дар ҳамин браузер мемонанд.",
+  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "Ба сервери FreeLLMAPI-и шумо пайваст шудан нашуд. Санҷед, ки он кор мекунад, суроға дуруст аст ва он дархостҳоро аз ин сомона иҷозат медиҳад (CORS).",
+  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "Сервери FreeLLMAPI-и шумо калидро рад кард. Онро дар майдони поён санҷед.",
+  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "Дар сервери FreeLLMAPI-и шумо модели тасвирхон нест. Ба он калиди Gemini илова кунед ё калимаҳоро худатон нависед.",
+  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "Ҳамаи моделҳои ройгон дар сервери FreeLLMAPI-и шумо банданд ё ба ҳудуд расидаанд. Пас аз як дақиқа бори дигар кӯшиш кунед.",
+  "The answer came back in the wrong format. Press the button again.": "Ҷавоб дар формати нодуруст омад. Тугмаро боз пахш кунед."
  },
  "p": {
   "{0} word has no example sentence.": "Барои {0} калима ҷумлаи намунавӣ нест.",

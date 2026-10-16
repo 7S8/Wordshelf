@@ -216,7 +216,22 @@
   "American": "アメリカ英語",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "キー不要ですが基本モードです：印刷された文字のみ読み取ります（手書きは不可）。レベルは単語の使用頻度から推定し、意味（英語）と例文はウィクショナリーから取得します。",
   "Other languages: word frequencies from": "その他の言語：単語の頻度データは",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "（OpenSubtitles 2018、CC BY-SA 4.0）を使用しています。"
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "（OpenSubtitles 2018、CC BY-SA 4.0）を使用しています。",
+  "FreeLLMAPI · your server": "FreeLLMAPI · 自分のサーバー",
+  "Many free AI services in one. Needs your own FreeLLMAPI server.": "多くの無料 AI サービスをひとつに。自分の FreeLLMAPI サーバーが必要です。",
+  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "自分の FreeLLMAPI サーバー：多くの AI サービスの無料プランをひとつにまとめ、上限に達すると次のサービスに切り替えます。手書きも読み取り、例文と翻訳を作成します。",
+  "FreeLLMAPI key": "FreeLLMAPI キー",
+  "Server address, e.g. http://localhost:3001/v1": "サーバーのアドレス（例: http://localhost:3001/v1）",
+  "FreeLLMAPI server address": "FreeLLMAPI サーバーのアドレス",
+  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI は、多くの AI サービス（Gemini、Groq、Mistral、OpenRouter など）の無料プランをひとつのアドレスにまとめ、上限に達すると次のサービスに切り替えます。",
+  "Install it from": "FreeLLMAPI を",
+  "(desktop app or Docker) and add your free keys there.": "（デスクトップアプリまたは Docker）からインストールし、無料キーをそこに追加してください。",
+  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "サーバーのアドレスと、その Keys ページにある統合キーを下に貼り付けてください。どちらもこのブラウザ内にだけ保存されます。",
+  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "FreeLLMAPI サーバーに接続できませんでした。サーバーが起動していること、アドレスが正しいこと、このサイトからのリクエストを許可していること（CORS）を確認してください。",
+  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "FreeLLMAPI サーバーがキーを拒否しました。下の入力欄で確認してください。",
+  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "FreeLLMAPI サーバーに画像を読めるモデルがありません。サーバーに Gemini キーを追加するか、単語を入力してください。",
+  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "FreeLLMAPI サーバーの無料モデルはすべて混雑しているか上限に達しています。1分後にもう一度お試しください。",
+  "The answer came back in the wrong format. Press the button again.": "回答の形式が正しくありませんでした。もう一度ボタンを押してください。"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 語に例文がありません。",

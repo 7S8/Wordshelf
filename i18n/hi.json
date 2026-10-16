@@ -216,7 +216,22 @@
   "American": "अमेरिकी",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "कुंजी की ज़रूरत नहीं, पर यह बुनियादी मोड है: सिर्फ़ छपा हुआ टेक्स्ट पढ़ता है (हाथ से लिखा नहीं)। स्तर इस से अनुमानित होता है कि शब्द कितना आम है; अर्थ (अंग्रेज़ी में) और उदाहरण विक्षनरी से आते हैं।",
   "Other languages: word frequencies from": "अन्य भाषाएँ: शब्द-आवृत्ति स्रोत",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)।"
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)।",
+  "FreeLLMAPI · your server": "FreeLLMAPI · आपका सर्वर",
+  "Many free AI services in one. Needs your own FreeLLMAPI server.": "कई मुफ़्त AI सेवाएँ एक जगह। आपका अपना FreeLLMAPI सर्वर चाहिए।",
+  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "आपका अपना FreeLLMAPI सर्वर: कई AI सेवाओं के मुफ़्त प्लान एक जगह, और किसी एक की सीमा पूरी होने पर अगली पर चला जाता है। हाथ की लिखावट पढ़ता है और वाक्य व अनुवाद लिखता है।",
+  "FreeLLMAPI key": "FreeLLMAPI कुंजी",
+  "Server address, e.g. http://localhost:3001/v1": "सर्वर का पता, जैसे http://localhost:3001/v1",
+  "FreeLLMAPI server address": "FreeLLMAPI सर्वर का पता",
+  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI कई AI सेवाओं (Gemini, Groq, Mistral, OpenRouter और भी) के मुफ़्त प्लान एक ही पते पर जोड़ता है, और सीमा पूरी होने पर अगली सेवा पर चला जाता है।",
+  "Install it from": "इसे यहाँ से इंस्टॉल करें:",
+  "(desktop app or Docker) and add your free keys there.": "(डेस्कटॉप ऐप या Docker) और अपनी मुफ़्त कुंजियाँ वहीं जोड़ें।",
+  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "सर्वर का पता और उसके Keys पेज से एकीकृत कुंजी नीचे पेस्ट करें। ये इसी ब्राउज़र में रहती हैं।",
+  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "आपके FreeLLMAPI सर्वर तक नहीं पहुँच सके। जाँचें कि वह चल रहा है, पता सही है, और वह इस साइट से अनुरोधों की अनुमति देता है (CORS)।",
+  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "आपके FreeLLMAPI सर्वर ने कुंजी अस्वीकार कर दी। नीचे के बॉक्स में उसे जाँचें।",
+  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "आपके FreeLLMAPI सर्वर में तस्वीरें पढ़ने वाला कोई मॉडल नहीं है। उसमें Gemini कुंजी जोड़ें, या शब्द टाइप करें।",
+  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "आपके FreeLLMAPI सर्वर के सभी मुफ़्त मॉडल व्यस्त हैं या अपनी सीमा पर हैं। एक मिनट बाद फिर से कोशिश करें।",
+  "The answer came back in the wrong format. Press the button again.": "जवाब गलत फ़ॉर्मैट में आया। बटन फिर से दबाएँ।"
  },
  "p": {
   "{0} word has no example sentence.": "{0} शब्द का कोई उदाहरण वाक्य नहीं है।",
