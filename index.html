@@ -209,7 +209,7 @@ html.i18n-wait body{visibility:hidden}
 .panel-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 .panel-head h2{font-size:20px;font-weight:700}
 /* heading and reading-mode picker stay on one row; a long name shortens instead of wrapping */
-.panel-head{flex-wrap:nowrap}.panel-head h2{white-space:nowrap;flex:none}.panel-head .pick{min-width:0;flex:none}.panel-head .lbl{white-space:nowrap}.panel-head.tight .lbl{display:none}.appbar.tight .themepick .dd-val>span:not(.tdot){display:none}
+.panel-head{flex-wrap:nowrap}.panel-head h2{white-space:nowrap;flex:none}.panel-head .pick{min-width:0;flex:none}.panel-head .lbl{white-space:nowrap}.panel-head.tight .lbl{display:none}.panel-head .dd-btn{flex:none}.panel-head .dd-btn .dd-val{overflow:visible;text-overflow:clip}.appbar.tight .themepick .dd-val>span:not(.tdot){display:none}
 .mode-help{font-size:14px;color:var(--muted);margin:-4px 0 0}
 .drop{border:2px dashed var(--line);border-radius:var(--r-sm);padding:22px 16px;text-align:center;background:var(--sunk);cursor:pointer;transition:border-color .15s,background .15s;display:grid;gap:4px;justify-items:center}
 .drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
@@ -251,6 +251,7 @@ html.i18n-wait body{visibility:hidden}
 .keybox{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
 .keybox summary{cursor:pointer;font-weight:700;font-size:15px}
 .keyrow{display:flex;flex-wrap:wrap;gap:8px}
+.keyrow #apiUrl{flex-basis:100%}
 .keyrow input{flex:1 1 240px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);font-family:var(--mono);font-size:14px}
 .keybox p,.keyhelp{margin:0;font-size:14px;color:var(--muted)}
 .keyhelp ol{margin:4px 0 0;padding-left:20px;display:grid;gap:2px}
@@ -438,6 +439,7 @@ footer p{margin:8px 0 0}
         <select id="modeSel" aria-label="Reading mode">
           <option value="gemini">Gemini · free key</option>
           <option value="qwen">Qwen · free key</option>
+          <option value="freellm">FreeLLMAPI · your server</option>
           <option value="account">Claude account</option>
           <option value="claude">Claude API key</option>
           <option value="free">Basic · no key</option>
@@ -474,6 +476,7 @@ footer p{margin:8px 0 0}
       <summary id="keySummary">API key</summary>
       <div id="keyHelp" class="keyhelp"></div>
       <form class="keyrow" id="keyForm">
+        <input id="apiUrl" type="url" autocomplete="off" hidden placeholder="Server address, e.g. http://localhost:3001/v1" aria-label="FreeLLMAPI server address">
         <input id="apiKey" type="password" autocomplete="off" placeholder="Paste your key" aria-label="API key">
         <button class="btn small" type="submit">Save key</button>
         <button class="btn small" type="button" id="forgetKey">Forget key</button>
@@ -563,11 +566,16 @@ const PROVIDERS={
     help:'<p>Gemini is free. Get a key in about a minute, no card needed:</p><ol><li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and sign in with Google.</li><li>Click <b>Create API key</b> and copy it.</li><li>Paste it below. It stays in this browser and is sent only to Google.</li></ol>'},
   qwen:{name:"Qwen",keyName:"OpenRouter key",storage:"wordshelf.key.openrouter",
     help:'<p>Qwen runs through OpenRouter\'s free models. Free models have a daily limit and are sometimes busy.</p><ol><li>Sign up at <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener">openrouter.ai/settings/keys</a> (free).</li><li>Click <b>Create API key</b> and copy it.</li><li>Paste it below. It stays in this browser and is sent only to OpenRouter.</li></ol>'},
+  freellm:{name:"FreeLLMAPI",keyName:"FreeLLMAPI key",storage:"wordshelf.key.freellm",
+    help:'<p>FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.</p><ol><li>Install it from <a href="https://github.com/tashfeenahmed/freellmapi" target="_blank" rel="noopener">github.com/tashfeenahmed/freellmapi</a> (desktop app or Docker) and add your free keys there.</li><li>Paste the server address and the unified key from its Keys page below. They stay in this browser.</li></ol>'},
   claude:{name:"Claude",keyName:"Anthropic API key",storage:"wordshelf.apikey",
     help:'<p>Paste an API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. It stays in this browser and is sent only to Anthropic. Each scan costs a few cents on your account.</p>'}};
 const getKey=(m=mode)=>{try{return localStorage.getItem(PROVIDERS[m]?.storage)||""}catch{return ""}};
 const setKey=(v,m=mode)=>{try{v?localStorage.setItem(PROVIDERS[m].storage,v):localStorage.removeItem(PROVIDERS[m].storage)}catch{}};
 const MODEL="claude-opus-5-5";
+const AI_PROVIDERS=["freellm","gemini","qwen","claude"];   // a saved FreeLLMAPI server is tried first
+const freellmUrl=()=>{try{return (localStorage.getItem("wordshelf.freellm.url")||"http://localhost:3001/v1").replace(/\/+$/,"")}catch{return "http://localhost:3001/v1"}};
+const askText=(provider,key,prompt)=>provider==="gemini"?askGemini(key,prompt,[]):provider==="qwen"?askQwen(key,prompt,[]):provider==="freellm"?askFreeLLM(key,prompt,[]):askClaudeText(key,prompt);
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
@@ -706,6 +714,7 @@ async function ask(prompt,images,label){
   setStatus(spin(label));
   if(mode==="gemini") return askGemini(key,prompt,images);
   if(mode==="qwen") return askQwen(key,prompt,images);
+  if(mode==="freellm") return askFreeLLM(key,prompt,images);
   return askClaude(key,prompt,images);
 }
 const fail=msg=>{setStatus(esc(msg),true);return null};
@@ -809,6 +818,23 @@ async function askQwen(key,prompt,images){
   return fail(`None of OpenRouter's free models could do this right now (${lastErr}). Free models are often busy or hit their daily limit. Switch to Gemini, or try again later.`);
 }
 
+/* FreeLLMAPI: your own server with an OpenAI-compatible /v1 address; "auto" lets its router pick a free model */
+async function askFreeLLM(key,prompt,images){
+  const content=[{type:"text",text:prompt+"\n\n"+JSON_SHAPE}];
+  try{ for(const f of images||[]){const im=await prepImage(f);content.push({type:"image_url",image_url:{url:`data:${im.media_type};base64,${im.data}`}})} }
+  catch{ return fail("Couldn't prepare the image. Try a JPG or PNG.") }
+  let r,data;
+  try{
+    r=await fetch(freellmUrl()+"/chat/completions",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+key},
+      body:JSON.stringify({model:"auto",messages:[{role:"user",content}],temperature:0.3})});
+    data=await r.json().catch(()=>({}));
+  }catch{ return fail("Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).") }
+  if(r.status===401||r.status===403){$("#keybox").open=true;return fail("Your FreeLLMAPI server rejected the key. Check it in the box below.")}
+  if(r.status===422&&/vision/i.test(JSON.stringify(data))) return fail("Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.");
+  if(r.status===429) return fail("All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.");
+  if(!r.ok) return fail("Request failed: "+(data?.error?.message||r.status));
+  return parseJSONReply(data.choices?.[0]?.message?.content||"")||fail("The answer came back in the wrong format. Press the button again.");
+}
 async function askClaude(key,prompt,images){
   try{
     const content=[];
@@ -997,6 +1023,7 @@ function setMode(m){
   $("#accountBox").hidden=m!=="account";
   $("#modeHelp").textContent={
     gemini:"Free with a Google key. Reads handwriting, phrases and translations, and writes example sentences for every word.",
+    freellm:"Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.",
     qwen:"Free with an OpenRouter key. Uses a free Qwen model, or another free model when no Qwen can read images. Free models can be slow or busy.",
     claude:"Most accurate. Reads handwriting, phrases and translations. Needs an Anthropic API key (paid per use).",
     account:"Have a Claude account (claude.ai) but no API key? Use the claude.ai version of Wordshelf, which runs on your account.",
@@ -1258,10 +1285,13 @@ function showKeyState(){
   const p=PROVIDERS[mode]; if(!p) return; const k=getKey();
   $("#keySummary").textContent=k?`${p.keyName} · saved (…${k.slice(-4)})`:`${p.keyName} · needed`;
   $("#keyHelp").innerHTML=p.help; $("#apiKey").value=""; $("#apiKey").placeholder="Paste your "+p.keyName;
+  $("#apiUrl").hidden=mode!=="freellm"; if(mode==="freellm") $("#apiUrl").value=freellmUrl();
   $("#keybox").open=!k;
 }
 setMode(mode);
-$("#keyForm").addEventListener("submit",e=>{e.preventDefault();const v=$("#apiKey").value.trim();if(!v)return;setKey(v);geminiModel=null;showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
+$("#keyForm").addEventListener("submit",e=>{e.preventDefault();
+  if(mode==="freellm"){const u=$("#apiUrl").value.trim(); if(u) try{localStorage.setItem("wordshelf.freellm.url",u)}catch{}}
+  const v=$("#apiKey").value.trim();if(!v)return;setKey(v);geminiModel=null;showKeyState();$("#keybox").open=false;setStatus("Key saved in this browser.")});
 $("#forgetKey").addEventListener("click",()=>{setKey("");showKeyState();setStatus("Key removed from this browser.")});
 
 /* Write missing example sentences: with a saved AI key if there is one, otherwise with Qwen running in the browser */
@@ -1272,7 +1302,7 @@ const EX_PROMPT=list=>`Write exactly 2 short, natural, everyday example sentence
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.pos?w.pos+": ":""}${w.definition})`:""}`).join("\n");
 async function fillWithKey(provider,list){
   const key=getKey(provider); setStatus(spin(`Writing sentences with ${PROVIDERS[provider].name}…`));
-  const res=provider==="gemini"?await askGemini(key,EX_PROMPT(list),[]):provider==="qwen"?await askQwen(key,EX_PROMPT(list),[]):await askClaudeText(key,EX_PROMPT(list));
+  const res=await askText(provider,key,EX_PROMPT(list));
   return res?.items||null;
 }
 async function askClaudeText(key,prompt){
@@ -1322,7 +1352,7 @@ async function fillMissing(useLocal){
   const list=needSentences(); if(!list.length) return;
   filling=true; render(); $("#fillConfirm").hidden=true;
   let items=null;
-  const provider=["gemini","qwen","claude"].find(p=>getKey(p));
+  const provider=AI_PROVIDERS.find(p=>getKey(p));
   if(!useLocal&&provider){
     items=await fillWithKey(provider,list.slice(0,60));
     let local=false; try{local=localStorage.getItem("wordshelf.localModel")==="1"}catch{}
@@ -1408,7 +1438,7 @@ async function autoFill(){
     try{ await fillFromWiktionary() } finally { filling=false; render() }
     if(!needSentences().length) return;
   }
-  if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
+  if(AI_PROVIDERS.some(p=>getKey(p))) return fillMissing(false);
   let local=false; try{local=localStorage.getItem("wordshelf.localModel")==="1"}catch{}
   if(local&&canRunLocal) return fillMissing(true);
   if(!canRunLocal){ $("#fillPhone").hidden=false; return }
@@ -1416,7 +1446,7 @@ async function autoFill(){
 }
 $("#fillGo").addEventListener("click",async()=>{
   if(needSentences().some(w=>!wikiTried.has(w.word))){ await autoFill(); return }
-  if(["gemini","qwen","claude"].some(p=>getKey(p))) return fillMissing(false);
+  if(AI_PROVIDERS.some(p=>getKey(p))) return fillMissing(false);
   if(!canRunLocal){ $("#fillPhone").hidden=false; return }
   $("#fillConfirm").hidden=false;   // no key saved: offer the on-device model
 });
@@ -1453,7 +1483,7 @@ fillLangs();
 $("#lang").addEventListener("change",e=>{lang=e.target.value;if(lang)track("translate-"+lang,"Translate to "+langName(lang));try{localStorage.setItem("wordshelf.lang",lang)}catch{};render();autoTranslate()});
 var translating=false;
 const upgraded=new Set();
-const hasAiKey=()=>["gemini","qwen","claude"].some(p=>getKey(p));
+const hasAiKey=()=>AI_PROVIDERS.some(p=>getKey(p));
 const needDef=w=>w.definition&&(!w.defTr?.[lang]||(hasAiKey()&&w.defSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)));
 const trTried=new Set();   // each word is tried once per visit and language, so a word that can't be translated doesn't loop
 const needTranslation=()=>lang?words.filter(w=>!w.example&&!trTried.has(w.word+"|"+lang)&&(!w.tr?.[lang]||needDef(w)||(hasAiKey()&&w.trSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)))):[];
@@ -1462,7 +1492,7 @@ async function translateWithKey(provider,list){
 
 `+list.map(w=>`- ${w.word}${w.pos||w.definition?` (${[w.pos,w.definition].filter(Boolean).join(": ")})`:""}`).join("\n");
   const key=getKey(provider); setStatus(spin(`Translating into ${langName(lang)} with ${PROVIDERS[provider].name}…`));
-  const res=provider==="gemini"?await askGemini(key,prompt,[]):provider==="qwen"?await askQwen(key,prompt,[]):await askClaudeText(key,prompt);
+  const res=await askText(provider,key,prompt);
   return res?.items||null;
 }
 // Scripts that a correct translation must use (MyMemory sometimes answers in the wrong language)
@@ -1523,7 +1553,7 @@ async function autoTranslate(){
   translating=true;
   const forLang=lang;
   try{
-    const provider=["gemini","qwen","claude"].find(p=>getKey(p));
+    const provider=AI_PROVIDERS.find(p=>getKey(p));
     let items=provider?await translateWithKey(provider,list):null;
     if(provider) list.forEach(w=>upgraded.add(w.word+"|"+forLang));
     // without a working AI, only fill words that have no translation yet (don't replace one free answer with another)
@@ -1596,6 +1626,7 @@ function refreshDropdowns(){ (dropdowns||[]).forEach(d=>d.refresh()) }
 const DOT={auto:null,light:"#f4f6f5",dark:"#1c282b",paper:"#e3d3b8",ocean:"#0f5f7a",forest:"#2f5d3a",rose:"#e59bb3",contrast:"#000000"};
 const THEME_NOTE={auto:"Follows your device",light:"Clean and bright",dark:"Easy on the eyes",paper:"Warm, like a notebook",ocean:"Deep blue",forest:"Dark green and gold",rose:"Soft pink",contrast:"Maximum readability"};
 const MODE_INFO={gemini:["Free","Gemini","Reads handwriting. Needs a free Google key."],qwen:["Free","Qwen","Reads handwriting. Needs a free OpenRouter key."],
+  freellm:["Free","FreeLLMAPI","Many free AI services in one. Needs your own FreeLLMAPI server."],
   account:["Account","Claude account","Opens Wordshelf on claude.ai with your Claude login."],claude:["Paid","Claude API","Most accurate. Needs a paid Anthropic key."],free:["No key","Basic","Typed or printed text only. Works right away."]};
 makeDropdown($("#modeSel"),{title:"Reading mode",item:(o,short)=>{const m=MODE_INFO[o.value];
   return short?esc(m[1]):`<span class="mrow"><span class="mtxt"><b>${esc(m[1])}</b><small>${esc(m[2])}</small></span><span class="mtag t-${o.value}">${esc(m[0])}</span></span>`}});
@@ -1841,9 +1872,9 @@ async function i18nWithAi(code){
   const prompt=`Translate these interface texts of a vocabulary-learning website into ${langName(code)}. Natural, short app wording. Keep brand names (Wordshelf, Gemini, Qwen, Claude, Google, OpenRouter, CEFR, YouTube…) as they are. Placeholders like {0}, {t0} or {L1} are filled in by the page: in your translation write them as {0}, {1}, {2} and keep every one. Some texts are fragments around a link, keep them as fragments. Reply with only JSON: {"items":[{"i":0,"s":"..."}]}
 
 `+all.map((x,i)=>`${i}: ${x}`).join("\n");
-  const provider=["gemini","qwen","claude"].find(p=>getKey(p)); if(!provider) return null;
+  const provider=AI_PROVIDERS.find(p=>getKey(p)); if(!provider) return null;
   const key=getKey(provider);
-  const res=provider==="gemini"?await askGemini(key,prompt,[]):provider==="qwen"?await askQwen(key,prompt,[]):await askClaudeText(key,prompt);
+  const res=await askText(provider,key,prompt);
   if(!res?.items) return null;
   const d={t:{},p:{}};
   for(const it of res.items){ const en=all[it.i], s=String(it.s||"").trim(); if(en==null||!s) continue;
@@ -1862,7 +1893,7 @@ makeDropdown($("#uiSel"),{title:"Site language",search:true,item:(o,short)=>shor
 $("#uiSel").addEventListener("change",async e=>{
   const code=e.target.value; let cached=null; try{cached=localStorage.getItem("wordshelf.ui."+code)}catch{}
   if(code!=="en"&&!UI_BUILTIN.includes(code)&&!cached){
-    if(!["gemini","qwen","claude"].some(p=>getKey(p))){
+    if(!AI_PROVIDERS.some(p=>getKey(p))){
       e.target.value=ui; refreshDropdowns();
       setStatus(i18nText(`To show the page in ${langName(code)}, add a free Gemini key (or another AI key) in "Read with": the page is translated once and saved.`)||`To show the page in ${langName(code)}, add a free Gemini key (or another AI key) in "Read with": the page is translated once and saved.`,true);
       $("#status").scrollIntoView({behavior:"smooth",block:"center"}); return }
