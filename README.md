@@ -28,8 +28,7 @@ Your word list is saved in your browser. Use **Print** to print (or save as PDF)
 
 ## Languages
 
-- **Learn** English, German, French, Spanish, Italian or Arabic (pick it in "Learning"). Each language has its own shelf, so your English words stay as they are. Basic mode (no key) works for all of them: for German, French, Spanish, Italian and Arabic the level is estimated from word frequency ([FrequencyWords](https://github.com/hermitdave/FrequencyWords), OpenSubtitles 2018, CC BY-SA 4.0, in `freq/`) and meanings and examples come from Wiktionary.
-- **Type words in Russian** (or another language): they are added (typos like doubled letters are fixed first) in the language you're learning, with the original kept as a note.
+- **Type words in Russian** (or another language): they are added in English (typos like doubled letters are fixed first), with the original kept as a note.
 - **Site language:** the 🌐 button in the top bar. Built in: Russian, Ukrainian, Kazakh, Kyrgyz, Uzbek, Tajik, Turkish, Azerbaijani, German, French, Spanish, Italian, Portuguese, Arabic, Persian, Hindi, Chinese, Japanese, Korean and Indonesian. Any other language is translated once with your AI key and saved in your browser. Interface texts live in `i18n/` (`source.json` is the English list; check translations with `python3 tools/check-i18n.py`).
 
 ## Privacy
