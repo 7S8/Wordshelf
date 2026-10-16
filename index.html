@@ -1436,7 +1436,8 @@ var translating=false;
 const upgraded=new Set();
 const hasAiKey=()=>["gemini","qwen","claude"].some(p=>getKey(p));
 const needDef=w=>w.definition&&(!w.defTr?.[lang]||(hasAiKey()&&w.defSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)));
-const needTranslation=()=>lang?words.filter(w=>!w.example&&(!w.tr?.[lang]||needDef(w)||(hasAiKey()&&w.trSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)))):[];
+const trTried=new Set();   // each word is tried once per visit and language, so a word that can't be translated doesn't loop
+const needTranslation=()=>lang?words.filter(w=>!w.example&&!trTried.has(w.word+"|"+lang)&&(!w.tr?.[lang]||needDef(w)||(hasAiKey()&&w.trSrc?.[lang]!=="ai"&&!upgraded.has(w.word+"|"+lang)))):[];
 async function translateWithKey(provider,list){
   const prompt=`Translate each English word or phrase into ${langName(lang)} for a language learner. Give the most common equivalent(s) for the meaning described, comma-separated, short. Also translate the definition given after the colon into natural ${langName(lang)} ("definition"; "" if there is none). Reply with only JSON: {"items":[{"word":"...","translation":"...","definition":"..."}]}
 
@@ -1491,7 +1492,10 @@ async function translateFree(list){
 }
 async function autoTranslate(){
   if(translating||!lang) return;
-  const list=needTranslation().slice(0,80); if(!list.length) return;
+  // in the order the shelf shows them (A1 first, then alphabetically), so the cards at the top are done first
+  const order=w=>GROUPS.findIndex(g=>g.id===(w.level||""));
+  const list=needTranslation().sort((a,b)=>order(a)-order(b)||a.word.localeCompare(b.word)).slice(0,60); if(!list.length) return;
+  let more=false; list.forEach(w=>trTried.add(w.word+"|"+lang));
   translating=true;
   const forLang=lang;
   try{
@@ -1507,9 +1511,12 @@ async function autoTranslate(){
       if(w&&it.definition&&w.definition){ w.defTr={...(w.defTr||{}),[forLang]:String(it.definition)}; w.defSrc={...(w.defSrc||{}),[forLang]:it.src||"ai"} }
     }
     store.set(words); render();
-    if(n&&!/limit/.test($("#status").textContent)) setStatus(`Translated ${n} word${n===1?"":"s"} into ${langName(forLang)}.`);
+    const limit=/limit/.test($("#status").textContent);
+    if(n&&!limit) setStatus(`Translated ${n} word${n===1?"":"s"} into ${langName(forLang)}.`);
+    // keep going with the next words while it's working (stops at the free service's daily limit)
+    more=!limit&&(items||[]).length>0&&needTranslation().length>0;
   } finally { translating=false }
-  if(lang!==forLang) autoTranslate();
+  if(lang!==forLang) autoTranslate(); else if(more) setTimeout(autoTranslate,400);
 }
 
 /* Dropdowns: a designed menu on top of each native <select> (which keeps the value and change events) */
