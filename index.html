@@ -620,7 +620,8 @@ const uniqueExamples=list=>{const seen=new Set();return (list||[]).filter(e=>{co
 function card(w,i){
   const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED;
   const q=encodeURIComponent(w.word);
-  const dirA=SL().rtl?' dir="auto"':"";
+  // word content keeps its own direction when the interface is right-to-left (and the other way round)
+  const dirA=SL().rtl?' dir="auto"':' dir="ltr"';
   const exs=uniqueExamples(w.examples).map(e=>`<li${dirA}>${highlight(e,w.word)}</li>`).join("");
   const meta=[w.pos&&`<span>${esc(w.pos)}</span>`,w.ipa&&`<span>${w.ipaUs?"UK ":""}${esc(w.ipa)}</span>`,w.ipaUs&&`<span>US ${esc(w.ipaUs)}</span>`,
     w.est&&`<span class="est" title="Not on the CEFR word lists. Level estimated from how common the word is${w.word.includes(" ")?" and its hardest word":""}.">level estimated</span>`].filter(Boolean).join("");
@@ -628,7 +629,7 @@ function card(w,i){
     <div class="card-head"><div style="flex:1;min-width:0"><span class="lvl">${lv.label||lv.id}${w.est?" ≈":""}</span><h3${dirA}>${esc(w.word)}</h3></div>
       <div class="say">${study==="en"?`<button class="say-btn" data-say="${i}" data-accent="en-GB" aria-label="British pronunciation of ${esc(w.word)}" title="British accent">${speakIcon}UK</button><button class="say-btn" data-say="${i}" data-accent="en-US" aria-label="American pronunciation of ${esc(w.word)}" title="American accent">${speakIcon}US</button>`
         :SL().voices.map(([c,l,n])=>`<button class="say-btn" data-say="${i}" data-accent="${c}" aria-label="${esc(n)} pronunciation of ${esc(w.word)}" title="${esc(n)} accent">${speakIcon}${l}</button>`).join("")}</div></div>
-    ${meta?`<div class="meta">${meta}</div>`:""}
+    ${meta?`<div class="meta"${dirA}>${meta}</div>`:""}
     ${lang&&w.tr?.[lang]?`<p class="tr" lang="${lang}"><span>${lang}</span>${esc(w.tr[lang])}</p>`:""}
     ${w.definition?`<p class="def"${dirA}>${esc(w.definition)}</p>`:`<p class="def note">No dictionary entry found.${w.suggest?` Did you mean <button class="linkish" data-fix="${i}">${esc(w.suggest)}</button>?`:" Check the spelling."}</p>`}
     ${w.note?`<p class="note">From your list: <b>${esc(w.note)}</b></p>`:""}
