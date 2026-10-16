@@ -1218,7 +1218,7 @@ $("#manualForm").addEventListener("submit",async e=>{
   $("#manualBtn").disabled=true;
   if(mode==="free"){
     // words typed in Russian (or another Cyrillic language) are translated to English first; the original goes in the note
-    const terms=v.split(/[\n,;]+/).map(t=>t.trim()).filter(Boolean), notes={};
+    const terms=v.split(/[\n,;]+/).map(t=>t.trim()).filter(Boolean), notes={}; let limited=false;
     const foreign=terms.filter(t=>/[\u0400-\u04FF]/.test(t));
     if(foreign.length) setStatus(spin("Translating into English…"));
     const fixed=await Promise.all(terms.map(async t=>{
@@ -1227,8 +1227,11 @@ $("#manualForm").addEventListener("submit",async e=>{
       // a typo can make the translator give the word back untranslated: try with repeated letters fixed (смышленнный)
       const lower=t.toLowerCase();
       const variants=[...new Set([lower,lower.replace(/(.)\1{2,}/g,"$1$1"),lower.replace(/(.)\1+/g,"$1"),lower.replace(/ё/g,"е"),lower.replace(/(.)\1{2,}/g,"$1").replace(/е/g,"ё")])];
+      // Wiktionary first (Russian words there have English meanings, no daily limit), then the free translator
+      for(const q of variants){ const e=await wikiToEnglish(q,src); if(e){ notes[e]=t; return e } }
       for(const q of variants){
         const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${src}|en`,8000);
+        if(d?.quotaFinished||d?.responseStatus==429||/MYMEMORY WARNING/i.test(d?.responseData?.translatedText||"")){ limited=true; break }
         const e=String(d?.responseData?.translatedText||"").trim().toLowerCase().replace(/^(to|a|an|the)\s+/,"").replace(/[.!?]+$/,"");
         if(!e||/[\u0400-\u04FF]|mymemory/i.test(e)) continue;
         notes[e]=t; return e;
@@ -1238,7 +1241,7 @@ $("#manualForm").addEventListener("submit",async e=>{
     const missed=terms.filter((t,i)=>!fixed[i]);
     const r=await freeLookup(fixed.filter(Boolean));
     $("#manualBtn").disabled=false;
-    if(!r){ if(missed.length) setStatus(`Couldn't translate ${missed.join(", ")}. Type them in English, or use Gemini (free).`,true); return }
+    if(!r){ if(missed.length) setStatus(limited?"The free translation service's daily limit is used up. Add a free Gemini key for unlimited translations, or try again tomorrow.":`Couldn't translate ${missed.join(", ")}. Type them in English, or use Gemini (free).`,true); return }
     for(const it of r.items) if(notes[it.word]) it.note=notes[it.word];
     const {total}=addWords(r.items); $("#manual").value="";
     setStatus(`Added ${total} word${total>1?"s":""}.`+(missed.length?` Couldn't translate ${missed.join(", ")}.`:""),!!missed.length); return;
@@ -1338,6 +1341,22 @@ async function fillMissing(useLocal){
   if(items) setStatus(n?`Added sentences for ${n} word${n===1?"":"s"}.`:"No sentences came back. Try again.",!n);
 }
 // Called whenever words are added: write sentences right away if that can happen without asking
+/* Russian (Ukrainian, Kazakh) → English with Wiktionary: its entries for those words give the English meaning
+   ("картофель" → "potato (plant and tuber)" → potato). Inflected forms point to the dictionary form, which is looked up next */
+async function wikiToEnglish(word,src,depth=0){
+  const d=await getJSON("https://en.wiktionary.org/api/rest_v1/page/definition/"+encodeURIComponent(word.replace(/ /g,"_"))+"?redirect=true",7000);
+  const senses=d?.[src]||d?.ru||[];
+  for(const s of senses) for(const df of s.definitions||[]){
+    const t=stripHtml(df.definition).replace(/\([^)]*\)/g,"").replace(/\s+/g," ").trim();
+    if(!t) continue;
+    const form=t.match(/\bof\s+([\u0400-\u04FF\u0301-]+)/);
+    if(/^(inflection|[a-z ]*(singular|plural|case|form|participle|tense|gerund|diminutive|augmentative))\b.*\bof\b/i.test(t)){
+      if(form&&depth<1){ const r=await wikiToEnglish(form[1].replace(/\u0301/g,""),src,1); if(r) return r } continue }
+    const e=t.split(/[,;:]/)[0].trim().toLowerCase().replace(/^(to|a|an|the)\s+/,"").replace(/[.!?]+$/,"");
+    if(/^[a-z][a-z' -]{1,40}$/.test(e)) return e;
+  }
+  return "";
+}
 /* Wiktionary: free, no key, and has usage examples for many words, including rare ones */
 const wikiTried=new Set();
 const stripHtml=h=>new DOMParser().parseFromString(String(h||""),"text/html").body.textContent.replace(/\s+/g," ").trim();
@@ -1463,8 +1482,13 @@ async function translateFree(list){
   // the definition, as a whole sentence
   async function defFree(w){
     if(!w.definition||w.defTr?.[lang]||stop) return;
+    const day=new Date().toDateString(); let used={};
+    try{ used=JSON.parse(localStorage.getItem("wordshelf.defFree")||"{}") }catch{}
+    if(used.day!==day) used={day,n:0};
+    if(used.n>=25) return;
+    used.n++; try{ localStorage.setItem("wordshelf.defFree",JSON.stringify(used)) }catch{}
     const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(w.definition.slice(0,450))}&langpair=en|${encodeURIComponent(lang)}`,9000);
-    if(d?.quotaFinished||d?.responseStatus==429){stop="limit";return}
+    if(d?.quotaFinished||d?.responseStatus==429||/MYMEMORY WARNING/i.test(d?.responseData?.translatedText||"")){stop="limit";return}
     const t=String(d?.responseData?.translatedText||"").trim();
     if(t&&!/MYMEMORY WARNING|INVALID|QUERY LENGTH/i.test(t)&&t.toLowerCase()!==w.definition.toLowerCase()&&(!SCRIPT[lang]||SCRIPT[lang].test(t)))
       out.push({word:w.word,definition:t,src:"free"});
@@ -1478,7 +1502,7 @@ async function translateFree(list){
       const base=(await dictEntry(w.word.toLowerCase()).catch(()=>null))?.form||w.word;
       const q=/(^|\s)verb\b/i.test(w.pos||"")&&!/^to /i.test(base)?"to "+base:base;
       const d=await getJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|${encodeURIComponent(lang)}`,8000);
-      if(d?.quotaFinished||d?.responseStatus==429){stop="limit";break}
+      if(d?.quotaFinished||d?.responseStatus==429||/MYMEMORY WARNING/i.test(d?.responseData?.translatedText||"")){stop="limit";break}
       const t=d?.responseData?.translatedText;
       const c=cleanTranslation(t,lang).replace(/^(to|zu|à|a|para)\s+/i,"");
       if(c&&c.toLowerCase()!==q.toLowerCase()) out.push({word:w.word,translation:c,src:"free"});
