@@ -1459,7 +1459,7 @@ const LANGS="af sq am ar hy az eu be bn bs bg ca ceb zh-CN zh-TW co hr cs da nl 
 function langName(code){ try{ return new Intl.DisplayNames(["en"],{type:"language"}).of(code)||code }catch{ return code } }
 const UI_KEY="wordshelf.ui";
 var ui=(()=>{try{return localStorage.getItem(UI_KEY)||"en"}catch{return "en"}})();
-function dispName(code){ try{ const n=new Intl.DisplayNames([ui],{type:"language"}).of(code)||code; return n[0].toLocaleUpperCase(ui)+n.slice(1) }catch{ return langName(code) } }
+function dispName(code,inText){ try{ const n=new Intl.DisplayNames([ui],{type:"language"}).of(code)||code; return inText?n:n[0].toLocaleUpperCase(ui)+n.slice(1) }catch{ return langName(code) } }
 function nativeName(code){ try{ return new Intl.DisplayNames([code],{type:"language"}).of(code)||"" }catch{ return "" } }
 lang=(()=>{try{const v=localStorage.getItem("wordshelf.lang");if(v!==null)return v}catch{}
   const nav=(navigator.language||"").toLowerCase(), base=nav.split("-")[0];
@@ -1797,7 +1797,7 @@ function i18nText(s){
     const vals=[];
     idx.forEach((i,g)=>{let v=m[g+1];
       if(kinds[g]==="t") v=I18N.t.get(v)??v;
-      else if(kinds[g]==="L"&&LANG_BY_NAME.has(v)) v=dispName(LANG_BY_NAME.get(v));
+      else if(kinds[g]==="L"&&LANG_BY_NAME.has(v)) v=dispName(LANG_BY_NAME.get(v),true);
       vals[i]=v});
     return out.replace(/\{(\d)(?::([^}]*))?\}/g,(x,i,forms)=>{
       const v=vals[+i]??""; if(!forms) return v;
