@@ -216,22 +216,7 @@
   "American": "Amerika",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Kalit kerak emas, lekin rejim oddiy: faqat bosma matnni o‘qiydi (qo‘lyozmani emas). Daraja so‘z qanchalik ko‘p ishlatilishiga qarab aniqlanadi; ma’nolar (ingliz tilida) va misollar Vikilug‘atdan olinadi.",
   "Other languages: word frequencies from": "Boshqa tillar: so‘zlar chastotasi manbasi",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
-  "FreeLLMAPI · your server": "FreeLLMAPI · oʻz serveringiz",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "Koʻplab bepul sunʼiy intellekt xizmatlari bir joyda. Oʻz FreeLLMAPI serveringiz kerak.",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "Oʻz FreeLLMAPI serveringiz: koʻplab sunʼiy intellekt xizmatlarining bepul tariflari bir joyda, biri limitga yetganda keyingisiga oʻtadi. Qoʻlyozmani oʻqiydi, gaplar va tarjimalar yozadi.",
-  "FreeLLMAPI key": "FreeLLMAPI kaliti",
-  "Server address, e.g. http://localhost:3001/v1": "Server manzili, masalan http://localhost:3001/v1",
-  "FreeLLMAPI server address": "FreeLLMAPI server manzili",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI koʻplab sunʼiy intellekt xizmatlarining (Gemini, Groq, Mistral, OpenRouter va boshqalar) bepul tariflarini bitta manzilga birlashtiradi va limit tugaganda keyingisiga oʻtadi.",
-  "Install it from": "Uni shu yerdan oʻrnating:",
-  "(desktop app or Docker) and add your free keys there.": "(kompyuter ilovasi yoki Docker) va bepul kalitlaringizni oʻsha yerga qoʻshing.",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "Server manzilini va uning Keys sahifasidagi yagona kalitni pastga joylashtiring. Ular shu brauzerda qoladi.",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "FreeLLMAPI serveringizga ulanib boʻlmadi. U ishlab turganini, manzil toʻgʻriligini va bu saytdan soʻrovlarga ruxsat berishini (CORS) tekshiring.",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "FreeLLMAPI serveringiz kalitni rad etdi. Uni quyidagi maydonda tekshiring.",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "FreeLLMAPI serveringizda rasmni oʻqiy oladigan model yoʻq. Unga Gemini kalitini qoʻshing yoki soʻzlarni oʻzingiz yozing.",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "FreeLLMAPI serveringizdagi barcha bepul modellar band yoki limitga yetgan. Bir daqiqadan soʻng qaytadan urinib koʻring.",
-  "The answer came back in the wrong format. Press the button again.": "Javob notoʻgʻri formatda keldi. Tugmani yana bosing."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} ta soʻzda misol gap yoʻq.",

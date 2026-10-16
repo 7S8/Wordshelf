@@ -216,22 +216,7 @@
   "American": "الأمريكية",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "لا حاجة إلى مفتاح، لكنه وضع بسيط: يقرأ النص المطبوع فقط (لا خط اليد). يُقدَّر المستوى بحسب شيوع الكلمة، وتأتي المعاني (بالإنجليزية) والأمثلة من ويكاموس.",
   "Other languages: word frequencies from": "اللغات الأخرى: تكرار الكلمات من",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018، CC BY-SA 4.0).",
-  "FreeLLMAPI · your server": "FreeLLMAPI · خادمك",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "خدمات ذكاء اصطناعي مجانية كثيرة في خدمة واحدة. يحتاج إلى خادم FreeLLMAPI خاص بك.",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "خادم FreeLLMAPI الخاص بك: الخطط المجانية لخدمات ذكاء اصطناعي كثيرة في مكان واحد، وينتقل إلى التالية حين تبلغ إحداها حدّها. يقرأ خط اليد ويكتب الجمل والترجمات.",
-  "FreeLLMAPI key": "مفتاح FreeLLMAPI",
-  "Server address, e.g. http://localhost:3001/v1": "عنوان الخادم، مثل http://localhost:3001/v1",
-  "FreeLLMAPI server address": "عنوان خادم FreeLLMAPI",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "يجمع FreeLLMAPI الخطط المجانية لخدمات ذكاء اصطناعي كثيرة (Gemini وGroq وMistral وOpenRouter وغيرها) خلف عنوان واحد، وينتقل إلى التالية حين يُبلغ الحد.",
-  "Install it from": "ثبّته من",
-  "(desktop app or Docker) and add your free keys there.": "(تطبيق سطح المكتب أو Docker) وأضف مفاتيحك المجانية هناك.",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "الصق أدناه عنوان الخادم والمفتاح الموحّد من صفحة Keys فيه. يبقيان في هذا المتصفح.",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "تعذّر الوصول إلى خادم FreeLLMAPI الخاص بك. تحقّق من أنه يعمل، وأن العنوان صحيح، وأنه يسمح بالطلبات من هذا الموقع (CORS).",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "رفض خادم FreeLLMAPI الخاص بك المفتاح. تحقّق منه في المربع أدناه.",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "لا يوجد في خادم FreeLLMAPI الخاص بك نموذج يقرأ الصور. أضف إليه مفتاح Gemini، أو اكتب الكلمات.",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "كل النماذج المجانية في خادم FreeLLMAPI الخاص بك مشغولة أو بلغت حدّها. حاول مرة أخرى بعد دقيقة.",
-  "The answer came back in the wrong format. Press the button again.": "وصلت الإجابة بتنسيق خاطئ. اضغط الزر مرة أخرى."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018، CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:zero=كلمة;one=كلمة;two=كلمتان;few=كلمات;many=كلمة;other=كلمة} بلا جملة مثال.",

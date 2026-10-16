@@ -216,22 +216,7 @@
   "American": "آمریکایی",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "کلید لازم نیست، اما حالت ساده است: فقط متن چاپی را می‌خواند (نه دست‌نویس). سطح بر اساس رایج بودن واژه تخمین زده می‌شود؛ معنی‌ها (به انگلیسی) و مثال‌ها از ویکی‌واژه می‌آیند.",
   "Other languages: word frequencies from": "زبان‌های دیگر: بسامد واژه‌ها از",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018، CC BY-SA 4.0).",
-  "FreeLLMAPI · your server": "FreeLLMAPI · سرور خودتان",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "سرویس‌های رایگان هوش مصنوعی بسیار در یکجا. سرور FreeLLMAPI خودتان لازم است.",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "سرور FreeLLMAPI خودتان: طرح‌های رایگان سرویس‌های هوش مصنوعی بسیار در یکجا، که وقتی یکی به سقفش برسد به بعدی می‌رود. دست‌خط را می‌خواند و جمله و ترجمه می‌نویسد.",
-  "FreeLLMAPI key": "کلید FreeLLMAPI",
-  "Server address, e.g. http://localhost:3001/v1": "نشانی سرور، مثلاً http://localhost:3001/v1",
-  "FreeLLMAPI server address": "نشانی سرور FreeLLMAPI",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI طرح‌های رایگان سرویس‌های هوش مصنوعی بسیاری (Gemini، Groq، Mistral، OpenRouter و غیره) را پشت یک نشانی جمع می‌کند و وقتی به سقفی برسد سراغ بعدی می‌رود.",
-  "Install it from": "آن را از اینجا نصب کنید:",
-  "(desktop app or Docker) and add your free keys there.": "(برنامهٔ دسکتاپ یا Docker) و کلیدهای رایگان خود را همان‌جا اضافه کنید.",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "نشانی سرور و کلید یکپارچه را از صفحهٔ Keys آن در پایین جای‌گذاری کنید. در همین مرورگر می‌مانند.",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "به سرور FreeLLMAPI شما دسترسی نداشتیم. بررسی کنید که روشن باشد، نشانی درست باشد و درخواست‌های این سایت را بپذیرد (CORS).",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "سرور FreeLLMAPI شما کلید را نپذیرفت. آن را در کادر پایین بررسی کنید.",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "سرور FreeLLMAPI شما مدلی ندارد که تصویر بخواند. یک کلید Gemini به آن اضافه کنید، یا واژه‌ها را تایپ کنید.",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "همهٔ مدل‌های رایگان سرور FreeLLMAPI شما شلوغ‌اند یا به سقف رسیده‌اند. یک دقیقه دیگر دوباره امتحان کنید.",
-  "The answer came back in the wrong format. Press the button again.": "پاسخ با قالب نادرست برگشت. دوباره دکمه را بزنید."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018، CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} واژه جملهٔ نمونه ندارد.",

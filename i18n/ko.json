@@ -216,22 +216,7 @@
   "American": "미국식",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "키가 필요 없지만 기본 모드예요: 인쇄된 글자만 읽어요(손글씨 불가). 레벨은 단어가 얼마나 자주 쓰이는지로 추정하고, 뜻(영어)과 예문은 위키낱말사전에서 가져와요.",
   "Other languages: word frequencies from": "기타 언어: 단어 빈도 출처",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
-  "FreeLLMAPI · your server": "FreeLLMAPI · 내 서버",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "여러 무료 AI 서비스를 하나로. 내 FreeLLMAPI 서버가 필요해요.",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "내 FreeLLMAPI 서버: 여러 AI 서비스의 무료 요금제를 하나로 묶고, 한도에 도달하면 다음 서비스로 전환해요. 손글씨도 읽고 예문과 번역을 만들어 줘요.",
-  "FreeLLMAPI key": "FreeLLMAPI 키",
-  "Server address, e.g. http://localhost:3001/v1": "서버 주소, 예: http://localhost:3001/v1",
-  "FreeLLMAPI server address": "FreeLLMAPI 서버 주소",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI는 여러 AI 서비스(Gemini, Groq, Mistral, OpenRouter 등)의 무료 요금제를 하나의 주소로 묶고, 한도에 도달하면 다음 서비스로 넘어가요.",
-  "Install it from": "FreeLLMAPI를",
-  "(desktop app or Docker) and add your free keys there.": "(데스크톱 앱 또는 Docker)에서 설치하고 무료 키를 거기에 추가하세요.",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "서버 주소와 서버의 Keys 페이지에 있는 통합 키를 아래에 붙여넣으세요. 이 브라우저에만 저장돼요.",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "FreeLLMAPI 서버에 연결하지 못했어요. 서버가 실행 중인지, 주소가 맞는지, 이 사이트의 요청을 허용하는지(CORS) 확인하세요.",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "FreeLLMAPI 서버가 키를 거부했어요. 아래 입력란에서 확인하세요.",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "FreeLLMAPI 서버에 이미지를 읽을 수 있는 모델이 없어요. 서버에 Gemini 키를 추가하거나 단어를 직접 입력하세요.",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "FreeLLMAPI 서버의 무료 모델이 모두 혼잡하거나 한도에 도달했어요. 1분 후에 다시 시도하세요.",
-  "The answer came back in the wrong format. Press the button again.": "응답 형식이 잘못됐어요. 버튼을 다시 눌러 주세요."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "단어 {0}개에 예문이 없어요.",

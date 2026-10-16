@@ -216,22 +216,7 @@
   "American": "Америкалык",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Ачкыч керек эмес, бирок режим жөнөкөй: басма текстти гана окуйт (кол жазманы эмес). Деңгээл сөздүн канчалык көп колдонуларына жараша аныкталат; маанилери (англисче) жана мисалдар Викисөздүктөн алынат.",
   "Other languages: word frequencies from": "Башка тилдер: сөз жыштыгы булактан",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
-  "FreeLLMAPI · your server": "FreeLLMAPI · өз сервериңиз",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "Көп акысыз ЖИ кызматы бир жерде. Өз FreeLLMAPI сервериңиз керек.",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "Өз FreeLLMAPI сервериңиз: көп ЖИ кызматынын акысыз пландары бир жерде, бирөө лимитке жеткенде кийинкисине которулат. Кол жазманы окуйт, сүйлөмдөрдү жана котормолорду жазат.",
-  "FreeLLMAPI key": "FreeLLMAPI ачкычы",
-  "Server address, e.g. http://localhost:3001/v1": "Сервердин дареги, мисалы http://localhost:3001/v1",
-  "FreeLLMAPI server address": "FreeLLMAPI серверинин дареги",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI көп ЖИ кызматынын (Gemini, Groq, Mistral, OpenRouter жана башкалар) акысыз пландарын бир дарекке бириктирет жана лимит бүткөндө кийинкисине которулат.",
-  "Install it from": "Аны бул жерден орнотуңуз:",
-  "(desktop app or Docker) and add your free keys there.": "(компьютер колдонмосу же Docker) жана акысыз ачкычтарыңызды ошол жерге кошуңуз.",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "Сервердин дарегин жана анын Keys барагындагы жалпы ачкычты төмөнгө чаптаңыз. Алар ушул браузерде гана сакталат.",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "FreeLLMAPI сервериңизге туташуу мүмкүн болгон жок. Анын иштеп турганын, даректин туура экенин жана бул сайттан сурамдарга уруксат берерин (CORS) текшериңиз.",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "FreeLLMAPI сервериңиз ачкычты кабыл алган жок. Аны төмөнкү талаада текшериңиз.",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "FreeLLMAPI сервериңизде сүрөттү окуй алган модель жок. Ага Gemini ачкычын кошуңуз же сөздөрдү өзүңүз жазыңыз.",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "FreeLLMAPI сервериңиздеги бардык акысыз моделдер бош эмес же лимитине жетти. Бир мүнөттөн кийин кайра аракет кылыңыз.",
-  "The answer came back in the wrong format. Press the button again.": "Жооп туура эмес форматта келди. Баскычты кайра басыңыз."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөздө мисал сүйлөм жок.",

@@ -216,22 +216,7 @@
   "American": "Amerika",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "Tidak perlu kunci, tetapi mode dasar: hanya membaca teks cetak (bukan tulisan tangan). Level diperkirakan dari seberapa umum kata itu; arti (dalam bahasa Inggris) dan contoh diambil dari Wiktionary.",
   "Other languages: word frequencies from": "Bahasa lain: frekuensi kata dari",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0).",
-  "FreeLLMAPI · your server": "FreeLLMAPI · server Anda",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "Banyak layanan AI gratis dalam satu. Perlu server FreeLLMAPI sendiri.",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "Server FreeLLMAPI Anda sendiri: paket gratis dari banyak layanan AI dalam satu, dan pindah ke layanan berikutnya saat satu mencapai batas. Membaca tulisan tangan serta menulis kalimat dan terjemahan.",
-  "FreeLLMAPI key": "Kunci FreeLLMAPI",
-  "Server address, e.g. http://localhost:3001/v1": "Alamat server, mis. http://localhost:3001/v1",
-  "FreeLLMAPI server address": "Alamat server FreeLLMAPI",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI menggabungkan paket gratis dari banyak layanan AI (Gemini, Groq, Mistral, OpenRouter, dan lainnya) di balik satu alamat, lalu pindah ke layanan berikutnya saat batas tercapai.",
-  "Install it from": "Instal dari",
-  "(desktop app or Docker) and add your free keys there.": "(aplikasi desktop atau Docker) lalu tambahkan kunci gratis Anda di sana.",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "Tempel alamat server dan kunci gabungan dari halaman Keys-nya di bawah. Keduanya tetap di browser ini.",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "Tidak bisa menghubungi server FreeLLMAPI Anda. Pastikan server berjalan, alamatnya benar, dan mengizinkan permintaan dari situs ini (CORS).",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "Server FreeLLMAPI Anda menolak kunci. Periksa di kotak di bawah.",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "Server FreeLLMAPI Anda tidak punya model yang bisa membaca gambar. Tambahkan kunci Gemini ke server, atau ketik kata-katanya.",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "Semua model gratis di server FreeLLMAPI Anda sedang sibuk atau mencapai batas. Coba lagi dalam satu menit.",
-  "The answer came back in the wrong format. Press the button again.": "Jawaban kembali dalam format yang salah. Tekan tombolnya lagi."
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "(OpenSubtitles 2018, CC BY-SA 4.0)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} kata belum punya contoh kalimat.",

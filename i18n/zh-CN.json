@@ -216,22 +216,7 @@
   "American": "美式",
   "No key needed, but basic: reads typed or printed text only (not handwriting). Levels are estimated from how common a word is; meanings (in English) and examples come from Wiktionary.": "无需密钥，但功能基础：只能识别印刷文字（不支持手写）。等级根据单词的常见程度估算；释义（英文）和例句来自维基词典。",
   "Other languages: word frequencies from": "其他语言：词频数据来自",
-  "(OpenSubtitles 2018, CC BY-SA 4.0).": "（OpenSubtitles 2018，CC BY-SA 4.0）。",
-  "FreeLLMAPI · your server": "FreeLLMAPI · 自建服务器",
-  "Many free AI services in one. Needs your own FreeLLMAPI server.": "多个免费 AI 服务合而为一。需要你自己的 FreeLLMAPI 服务器。",
-  "Your own FreeLLMAPI server: the free plans of many AI services in one, switching to the next when one hits its limit. Reads handwriting and writes sentences and translations.": "你自己的 FreeLLMAPI 服务器：把多个 AI 服务的免费额度合而为一，一个达到上限时自动切换到下一个。能识别手写，并写例句和翻译。",
-  "FreeLLMAPI key": "FreeLLMAPI 密钥",
-  "Server address, e.g. http://localhost:3001/v1": "服务器地址，例如 http://localhost:3001/v1",
-  "FreeLLMAPI server address": "FreeLLMAPI 服务器地址",
-  "FreeLLMAPI joins the free plans of many AI services (Gemini, Groq, Mistral, OpenRouter and more) behind one address, and moves to the next one when a limit is reached.": "FreeLLMAPI 把多个 AI 服务（Gemini、Groq、Mistral、OpenRouter 等）的免费额度汇集到一个地址下，达到上限时自动切换到下一个。",
-  "Install it from": "从",
-  "(desktop app or Docker) and add your free keys there.": "安装（桌面应用或 Docker），然后在其中添加你的免费密钥。",
-  "Paste the server address and the unified key from its Keys page below. They stay in this browser.": "将服务器地址和其 Keys 页面上的统一密钥粘贴到下方。它们只保存在此浏览器中。",
-  "Couldn't reach your FreeLLMAPI server. Check that it's running and the address is right, and that it allows requests from this site (CORS).": "无法连接你的 FreeLLMAPI 服务器。请检查它是否正在运行、地址是否正确，以及是否允许来自本网站的请求（CORS）。",
-  "Your FreeLLMAPI server rejected the key. Check it in the box below.": "你的 FreeLLMAPI 服务器拒绝了该密钥。请在下方输入框中检查。",
-  "Your FreeLLMAPI server has no model that can read images. Add a Gemini key to it, or type the words.": "你的 FreeLLMAPI 服务器上没有能识别图片的模型。请为它添加一个 Gemini 密钥，或手动输入单词。",
-  "All free models on your FreeLLMAPI server are busy or at their limit. Try again in a minute.": "你的 FreeLLMAPI 服务器上的所有免费模型都繁忙或已达上限。请一分钟后重试。",
-  "The answer came back in the wrong format. Press the button again.": "返回的结果格式不对。请再按一次按钮。"
+  "(OpenSubtitles 2018, CC BY-SA 4.0).": "（OpenSubtitles 2018，CC BY-SA 4.0）。"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 个单词没有例句。",
