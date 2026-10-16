@@ -26,6 +26,12 @@ Pick a language in **Translate to** (about 100 languages, defaults to your brows
 
 Your word list is saved in your browser. Use **Print** to print (or save as PDF) all levels or only the ones you choose, with or without definitions, sentences, pronunciation and notes.
 
+## Languages
+
+- **Learn** English, German, French, Spanish, Italian or Arabic (pick it in "Learning"). Each language has its own shelf, so your English words stay as they are. Basic mode (no key) is English only.
+- **Type words in Russian** (or another language): they are added in the language you're learning, with the original kept as a note.
+- **Site language:** the 🌐 button in the top bar. Built in: Russian, Ukrainian, Kazakh, Kyrgyz, Uzbek, Tajik, Turkish, Azerbaijani, German, French, Spanish, Italian, Portuguese, Arabic, Persian, Hindi, Chinese, Japanese, Korean and Indonesian. Any other language is translated once with your AI key and saved in your browser. Interface texts live in `i18n/` (`source.json` is the English list; check translations with `python3 tools/check-i18n.py`).
+
 ## Privacy
 
 Visits are counted anonymously with [GoatCounter](https://www.goatcounter.com) (no cookies, no personal data). The site also counts how often scanning, adding words, translating and printing are used. Your words, notes and keys are never sent: they stay in your browser.

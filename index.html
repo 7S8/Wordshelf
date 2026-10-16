@@ -1460,7 +1460,11 @@ const LANGS="af sq am ar hy az eu be bn bs bg ca ceb zh-CN zh-TW co hr cs da nl 
 function langName(code){ try{ return new Intl.DisplayNames(["en"],{type:"language"}).of(code)||code }catch{ return code } }
 const UI_KEY="wordshelf.ui";
 var ui=(()=>{try{return localStorage.getItem(UI_KEY)||"en"}catch{return "en"}})();
-function dispName(code,inText){ try{ const n=new Intl.DisplayNames([ui],{type:"language"}).of(code)||code; return inText?n:n[0].toLocaleUpperCase(ui)+n.slice(1) }catch{ return langName(code) } }
+// some browsers have no language names in Kazakh, Kyrgyz, Tajik, Uzbek or Azerbaijani: use Russian or Turkish names there
+const NAME_FALLBACK={kk:"ru",ky:"ru",tg:"ru",uz:"ru",az:"tr"};
+function dispName(code,inText){ try{ let n=new Intl.DisplayNames([ui],{type:"language"}).of(code)||code;
+  if(ui!=="en"&&NAME_FALLBACK[ui]&&(n===code||n===langName(code))) n=new Intl.DisplayNames([NAME_FALLBACK[ui]],{type:"language"}).of(code)||n;
+  return inText?n:n[0].toLocaleUpperCase(ui)+n.slice(1) }catch{ return langName(code) } }
 function nativeName(code){ try{ return new Intl.DisplayNames([code],{type:"language"}).of(code)||"" }catch{ return "" } }
 lang=(()=>{try{const v=localStorage.getItem("wordshelf.lang");if(v!==null)return v}catch{}
   const nav=(navigator.language||"").toLowerCase(), base=nav.split("-")[0];
@@ -1778,7 +1782,7 @@ function setStudy(code){
    interface texts. Words, definitions, example sentences and your notes are never touched. */
 const UI_BUILTIN="ru uk kk ky uz tg tr az de fr es it pt ar fa hi zh-CN ja ko id".split(" ");
 const UI_RTL=/^(ar|fa|ur|he|ps|sd|ug|yi)$/;
-const I18N_SKIP="script,style,svg,.card h3,.def,.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li";
+const I18N_SKIP="script,style,svg,.card h3,.def,.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li,#uiSel,[data-noi18n]";
 let I18N=null;
 const LANG_BY_NAME=new Map([...LANGS,"en"].map(c=>[langName(c),c]));
 function compileI18n(d){
@@ -1809,15 +1813,17 @@ function i18nText(s){
   }
   return null;
 }
+const i18nDone=new WeakMap();   // what we wrote last, so a translated text is never translated again
 function i18nNode(n){
-  const raw=n.nodeValue; if(!raw||!/[A-Za-z]/.test(raw)) return;
+  const raw=n.nodeValue; if(!raw||!/[A-Za-z]/.test(raw)||i18nDone.get(n)===raw) return;
   const el=n.parentElement; if(!el||el.closest(I18N_SKIP)) return;
   const key=raw.replace(/\s+/g," ").trim(); const tr=i18nText(key);
-  if(tr!=null&&tr!==key) n.nodeValue=(/^\s/.test(raw)?" ":"")+tr+(/\s$/.test(raw)?" ":"");
+  if(tr!=null&&tr!==key){ n.nodeValue=(/^\s/.test(raw)?" ":"")+tr+(/\s$/.test(raw)?" ":""); i18nDone.set(n,n.nodeValue) }
 }
 const I18N_ATTRS=["placeholder","aria-label","title","alt"];
 function i18nAttrs(el){
-  for(const a of I18N_ATTRS){ const v=el.getAttribute(a); if(!v||!/[A-Za-z]/.test(v)) continue; const tr=i18nText(v.trim()); if(tr!=null&&tr!==v) el.setAttribute(a,tr) }
+  const done=i18nDone.get(el)||{};
+  for(const a of I18N_ATTRS){ const v=el.getAttribute(a); if(!v||!/[A-Za-z]/.test(v)||done[a]===v) continue; const tr=i18nText(v.trim()); if(tr!=null&&tr!==v){ el.setAttribute(a,tr); done[a]=tr; i18nDone.set(el,done) } }
 }
 function i18nTree(root){
   if(root.nodeType===3){ i18nNode(root); return }
@@ -1860,7 +1866,7 @@ $("#uiSel").innerHTML=UI_LIST.map(c=>({c,nn:nativeName(c)||langName(c),n:langNam
 $("#uiSel").value=UI_LIST.includes(ui)?ui:"en";
 const globeIcon='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>';
 makeDropdown($("#uiSel"),{title:"Site language",search:true,item:(o,short)=>short?`${globeIcon}<span>${esc(o.value.split("-")[0].toUpperCase())}</span>`
-  :`<span><b>${esc(o.textContent)}</b>${o.value!=="en"&&o.title?`<span class="sub">${esc(o.title)}${UI_BUILTIN.includes(o.value)?"":" · AI"}</span>`:""}</span>`});
+  :`<span data-noi18n><b>${esc(o.textContent)}</b>${o.value!=="en"&&o.title?`<span class="sub">${esc(o.title)}${UI_BUILTIN.includes(o.value)?"":" · AI"}</span>`:""}</span>`});
 $("#uiSel").addEventListener("change",async e=>{
   const code=e.target.value; let cached=null; try{cached=localStorage.getItem("wordshelf.ui."+code)}catch{}
   if(code!=="en"&&!UI_BUILTIN.includes(code)&&!cached){
