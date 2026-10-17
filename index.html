@@ -264,6 +264,45 @@ html.i18n-wait body{visibility:hidden}
 .banner #fillConfirm[hidden],.banner #fillPhone[hidden]{display:none}
 .banner #fillPhone{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%}
 
+/* Test yourself: entry row and the full-screen test */
+.practice{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
+.practice-text{display:grid;gap:2px;min-width:0}.practice-text b{font-family:var(--display);font-size:18px}.practice-text span{color:var(--muted);font-size:14px}
+.practice-modes{display:flex;gap:8px;flex-wrap:wrap}
+.pmode{display:grid;gap:1px;text-align:left;border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer;min-width:0}
+.pmode:hover{border-color:var(--accent)}.pmode b{font-size:15px}.pmode small{color:var(--muted);font-size:12px}
+@media (max-width:640px){.practice-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.pmode{padding:8px 10px}.pmode small{display:none}}
+.quiz{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
+.quiz-inner{max-width:720px;margin:0 auto;padding:max(14px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.quiz-top{display:flex;align-items:center;gap:12px}.quiz-top h2{font-size:18px;font-weight:700;margin:0;flex:1;min-width:0}
+.quiz-count{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.quiz-close{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer}
+.quiz-ticks{display:flex;gap:2px;margin:12px 0 22px;min-height:4px}
+.quiz-ticks i{flex:1;height:4px;border-radius:2px;background:var(--line)}.quiz-ticks i.ok{background:var(--a1)}.quiz-ticks i.no{background:var(--danger)}.quiz-ticks i.now{background:var(--accent)}
+.q-ask{color:var(--muted);font-size:14px;margin:0 0 8px}
+.q-stem{font-size:22px;line-height:1.55;margin:0 0 20px}
+@media (min-width:641px){.q-stem{font-size:25px}}
+.q-word{font-family:var(--display);font-size:34px;font-weight:700;margin:0 0 6px}
+.q-blank{display:inline-block;min-width:4.5em;text-align:center;border-bottom:2px solid var(--accent);color:var(--accent);line-height:1.15;padding:0 .15em;font-style:italic}
+.q-blank.filled{font-style:normal;font-weight:700}.q-blank.ok{color:var(--a1);border-color:var(--a1)}.q-blank.no{color:var(--danger);border-color:var(--danger)}
+.q-blank .tag{font-size:.6em;color:var(--muted);vertical-align:.4em;padding-right:.2em;font-style:normal}
+.q-hl{font-weight:700;color:var(--accent)}
+.q-groups{display:grid;gap:16px}.q-group>p{margin:0 0 6px;color:var(--muted);font-size:14px}
+.q-opts{display:grid;gap:8px}.q-opts.two{grid-template-columns:1fr 1fr}
+.q-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;font-size:17px}
+.q-opt .mark{width:1.2em;flex:none;color:var(--muted);font-family:var(--mono);font-size:14px}
+.q-opt:hover:not(:disabled){border-color:var(--accent)}.q-opt:disabled{cursor:default}
+.q-opt.picked{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.q-opt.is-right{border-color:var(--a1);color:var(--a1)}.q-opt.is-wrong{border-color:var(--danger);color:var(--danger);text-decoration:line-through}.q-opt.dim{opacity:.45}
+.q-gloss{margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);line-height:1.55}.q-gloss b{color:var(--ink)}
+.q-bar{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px}
+.q-setup{display:grid;gap:16px}.q-setup .q-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.q-setup .q-row>b{width:100%;font-size:14px;color:var(--muted);font-weight:600}
+.q-chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;font:inherit;font-size:15px}
+.q-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.q-lede{color:var(--muted);line-height:1.55;margin:0}
+.q-score{font-family:var(--display);font-size:56px;font-weight:800;line-height:1;margin:6px 0}
+.q-missed{list-style:none;padding:0;margin:16px 0 0}.q-missed li{padding:10px 0;border-bottom:1px solid var(--line);color:var(--muted);line-height:1.5}.q-missed b{color:var(--ink)}
+body.quiz-open{overflow:hidden}
+
 /* shelf toolbar: sticky while you scroll the words */
 .shelfbar>*{min-width:0}
 .shelfbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding-block:10px;margin-inline:-6px;padding-inline:6px;
@@ -493,6 +532,15 @@ footer p{margin:8px 0 0}
       <button class="btn small" id="fillNo" type="button">Not now</button></span>
   </div>
 
+  <section class="practice" aria-label="Test yourself">
+    <div class="practice-text"><b>Test yourself</b><span>Questions made from the words on your shelf.</span></div>
+    <div class="practice-modes">
+      <button type="button" class="pmode" data-quiz="learn"><b>Learn</b><small>Meanings, gaps, translations</small></button>
+      <button type="button" class="pmode" data-quiz="ielts"><b>IELTS</b><small>Synonyms and paraphrase</small></button>
+      <button type="button" class="pmode" data-quiz="gre"><b>GRE</b><small>Text completion, sentence equivalence</small></button>
+    </div>
+  </section>
+
   <div class="shelfbar">
     <div class="chips" id="chips" role="group" aria-label="Filter by level"></div>
     <div class="tools">
@@ -538,6 +586,14 @@ footer p{margin:8px 0 0}
 </div>
 
 <div id="printArea" aria-hidden="true"></div>
+<div class="quiz" id="quiz" hidden role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+  <div class="quiz-inner">
+    <header class="quiz-top"><h2 id="quizTitle"></h2><span class="quiz-count" id="quizCount"></span>
+      <button type="button" class="quiz-close" id="quizClose" aria-label="Close the test">×</button></header>
+    <div class="quiz-ticks" id="quizTicks" aria-hidden="true"></div>
+    <div id="quizMain"></div>
+  </div>
+</div>
 <script>
 const LEVELS=[
   {id:"A1",name:"Beginner",v:"--a1"},{id:"A2",name:"Elementary",v:"--a2"},
@@ -728,12 +784,12 @@ async function geminiModels(key){
   return geminiModel;
 }
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-async function askGemini(key,prompt,images){
+async function askGemini(key,prompt,images,shape=JSON_SHAPE){
   let models, lastStatus=0, lastMsg="";
   try{ models=await geminiModels(key) }catch(e){ if(e?.status==null) return netFail(); lastStatus=e.status; lastMsg=e.data?.error?.message||""; models=[] }
   const parts=[];
   for(const f of images||[]){const im=await prepImage(f);parts.push({inline_data:{mime_type:im.media_type,data:im.data}})}
-  parts.push({text:prompt+"\n\n"+JSON_SHAPE});
+  parts.push({text:prompt+(shape?"\n\n"+shape:"")});
   for(const model of models){
     for(let attempt=0;attempt<2;attempt++){
       let r,data;
@@ -782,9 +838,9 @@ async function openRouterCandidates(needImages){
   const ids=[...free.map(m=>m.id),...(needImages?FALLBACK_VISION:FALLBACK_TEXT)];
   return orCandidates[k]=[...new Set(ids)];
 }
-async function askQwen(key,prompt,images){
+async function askQwen(key,prompt,images,shape=JSON_SHAPE){
   const needImages=(images||[]).length>0;
-  const content=[{type:"text",text:prompt+"\n\n"+JSON_SHAPE}];
+  const content=[{type:"text",text:prompt+(shape?"\n\n"+shape:"")}];
   try{ for(const f of images||[]){const im=await prepImage(f);content.push({type:"image_url",image_url:{url:`data:${im.media_type};base64,${im.data}`}})} }
   catch{ return fail("Couldn't prepare the image. Try a JPG or PNG.") }
   let cands=await openRouterCandidates(needImages);
@@ -1775,7 +1831,7 @@ $("#clearWrap").addEventListener("click",e=>{
    interface texts. Words, definitions, example sentences and your notes are never touched. */
 const UI_BUILTIN="ru uk kk ky uz tg tr az de fr es it pt ar fa hi zh-CN ja ko id".split(" ");
 const UI_RTL=/^(ar|fa|ur|he|ps|sd|ug|yi)$/;
-const I18N_SKIP="script,style,svg,.card h3,.def,.def-tr,.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li,#uiSel,[data-noi18n]";
+const I18N_SKIP="script,style,svg,.card h3,.def,.def-tr,[data-q],.ex,.meta,.tr,.note b,.mynote-text,textarea,.credit-sig,.credit-brand,.brand,.credit-made,.dd-opt .sub,.thumb .doc,#printArea .pa-w b,#printArea li,#uiSel,[data-noi18n]";
 let I18N=null;
 const LANG_BY_NAME=new Map([...LANGS,"en"].map(c=>[langName(c),c]));
 function compileI18n(d){
@@ -1892,6 +1948,257 @@ const fitPanelHead=()=>document.querySelectorAll(".panel-head,.appbar").forEach(
 addEventListener("resize",fitPanelHead);
 document.querySelectorAll(".panel-head,.appbar").forEach(h=>new MutationObserver(()=>requestAnimationFrame(fitPanelHead)).observe(h,{subtree:true,childList:true,characterData:true}));
 document.fonts?.ready.then(fitPanelHead); fitPanelHead();
+
+/* Test yourself. Learn: made right here from the shelf (meanings, gaps in your example sentences, translations), works
+   without a key. IELTS (synonyms, paraphrase, gap-fill) and GRE (text completion, sentence equivalence) are written by
+   the AI you set up, once per word, and kept in this browser. */
+const QUIZ_KEY="wordshelf.quiz";
+const qShuffle=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+const qEl=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n};
+const LETTERS="ABCDEF";
+function qCache(){try{return JSON.parse(localStorage.getItem(QUIZ_KEY)||"{}")}catch{return {}}}
+function qCacheSet(c){try{localStorage.setItem(QUIZ_KEY,JSON.stringify(c))}catch{}}
+function qStats(){try{return JSON.parse(localStorage.getItem("wordshelf.stats")||"{}")}catch{return {}}}
+function qStat(word,ok){const s=qStats(),k=word.toLowerCase();s[k]=s[k]||{r:0,w:0};ok?s[k].r++:s[k].w++;s[k].t=Date.now();try{localStorage.setItem("wordshelf.stats",JSON.stringify(s))}catch{}}
+const QUIZ_NAMES={learn:"Learn",ielts:"IELTS",gre:"GRE"};
+let quiz={mode:"learn",level:"all",count:10,deck:[],i:0,score:0,missed:[],locked:false,picks:[]};
+
+function quizWords(){
+  const real=words.filter(w=>!w.example||words.every(x=>x.example));
+  return quiz.level==="all"?real:real.filter(w=>(w.level||"")===quiz.level);
+}
+// weakest words first: more mistakes, fewer correct answers, not seen for a while
+function quizPick(list,n){
+  const st=qStats();
+  const score=w=>{const s=st[w.word.toLowerCase()]; return s?(s.w*2-s.r):0.5};
+  return qShuffle(list).sort((a,b)=>score(b)-score(a)).slice(0,n);
+}
+function blankIn(sentence,word){
+  const marked=highlight(sentence,word); const m=marked.match(/<mark>(.*?)<\/mark>/);
+  if(!m) return null;
+  const tmp=document.createElement("div"); tmp.innerHTML=marked.replace(/<mark>.*?<\/mark>/,"___"); return {s:tmp.textContent,form:tmp.ownerDocument&&m[1]};
+}
+// Learn: questions built from what the shelf already knows
+function learnItems(chosen,pool){
+  const out=[];
+  for(const w of chosen){
+    const others=qShuffle(pool.filter(x=>x!==w&&x.word.toLowerCase()!==w.word.toLowerCase()));
+    const samePos=others.filter(x=>x.pos&&w.pos&&x.pos.split(" ")[0]===w.pos.split(" ")[0]);
+    const distract=[...samePos,...others.filter(x=>!samePos.includes(x))].slice(0,3).map(x=>x.word);
+    const kinds=[];
+    const ex=(w.examples||[]).map(e=>blankIn(e,w.word)).filter(Boolean);
+    if(ex.length) kinds.push("gap");
+    if(w.definition) kinds.push("meaning");
+    const tr=lang&&w.tr?.[lang]; const otherTr=others.map(x=>x.tr?.[lang]).filter(Boolean);
+    if(tr&&otherTr.length>=2) kinds.push("translate");
+    if(!kinds.length) continue;
+    const k=kinds[Math.floor(Math.random()*kinds.length)];
+    const gloss={word:w.word,def:w.definition||"",tr:tr||""};
+    if(k==="gap") out.push({type:"single",ask:"Choose the word that fits the sentence.",s:ex[Math.floor(Math.random()*ex.length)].s,o:[w.word,...distract],a:w.word,word:w.word,gloss});
+    else if(k==="meaning") out.push({type:"single",ask:"Which word has this meaning?",quote:w.definition,o:[w.word,...distract],a:w.word,word:w.word,gloss});
+    else out.push({type:"single",ask:"Choose the translation.",big:w.word,o:[tr,...qShuffle(otherTr).slice(0,3)],a:tr,word:w.word,gloss});
+  }
+  return out;
+}
+// IELTS and GRE: ask the AI for questions about words that don't have any yet
+const AI_QUIZ_PROMPT={
+ielts:list=>`You write IELTS Academic vocabulary practice (Reading and Writing focus on synonyms and paraphrase). For EACH word below write 2 questions:
+1. "synonym": an academic-style sentence that uses the word; "options": 4 single words or short phrases, exactly one a close synonym of the word AS USED in that sentence, the others plausible but wrong; "answer": that synonym.
+2. "gap": an academic sentence (like IELTS Reading summary completion) with the word replaced by ___; "options": 4 words (the word itself in the form that fits, plus 3 distractors of the same part of speech); "answer": the word as it fits.
+Add "explain": one short sentence explaining the meaning, plus 2–3 other synonyms an IELTS paraphrase might use.
+Reply with only JSON: {"items":[{"word":"…","type":"synonym","sentence":"…","options":["…"],"answer":"…","explain":"…"},{"word":"…","type":"gap","sentence":"… ___ …","options":["…"],"answer":"…","explain":"…"}]}
+
+`+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n"),
+gre:list=>`You write GRE Verbal practice in the official formats. Use the words below.
+1. For EACH word, one "single" text-completion question: a demanding sentence with one blank ___ that only this word fits; "options": 4 words (the word in the form that fits, plus 3 GRE-level distractors of the same part of speech); "answer"; "explain": "word — short definition".
+2. For EACH word, one "equiv" sentence-equivalence question: a sentence with one blank ___; "options": 6 words, exactly two of which (the word and a true synonym) give the sentence the same meaning; "answers": those two; "explain": why, naming the opposites.
+3. If there are 2 or more words, also up to ${Math.floor(list.length/2)} "double" questions that each use two of the words: a sentence with two blanks ___ and ___; "blanks": [{"options":[3 words],"answer":"…"},{"options":[3 words],"answer":"…"}]; "words": the two words; "explain".
+Reply with only JSON: {"items":[{"type":"single","word":"…","sentence":"…","options":["…"],"answer":"…","explain":"…"},{"type":"equiv","word":"…","sentence":"…","options":["…"],"answers":["…","…"],"explain":"…"},{"type":"double","words":["…","…"],"sentence":"… ___ … ___ …","blanks":[{"options":["…"],"answer":"…"},{"options":["…"],"answer":"…"}],"explain":"…"}]}
+
+`+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n")};
+function okItem(it){
+  if(!it||typeof it.sentence!=="string") return false;
+  const n=(it.sentence.match(/___/g)||[]).length;
+  if(it.type==="double") return n===2&&Array.isArray(it.blanks)&&it.blanks.length===2&&it.blanks.every(b=>Array.isArray(b.options)&&b.options.includes(b.answer));
+  if(it.type==="equiv") return n===1&&Array.isArray(it.options)&&it.options.length>=4&&Array.isArray(it.answers)&&it.answers.length===2&&it.answers.every(a=>it.options.includes(a));
+  if(it.type==="synonym") return Array.isArray(it.options)&&it.options.includes(it.answer);
+  return n===1&&Array.isArray(it.options)&&it.options.includes(it.answer);
+}
+async function aiQuizItems(mode,chosen,onProgress){
+  const provider=["gemini","qwen","claude"].find(p=>getKey(p)); if(!provider) return null;
+  const key=getKey(provider), cache=qCache(); cache[mode]=cache[mode]||{};
+  const need=chosen.filter(w=>!cache[mode][w.word.toLowerCase()]);
+  for(let i=0;i<need.length;i+=10){
+    onProgress?.(Math.min(i+10,need.length),need.length);
+    const batch=need.slice(i,i+10), prompt=AI_QUIZ_PROMPT[mode](batch);
+    const res=provider==="gemini"?await askGemini(key,prompt,[],""):provider==="qwen"?await askQwen(key,prompt,[],""):await askClaudeText(key,prompt);
+    if(!res?.items) break;
+    for(const it of res.items){ if(!okItem(it)) continue;
+      const ws=it.type==="double"?(it.words||[]):[it.word];
+      for(const wd of ws){ const k=String(wd||"").toLowerCase(); if(!k) continue; (cache[mode][k]=cache[mode][k]||[]).push(it) } }
+    for(const w of batch) cache[mode][w.word.toLowerCase()]=cache[mode][w.word.toLowerCase()]||[];   // tried, even if nothing usable came back
+    qCacheSet(cache);
+  }
+  const seen=new Set(), out=[];
+  for(const w of chosen) for(const it of cache[mode][w.word.toLowerCase()]||[]){ const id=JSON.stringify(it); if(seen.has(id)) continue; seen.add(id);
+    const gloss={word:it.type==="double"?(it.words||[]).join(", "):it.word,def:"",tr:"",explain:it.explain||""};
+    if(it.type==="double") out.push({type:"double",s:it.sentence,b:it.blanks.map(b=>({o:b.options,a:b.answer})),words:it.words||[],gloss});
+    else if(it.type==="equiv") out.push({type:"equiv",ask:"Pick the two words that give the sentence the same meaning.",s:it.sentence,o:it.options,a:it.answers,word:it.word,gloss});
+    else if(it.type==="synonym") out.push({type:"single",ask:"Which is closest in meaning to the highlighted word?",hl:{s:it.sentence,w:it.word},o:it.options,a:it.answer,word:it.word,gloss});
+    else out.push({type:"single",ask:mode==="gre"?"Choose the word that best completes the sentence.":"Complete the sentence.",s:it.sentence,o:it.options,a:it.answer,word:it.word,gloss});
+  }
+  return out;
+}
+
+function openQuiz(mode){
+  quiz.mode=mode; quiz.level=filter==="all"?"all":filter;
+  $("#quiz").hidden=false; document.body.classList.add("quiz-open"); track("quiz-"+mode,"Test ("+mode+")");
+  quizSetup();
+}
+function closeQuiz(){ $("#quiz").hidden=true; document.body.classList.remove("quiz-open") }
+$("#quizClose").addEventListener("click",closeQuiz);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#quiz").hidden) closeQuiz() });
+document.querySelector(".practice").addEventListener("click",e=>{ const b=e.target.closest("[data-quiz]"); if(b) openQuiz(b.dataset.quiz) });
+
+function quizSetup(){
+  const m=$("#quizMain"); m.innerHTML=""; $("#quizTicks").innerHTML=""; $("#quizCount").textContent="";
+  $("#quizTitle").textContent=QUIZ_NAMES[quiz.mode];
+  const box=qEl("div","q-setup");
+  box.append(qEl("p","q-lede",{learn:"Practise the words on your shelf: pick the word for a meaning, fill the gap in your example sentences, and match translations. Works without a key.",
+    ielts:"IELTS Reading and Writing reward paraphrase: questions on synonyms in context and gap-fill sentences in an academic style. Written by AI for your words, once, then kept.",
+    gre:"The three GRE Verbal formats: one-blank and two-blank text completion, and sentence equivalence (pick the two words that give the same meaning). Written by AI for your words, once, then kept."}[quiz.mode]));
+  const counts=Object.fromEntries(GROUPS.map(g=>[g.id,words.filter(w=>(w.level||"")===g.id).length]));
+  const lv=qEl("div","q-row"); lv.append(qEl("b",null,"Which words?"));
+  [["all","All levels"],...GROUPS.filter(g=>counts[g.id]).map(g=>[g.id,(g.label||g.id)])].forEach(([id,label])=>{
+    const c=qEl("button","q-chip",label); c.type="button"; c.setAttribute("aria-pressed",String(quiz.level===id)); c.onclick=()=>{quiz.level=id;quizSetup()}; lv.append(c) });
+  const ct=qEl("div","q-row"); ct.append(qEl("b",null,"How many words?"));
+  [10,20,0].forEach(n=>{ const c=qEl("button","q-chip",n?String(n):"All"); c.type="button"; c.setAttribute("aria-pressed",String(quiz.count===n)); c.onclick=()=>{quiz.count=n;quizSetup()}; ct.append(c) });
+  box.append(lv,ct);
+  const avail=quizWords().length;
+  const needAi=quiz.mode!=="learn"&&!["gemini","qwen","claude"].some(p=>getKey(p));
+  const bar=qEl("div","q-bar");
+  const go=qEl("button","btn primary","Start"); go.type="button"; go.disabled=avail<1||needAi; go.onclick=()=>quizStart();
+  bar.append(go); box.append(bar);
+  if(avail<1) box.append(qEl("p","q-lede","There are no words at this level yet."));
+  if(needAi){ const p=qEl("p","q-lede","IELTS and GRE questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).");
+    const k=qEl("button","btn small","Add a free Gemini key"); k.type="button"; k.onclick=()=>{closeQuiz();setMode("gemini");$("#keybox").open=true;$("#keybox").scrollIntoView({behavior:"smooth",block:"center"})};
+    box.append(p,k) }
+  m.append(box);
+}
+async function quizStart(retry){
+  const pool=quizWords();
+  const chosen=retry||quizPick(pool,quiz.count||pool.length);
+  let items;
+  if(quiz.mode==="learn") { const real=words.filter(w=>!w.example); items=learnItems(chosen,real.length>=4?real:words) }
+  else{
+    const m=$("#quizMain"); m.innerHTML=""; const p=qEl("p","q-lede"); p.innerHTML=spin("Writing questions for your words…"); m.append(p);
+    items=await aiQuizItems(quiz.mode,chosen,(a,b)=>{p.innerHTML=spin(`Writing questions for your words… ${a} of ${b}`)});
+    if(!items){ quizSetup(); return }
+    if(!items.length){ m.innerHTML=""; m.append(qEl("p","q-lede",$("#status").textContent||"No questions came back. Try again."));
+      const b=qEl("button","btn","Back"); b.onclick=quizSetup; m.append(b); return }
+    if(quiz.mode==="gre"){ // mix the three formats rather than all of one kind
+      const by=t=>qShuffle(items.filter(x=>x.type===t)); const a=by("single"),d=by("double"),e=by("equiv"); items=[];
+      while(a.length||d.length||e.length){ if(a.length)items.push(a.pop()); if(e.length)items.push(e.pop()); if(d.length)items.push(d.pop()) }
+      items=items.slice(0,Math.max(chosen.length*2,10));
+    } else items=qShuffle(items).slice(0,Math.max(chosen.length*2,10));
+  }
+  quiz.deck=quiz.mode==="learn"?qShuffle(items):items;
+  quiz.deck=quiz.deck.map(q=>({...q,opts:q.type==="double"?q.b.map(b=>qShuffle(b.o)):qShuffle(q.o)}));
+  quiz.chosen=chosen; quiz.i=0; quiz.score=0; quiz.missed=[];
+  if(!quiz.deck.length){ $("#quizMain").innerHTML=""; $("#quizMain").append(qEl("p","q-lede","These words need a definition or an example sentence first.")); return }
+  quizRender();
+}
+function quizTicks(){
+  const t=$("#quizTicks"); t.innerHTML="";
+  quiz.deck.forEach((q,n)=>{ const i=qEl("i"); if(n<quiz.i) i.className=q.got?"ok":"no"; else if(n===quiz.i) i.className="now"; t.append(i) });
+}
+function stemNode(q){
+  const p=qEl("p","q-stem"); p.dataset.q="";
+  if(q.big){ const w=qEl("p","q-word",q.big); w.dataset.q=""; return w }
+  if(q.quote){ p.textContent="“"+q.quote+"”"; return p }
+  if(q.hl){ const re=new RegExp("(\\b"+reEsc(q.hl.w)+"\\w*)","i"); const parts=q.hl.s.split(re);
+    parts.forEach((x,n)=>{ if(n%2) p.append(qEl("span","q-hl",x)); else p.append(document.createTextNode(x)) }); return p }
+  const parts=q.s.split("___");
+  parts.forEach((x,n)=>{ p.append(document.createTextNode(x));
+    if(n<parts.length-1){ const b=qEl("span","q-blank"); b.id="qb"+n; if(q.type==="double") b.append(qEl("span","tag",n?"ii":"i")); b.append(document.createTextNode("?")); p.append(b) } });
+  return p;
+}
+function quizRender(){
+  const q=quiz.deck[quiz.i], m=$("#quizMain"); m.innerHTML=""; quiz.locked=false; quiz.picks=[];
+  $("#quizCount").textContent=(quiz.i+1)+" / "+quiz.deck.length; quizTicks();
+  if(q.ask) m.append(qEl("p","q-ask",q.ask));
+  if(q.type==="double") m.append(qEl("p","q-ask","Choose one word for each blank."));
+  m.append(stemNode(q));
+  const optBtn=(word,n,g)=>{ const b=qEl("button","q-opt"); b.type="button"; b.dataset.q=""; b.dataset.v=word; if(g!=null)b.dataset.g=g;
+    b.append(qEl("span","mark",LETTERS[n]),document.createTextNode(word)); return b };
+  if(q.type==="double"){
+    const gs=qEl("div","q-groups");
+    q.opts.forEach((set,gi)=>{ const g=qEl("div","q-group"); g.append(qEl("p",null,gi?"Blank (ii)":"Blank (i)")); const row=qEl("div","q-opts");
+      set.forEach((w,n)=>{ const b=optBtn(w,n,gi); b.onclick=()=>{ if(quiz.locked)return; row.querySelectorAll(".q-opt").forEach(x=>x.classList.remove("picked")); b.classList.add("picked"); quiz.picks[gi]=w; qFill(gi,w); $("#qCheck").disabled=!(quiz.picks[0]&&quiz.picks[1]) }; row.append(b) });
+      g.append(row); gs.append(g) });
+    m.append(gs);
+  } else {
+    const row=qEl("div","q-opts"+(q.type==="equiv"?" two":""));
+    q.opts.forEach((w,n)=>{ const b=optBtn(w,n); b.onclick=()=>q.type==="equiv"?qToggle(b,w):qSingle(b,w,q); row.append(b) });
+    m.append(row);
+  }
+  const gl=qEl("div","q-gloss"); gl.id="qGloss"; gl.hidden=true; gl.dataset.q=""; m.append(gl);
+  const bar=qEl("div","q-bar");
+  if(q.type!=="single"){ const c=qEl("button","btn primary","Check answer"); c.type="button"; c.id="qCheck"; c.disabled=true; c.onclick=()=>qGrade(q); bar.append(c) }
+  const nx=qEl("button","btn primary",quiz.i===quiz.deck.length-1?"See results":"Next"); nx.type="button"; nx.id="qNext"; nx.hidden=true; nx.onclick=()=>{quiz.i++; quiz.i<quiz.deck.length?quizRender():quizResults()};
+  const back=qEl("button","btn","End test"); back.type="button"; back.onclick=quizResults;
+  bar.append(nx,back); m.append(bar);
+  $("#quiz").scrollTop=0;
+}
+function qFill(n,word,cls){ const b=document.getElementById("qb"+n); if(!b) return; const tag=b.querySelector(".tag"); b.textContent=""; if(tag) b.append(tag); b.append(document.createTextNode(word)); b.classList.add("filled"); if(cls) b.classList.add(cls) }
+function qToggle(btn,w){
+  if(quiz.locked) return; const at=quiz.picks.indexOf(w);
+  if(at>-1){quiz.picks.splice(at,1);btn.classList.remove("picked")} else if(quiz.picks.length<2){quiz.picks.push(w);btn.classList.add("picked")}
+  if(quiz.picks.length) qFill(0,quiz.picks.join(" / ")); $("#qCheck").disabled=quiz.picks.length!==2;
+}
+function qMark(isRight,picked){
+  document.querySelectorAll("#quizMain .q-opt").forEach(b=>{ b.disabled=true; const r=isRight(b), p=picked(b); b.classList.remove("picked");
+    if(r){b.classList.add("is-right");b.querySelector(".mark").textContent="✓"} else if(p){b.classList.add("is-wrong");b.querySelector(".mark").textContent="✕"} else b.classList.add("dim") });
+}
+function qDone(q,ok){
+  q.got=ok; ok?quiz.score++:quiz.missed.push(q);
+  for(const w of (q.type==="double"?q.words:[q.word])) if(w) qStat(w,ok);
+  const g=$("#qGloss"), x=q.gloss; g.innerHTML="";
+  const b=qEl("b",null,x.word); g.append(b);
+  const txt=[x.def,x.tr,x.explain].filter(Boolean).join(" · "); if(txt) g.append(document.createTextNode(" — "+txt));
+  g.hidden=false; $("#qNext").hidden=false; $("#qNext").focus({preventScroll:true}); quizTicks();
+}
+function qSingle(btn,w,q){
+  if(quiz.locked) return; quiz.locked=true; const ok=w===q.a;
+  if(document.getElementById("qb0")) qFill(0,w,ok?"ok":"no");
+  qMark(b=>b.dataset.v===q.a,b=>b===btn); qDone(q,ok);
+}
+function qGrade(q){
+  if(quiz.locked) return; quiz.locked=true;
+  if(q.type==="double"){ const right=q.b.map(b=>b.a); const ok=quiz.picks[0]===right[0]&&quiz.picks[1]===right[1];
+    [0,1].forEach(n=>qFill(n,quiz.picks[n],quiz.picks[n]===right[n]?"ok":"no"));
+    qMark(b=>b.dataset.v===right[+b.dataset.g],b=>quiz.picks[+b.dataset.g]===b.dataset.v); $("#qCheck").hidden=true; qDone(q,ok);
+  } else { const ok=q.a.every(a=>quiz.picks.includes(a));
+    qFill(0,q.a.join(" / "),ok?"ok":"no"); qMark(b=>q.a.includes(b.dataset.v),b=>quiz.picks.includes(b.dataset.v)); $("#qCheck").hidden=true; qDone(q,ok) }
+}
+function quizResults(){
+  const answered=quiz.deck.filter(q=>q.got!=null).length||0, total=answered||quiz.deck.length;
+  quiz.deck=quiz.deck.slice(0,Math.max(answered,0)); quizTicks(); $("#quizCount").textContent="";
+  const m=$("#quizMain"); m.innerHTML="";
+  m.append(qEl("div","q-score",quiz.score+" / "+(answered||0)));
+  const pct=answered?quiz.score/answered:0;
+  m.append(qEl("p","q-lede",!answered?"No answers yet.":pct>=.9?"Excellent. Come back in two days to check they stuck.":pct>=.7?"Most are holding. The words below are where to spend the next session.":"Worth another pass today, then again tomorrow."));
+  const bar=qEl("div","q-bar");
+  const again=qEl("button","btn primary","Try again"); again.type="button"; again.onclick=()=>quizStart();
+  bar.append(again);
+  const missedWords=[...new Set(quiz.missed.flatMap(q=>q.type==="double"?q.words:[q.word]))].map(x=>words.find(w=>w.word.toLowerCase()===String(x).toLowerCase())).filter(Boolean);
+  if(missedWords.length){ const d=qEl("button","btn",missedWords.length===1?"Practise the word I missed":"Practise the "+missedWords.length+" words I missed"); d.type="button"; d.onclick=()=>quizStart(missedWords); bar.append(d) }
+  const close=qEl("button","btn","Close"); close.type="button"; close.onclick=closeQuiz; bar.append(close);
+  m.append(bar);
+  if(quiz.missed.length){ const ul=qEl("ul","q-missed"); ul.dataset.q="";
+    quiz.missed.forEach(q=>{ const li=qEl("li"); li.append(qEl("b",null,q.gloss.word)); const t=[q.gloss.def,q.gloss.tr,q.gloss.explain].filter(Boolean).join(" · "); if(t) li.append(document.createTextNode(" — "+t)); ul.append(li) });
+    m.append(ul) }
+}
 render();
 setTimeout(()=>loadCefr().catch(()=>{}),300);
 // Fill in example sentences for saved words that don't have any yet

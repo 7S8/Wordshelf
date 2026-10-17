@@ -26,6 +26,10 @@ Pick a language in **Translate to** (about 100 languages, defaults to your brows
 
 Your word list is saved in your browser. Use **Print** to print (or save as PDF) all levels or only the ones you choose, with or without definitions, sentences, pronunciation and notes.
 
+## Test yourself
+
+Under the add-words panel: **Learn** (word for a meaning, gaps in your example sentences, translations; works without a key), **IELTS** (synonyms in context, paraphrase and gap-fill) and **GRE** (one- and two-blank text completion, sentence equivalence). IELTS and GRE questions are written by your AI (Gemini, Qwen, Claude) once per word and kept in your browser. Weak words come up first, and you can drill the ones you missed.
+
 ## Languages
 
 - **Type words in Russian** (or another language): they are added in English (typos like doubled letters are fixed first), with the original kept as a note.

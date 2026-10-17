@@ -49,5 +49,54 @@ async function askAccount(prompt,images,structured){
 }
 '''
 sub('async function askClaude(key,prompt,images){', helper + 'async function askClaude(key,prompt,images){')
+# the page's own browser storage on claude.ai can be wiped: keep the shelf in the viewer's Claude account as well
+# (db capability, the viewer's private data/users/<id>/ subtree), so it is there on every visit and every device
+sub('set(v){try{localStorage.setItem("wordshelf.v1",JSON.stringify(v))}catch{}}};',
+    'set(v){try{localStorage.setItem("wordshelf.v1",JSON.stringify(v))}catch{};cloudSave()}};')
+cloud = r"""
+/* Shelf saved in your Claude account: chunks of 40 words under your private data/users/<id>/ path */
+var cloud=null, cloudSaved=[], cloudMeta="", cloudTimer=null, cloudBusy=false, cloudReady=false;
+const CLOUD_CHUNK=40;
+function cloudSave(){ if(!cloud||!cloudReady) return; clearTimeout(cloudTimer); cloudTimer=setTimeout(cloudFlush,1200) }
+async function cloudFlush(){
+  if(!cloud) return;
+  if(cloudBusy){ clearTimeout(cloudTimer); cloudTimer=setTimeout(cloudFlush,800); return }
+  cloudBusy=true;
+  try{
+    const list=words.filter(w=>!w.example), chunks=[];
+    for(let i=0;i<list.length;i+=CLOUD_CHUNK) chunks.push(JSON.stringify(list.slice(i,i+CLOUD_CHUNK)));
+    for(let i=0;i<chunks.length;i++) if(cloudSaved[i]!==chunks[i]){ await cloud.col.doc("c"+i).set({words:chunks[i]}); cloudSaved[i]=chunks[i] }
+    for(let i=chunks.length;i<cloudSaved.length;i++) await cloud.col.doc("c"+i).delete();
+    cloudSaved.length=chunks.length;
+    const meta=JSON.stringify({chunks:chunks.length,lang});
+    if(meta!==cloudMeta){ await cloud.meta.set({chunks:chunks.length,lang,saved:Date.now()}); cloudMeta=meta }
+  }catch(e){ if(e?.code==="invalid_argument"||e?.code==="revoked"||e?.code==="not_granted") cloud=null }
+  finally{ cloudBusy=false }
+}
+(async()=>{
+  if(!window.claude?.use) return;
+  const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]).catch(()=>[null,null]);
+  const uid=db&&user?await user.id().catch(()=>null):null; if(!uid) return;
+  const meta=db.doc("data/users/"+uid+"/shelf"); cloud={meta,col:meta.collection("chunks")};
+  try{
+    const m=await meta.get(); let fromCloud=[];
+    if(m.exists){
+      const d=m.data()||{}, n=d.chunks||0;
+      const docs=await Promise.all(Array.from({length:n},(_,i)=>cloud.col.doc("c"+i).get()));
+      docs.forEach((x,i)=>{ const str=x.exists?String(x.data().words||"[]"):"[]"; cloudSaved[i]=str; try{fromCloud.push(...JSON.parse(str))}catch{} });
+      cloudMeta=JSON.stringify({chunks:n,lang:d.lang??""});
+      if(d.lang&&!lang){ lang=d.lang; try{localStorage.setItem("wordshelf.lang",lang)}catch{}; $("#lang").value=lang; refreshDropdowns() }
+    }
+    // the account copy wins; words added here before it loaded are kept too
+    const local=words.filter(w=>!w.example), seen=new Set(fromCloud.map(w=>String(w.word).toLowerCase()));
+    const merged=[...fromCloud,...local.filter(w=>!seen.has(String(w.word).toLowerCase()))];
+    if(merged.length){ words=merged; try{localStorage.setItem("wordshelf.v1",JSON.stringify(words))}catch{}; render() }
+    cloudReady=true;
+    if(merged.length!==fromCloud.length) cloudFlush();
+    autoFill(); autoTranslate();
+  }catch(e){ cloud=null }
+})();
+"""
+sub('render();\nsetTimeout(()=>loadCefr()', cloud + 'render();\nsetTimeout(()=>loadCefr()')
 (pathlib.Path(sys.argv[1])).write_text(s)
 print("ok", len(s))
