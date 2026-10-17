@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "대문자로 된 단어로 빈칸에 맞는 단어를 만드세요.",
   "Put the word in capitals into the right form.": "대문자로 된 단어를 알맞은 형태로 바꾸세요.",
   "Choose the word that fits.": "알맞은 단어를 고르세요.",
-  "Your answer": "내 답"
+  "Your answer": "내 답",
+  "Show as a list": "목록으로 보기",
+  "Show as cards": "카드로 보기",
+  "Order": "정렬",
+  "By level": "레벨별",
+  "Jump to letter": "글자로 이동",
+  "Flashcards": "플래시카드",
+  "Flip, remember, repeat": "뒤집고, 떠올리고, 반복하기",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "플래시카드: 단어를 보고 떠올려 본 다음, 카드를 탭해 뜻, 번역, 예문을 확인하세요. 몰랐던 단어는 더 자주 나와요. 키 없이 사용할 수 있어요.",
+  "Turn the card": "카드 뒤집기",
+  "Tap the card to see the meaning": "카드를 탭하면 뜻이 보여요",
+  "I didn't know": "몰랐어요",
+  "I knew it": "알았어요"
  },
  "p": {
   "{0} word has no example sentence.": "단어 {0}개에 예문이 없어요.",

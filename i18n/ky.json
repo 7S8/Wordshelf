@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Баш тамга менен жазылган сөздөн боштукка туура келген сөз жасаңыз.",
   "Put the word in capitals into the right form.": "Баш тамга менен жазылган сөздү керектүү формага коюңуз.",
   "Choose the word that fits.": "Туура келген сөздү тандаңыз.",
-  "Your answer": "Сиздин жообуңуз"
+  "Your answer": "Сиздин жообуңуз",
+  "Show as a list": "Тизме түрүндө көрсөтүү",
+  "Show as cards": "Карточка түрүндө көрсөтүү",
+  "Order": "Тартиби",
+  "By level": "Деңгээл боюнча",
+  "Jump to letter": "Тамгага өтүү",
+  "Flashcards": "Карточкалар",
+  "Flip, remember, repeat": "Котор, эсте, кайтала",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Карточкалар: сөздү көрүп, аны эстөөгө аракет кылыңыз, анан маанисин, котормосун жана мисалын текшерүү үчүн карточканы басыңыз. Билбеген сөздөрүңүз көбүрөөк кайталанат. Ачкычсыз иштейт.",
+  "Turn the card": "Карточканы оодаруу",
+  "Tap the card to see the meaning": "Маанисин көрүү үчүн карточканы басыңыз",
+  "I didn't know": "Билген жокмун",
+  "I knew it": "Билчүмүн"
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөздө мисал сүйлөм жок.",

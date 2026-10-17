@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Аз калимаи бо ҳарфҳои калон навишташуда калимае созед, ки ба ҷои холӣ мувофиқ аст.",
   "Put the word in capitals into the right form.": "Калимаи бо ҳарфҳои калон навишташударо ба шакли лозимӣ гузоред.",
   "Choose the word that fits.": "Калимаи мувофиқро интихоб кунед.",
-  "Your answer": "Ҷавоби шумо"
+  "Your answer": "Ҷавоби шумо",
+  "Show as a list": "Ҳамчун рӯйхат",
+  "Show as cards": "Ҳамчун кортҳо",
+  "Order": "Тартиб",
+  "By level": "Аз рӯи сатҳ",
+  "Jump to letter": "Гузариш ба ҳарф",
+  "Flashcards": "Кортҳо",
+  "Flip, remember, repeat": "Гардон, ба ёд ор, такрор кун",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Кортҳо: ба калима нигаред, кӯшиш кунед онро ба ёд оред, баъд кортро пахш кунед, то маъно, тарҷума ва мисолро санҷед. Калимаҳое, ки намедонистед, бештар такрор мешаванд. Бе калид кор мекунад.",
+  "Turn the card": "Гардондани корт",
+  "Tap the card to see the meaning": "Барои дидани маъно кортро пахш кунед",
+  "I didn't know": "Намедонистам",
+  "I knew it": "Медонистам"
  },
  "p": {
   "{0} word has no example sentence.": "Барои {0} калима ҷумлаи намунавӣ нест.",

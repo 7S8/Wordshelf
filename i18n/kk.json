@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Бас әріппен жазылған сөзден бос орынға сәйкес келетін сөз жасаңыз.",
   "Put the word in capitals into the right form.": "Бас әріппен жазылған сөзді керекті формаға қойыңыз.",
   "Choose the word that fits.": "Сәйкес сөзді таңдаңыз.",
-  "Your answer": "Сіздің жауабыңыз"
+  "Your answer": "Сіздің жауабыңыз",
+  "Show as a list": "Тізім түрінде көрсету",
+  "Show as cards": "Карточка түрінде көрсету",
+  "Order": "Реті",
+  "By level": "Деңгей бойынша",
+  "Jump to letter": "Әріпке өту",
+  "Flashcards": "Карточкалар",
+  "Flip, remember, repeat": "Аудар, есте сақта, қайтала",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Карточкалар: сөзді көріп, оны есіңізге түсіруге тырысыңыз, содан кейін мағынасын, аудармасын және мысалын тексеру үшін карточканы басыңыз. Білмеген сөздеріңіз жиірек қайталанады. Кілтсіз жұмыс істейді.",
+  "Turn the card": "Карточканы аудару",
+  "Tap the card to see the meaning": "Мағынасын көру үшін карточканы басыңыз",
+  "I didn't know": "Білмедім",
+  "I knew it": "Білдім"
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөзде мысал сөйлем жоқ.",

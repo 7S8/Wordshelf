@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Bentuk kata dari kata berhuruf kapital yang cocok untuk bagian kosong.",
   "Put the word in capitals into the right form.": "Ubah kata berhuruf kapital ke bentuk yang tepat.",
   "Choose the word that fits.": "Pilih kata yang cocok.",
-  "Your answer": "Jawabanmu"
+  "Your answer": "Jawabanmu",
+  "Show as a list": "Tampilkan sebagai daftar",
+  "Show as cards": "Tampilkan sebagai kartu",
+  "Order": "Urutan",
+  "By level": "Per level",
+  "Jump to letter": "Lompat ke huruf",
+  "Flashcards": "Kartu hafalan",
+  "Flip, remember, repeat": "Balik, ingat, ulangi",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Kartu hafalan: lihat katanya, coba ingat artinya, lalu ketuk kartu untuk memeriksa arti, terjemahan, dan contohnya. Kata yang belum kamu tahu akan lebih sering muncul. Bisa dipakai tanpa kunci.",
+  "Turn the card": "Balik kartu",
+  "Tap the card to see the meaning": "Ketuk kartu untuk melihat artinya",
+  "I didn't know": "Belum tahu",
+  "I knew it": "Sudah tahu"
  },
  "p": {
   "{0} word has no example sentence.": "{0} kata belum punya contoh kalimat.",

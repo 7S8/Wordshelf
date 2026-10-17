@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "اشتق من الكلمة المكتوبة بالأحرف الكبيرة كلمة تناسب الفراغ.",
   "Put the word in capitals into the right form.": "ضع الكلمة المكتوبة بالأحرف الكبيرة في الصيغة الصحيحة.",
   "Choose the word that fits.": "اختر الكلمة المناسبة.",
-  "Your answer": "إجابتك"
+  "Your answer": "إجابتك",
+  "Show as a list": "عرض كقائمة",
+  "Show as cards": "عرض كبطاقات",
+  "Order": "الترتيب",
+  "By level": "حسب المستوى",
+  "Jump to letter": "الانتقال إلى حرف",
+  "Flashcards": "البطاقات التعليمية",
+  "Flip, remember, repeat": "اقلب، تذكّر، كرّر",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "البطاقات التعليمية: انظر إلى الكلمة وحاول تذكّرها، ثم المس البطاقة لتتحقق من المعنى والترجمة والمثال. الكلمات التي لم تعرفها تظهر أكثر. تعمل بلا مفتاح.",
+  "Turn the card": "اقلب البطاقة",
+  "Tap the card to see the meaning": "المس البطاقة لترى المعنى",
+  "I didn't know": "لم أعرفها",
+  "I knew it": "عرفتها"
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:zero=كلمة;one=كلمة;two=كلمتان;few=كلمات;many=كلمة;other=كلمة} بلا جملة مثال.",

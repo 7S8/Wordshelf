@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "از واژهٔ با حروف بزرگ واژه‌ای بسازید که با جای خالی جور باشد.",
   "Put the word in capitals into the right form.": "واژهٔ با حروف بزرگ را به شکل درست درآورید.",
   "Choose the word that fits.": "واژهٔ مناسب را انتخاب کنید.",
-  "Your answer": "پاسخ شما"
+  "Your answer": "پاسخ شما",
+  "Show as a list": "نمایش به‌صورت فهرست",
+  "Show as cards": "نمایش به‌صورت کارت",
+  "Order": "ترتیب",
+  "By level": "بر اساس سطح",
+  "Jump to letter": "رفتن به حرف",
+  "Flashcards": "فلش‌کارت‌ها",
+  "Flip, remember, repeat": "برگردان، به یاد بیاور، تکرار کن",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "فلش‌کارت‌ها: واژه را ببینید، سعی کنید آن را به یاد بیاورید، سپس روی کارت بزنید تا معنی، ترجمه و نمونه را بررسی کنید. واژه‌هایی که نمی‌دانستید بیشتر تکرار می‌شوند. بدون کلید کار می‌کند.",
+  "Turn the card": "برگرداندن کارت",
+  "Tap the card to see the meaning": "برای دیدن معنی روی کارت بزنید",
+  "I didn't know": "نمی‌دانستم",
+  "I knew it": "می‌دانستم"
  },
  "p": {
   "{0} word has no example sentence.": "{0} واژه جملهٔ نمونه ندارد.",

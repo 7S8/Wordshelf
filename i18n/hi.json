@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "कैपिटल अक्षरों वाले शब्द से ऐसा शब्द बनाएँ जो ख़ाली जगह में फ़िट हो।",
   "Put the word in capitals into the right form.": "कैपिटल अक्षरों वाले शब्द को सही रूप में रखें।",
   "Choose the word that fits.": "फ़िट होने वाला शब्द चुनें।",
-  "Your answer": "आपका जवाब"
+  "Your answer": "आपका जवाब",
+  "Show as a list": "सूची के रूप में दिखाएँ",
+  "Show as cards": "कार्ड के रूप में दिखाएँ",
+  "Order": "क्रम",
+  "By level": "स्तर के अनुसार",
+  "Jump to letter": "अक्षर पर जाएँ",
+  "Flashcards": "फ़्लैशकार्ड",
+  "Flip, remember, repeat": "पलटें, याद करें, दोहराएँ",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "फ़्लैशकार्ड: शब्द देखें, उसे याद करने की कोशिश करें, फिर अर्थ, अनुवाद और उदाहरण जाँचने के लिए कार्ड पर टैप करें। जो शब्द आपको नहीं आते थे, वे ज़्यादा बार लौटते हैं। बिना कुंजी के काम करता है।",
+  "Turn the card": "कार्ड पलटें",
+  "Tap the card to see the meaning": "अर्थ देखने के लिए कार्ड पर टैप करें",
+  "I didn't know": "नहीं पता था",
+  "I knew it": "पता था"
  },
  "p": {
   "{0} word has no example sentence.": "{0} शब्द का कोई उदाहरण वाक्य नहीं है।",

@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Bosh harflar bilan yozilgan soʻzdan boʻshliqqa mos soʻz yasang.",
   "Put the word in capitals into the right form.": "Bosh harflar bilan yozilgan soʻzni kerakli shaklga qoʻying.",
   "Choose the word that fits.": "Mos soʻzni tanlang.",
-  "Your answer": "Javobingiz"
+  "Your answer": "Javobingiz",
+  "Show as a list": "Roʻyxat koʻrinishida",
+  "Show as cards": "Kartochka koʻrinishida",
+  "Order": "Tartib",
+  "By level": "Daraja boʻyicha",
+  "Jump to letter": "Harfga oʻtish",
+  "Flashcards": "Kartochkalar",
+  "Flip, remember, repeat": "Aylantir, esla, takrorla",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Kartochkalar: soʻzga qarang, uni eslashga harakat qiling, soʻng maʼnosi, tarjimasi va misolini tekshirish uchun kartochkani bosing. Bilmagan soʻzlaringiz koʻproq takrorlanadi. Kalitsiz ishlaydi.",
+  "Turn the card": "Kartochkani aylantirish",
+  "Tap the card to see the meaning": "Maʼnosini koʻrish uchun kartochkani bosing",
+  "I didn't know": "Bilmadim",
+  "I knew it": "Bildim"
  },
  "p": {
   "{0} word has no example sentence.": "{0} ta soʻzda misol gap yoʻq.",

@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "大文字の単語から、空欄に合う語を作ってください。",
   "Put the word in capitals into the right form.": "大文字の単語を正しい形にしてください。",
   "Choose the word that fits.": "合う単語を選んでください。",
-  "Your answer": "あなたの答え"
+  "Your answer": "あなたの答え",
+  "Show as a list": "リストで表示",
+  "Show as cards": "カードで表示",
+  "Order": "並び順",
+  "By level": "レベル別",
+  "Jump to letter": "文字へ移動",
+  "Flashcards": "フラッシュカード",
+  "Flip, remember, repeat": "めくって、思い出して、くり返す",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "フラッシュカード：単語を見て思い出してみてから、カードをタップして意味・翻訳・例文を確認します。わからなかった単語はより頻繁に出てきます。キー不要で使えます。",
+  "Turn the card": "カードをめくる",
+  "Tap the card to see the meaning": "カードをタップして意味を表示",
+  "I didn't know": "わからなかった",
+  "I knew it": "わかった"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 語に例文がありません。",

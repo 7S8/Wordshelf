@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Forme a partir da palavra em maiúsculas uma palavra que se encaixe na lacuna.",
   "Put the word in capitals into the right form.": "Coloque a palavra em maiúsculas na forma certa.",
   "Choose the word that fits.": "Escolha a palavra que se encaixa.",
-  "Your answer": "Sua resposta"
+  "Your answer": "Sua resposta",
+  "Show as a list": "Mostrar como lista",
+  "Show as cards": "Mostrar como cartões",
+  "Order": "Ordem",
+  "By level": "Por nível",
+  "Jump to letter": "Ir para a letra",
+  "Flashcards": "Flashcards",
+  "Flip, remember, repeat": "Vire, lembre, repita",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Flashcards: veja a palavra, tente lembrar dela e depois toque no cartão para conferir o significado, a tradução e o exemplo. As palavras que você não sabia voltam com mais frequência. Funciona sem chave.",
+  "Turn the card": "Virar o cartão",
+  "Tap the card to see the meaning": "Toque no cartão para ver o significado",
+  "I didn't know": "Não sabia",
+  "I knew it": "Eu sabia"
  },
  "p": {
   "{0} word has no example sentence.": "{0} palavra está sem frase de exemplo.",

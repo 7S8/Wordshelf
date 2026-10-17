@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "用大写的单词构成一个适合填入空格的词。",
   "Put the word in capitals into the right form.": "将大写的单词变为正确形式。",
   "Choose the word that fits.": "选出合适的单词。",
-  "Your answer": "你的答案"
+  "Your answer": "你的答案",
+  "Show as a list": "以列表显示",
+  "Show as cards": "以卡片显示",
+  "Order": "排序",
+  "By level": "按等级",
+  "Jump to letter": "跳到字母",
+  "Flashcards": "闪卡",
+  "Flip, remember, repeat": "翻转、回忆、重复",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "闪卡：看单词，试着回想它的意思，然后点按卡片查看释义、翻译和例句。没记住的单词会更常出现。无需密钥即可使用。",
+  "Turn the card": "翻转卡片",
+  "Tap the card to see the meaning": "点按卡片查看释义",
+  "I didn't know": "不认识",
+  "I knew it": "认识"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 个单词没有例句。",

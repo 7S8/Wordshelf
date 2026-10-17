@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Büyük harfle yazılan kelimeden boşluğa uyan bir kelime türetin.",
   "Put the word in capitals into the right form.": "Büyük harfle yazılan kelimeyi doğru biçime sokun.",
   "Choose the word that fits.": "Uyan kelimeyi seçin.",
-  "Your answer": "Cevabınız"
+  "Your answer": "Cevabınız",
+  "Show as a list": "Liste olarak göster",
+  "Show as cards": "Kart olarak göster",
+  "Order": "Sıralama",
+  "By level": "Seviyeye göre",
+  "Jump to letter": "Harfe git",
+  "Flashcards": "Kartlar",
+  "Flip, remember, repeat": "Çevir, hatırla, tekrarla",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Kartlar: kelimeye bakın, hatırlamaya çalışın, ardından anlamını, çevirisini ve örneğini görmek için karta dokunun. Bilmediğiniz kelimeler daha sık karşınıza çıkar. Anahtar olmadan çalışır.",
+  "Turn the card": "Kartı çevir",
+  "Tap the card to see the meaning": "Anlamını görmek için karta dokunun",
+  "I didn't know": "Bilmiyordum",
+  "I knew it": "Biliyordum"
  },
  "p": {
   "{0} word has no example sentence.": "{0} kelimenin örnek cümlesi yok.",

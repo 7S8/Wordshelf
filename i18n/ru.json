@@ -264,7 +264,19 @@
   "Make a word from the one in capitals that fits the gap.": "Образуйте от слова, напечатанного заглавными буквами, слово, которое подходит по смыслу.",
   "Put the word in capitals into the right form.": "Поставьте слово, напечатанное заглавными буквами, в нужную форму.",
   "Choose the word that fits.": "Выберите подходящее слово.",
-  "Your answer": "Ваш ответ"
+  "Your answer": "Ваш ответ",
+  "Show as a list": "Показать списком",
+  "Show as cards": "Показать карточками",
+  "Order": "Порядок",
+  "By level": "По уровням",
+  "Jump to letter": "Перейти к букве",
+  "Flashcards": "Карточки",
+  "Flip, remember, repeat": "Переверни, вспомни, повтори",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.": "Карточки: посмотрите на слово, постарайтесь его вспомнить, затем нажмите на карточку, чтобы проверить значение, перевод и пример. Слова, которые вы не знали, будут появляться чаще. Работает без ключа.",
+  "Turn the card": "Перевернуть карточку",
+  "Tap the card to see the meaning": "Нажмите на карточку, чтобы увидеть значение",
+  "I didn't know": "Не знал(а)",
+  "I knew it": "Знал(а)"
  },
  "p": {
   "{0} word has no example sentence.": "Без примера предложения: {0} {0:one=слово;few=слова;many=слов;other=слова}.",
