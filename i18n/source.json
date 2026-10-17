@@ -265,7 +265,19 @@
   "Make a word from the one in capitals that fits the gap.",
   "Put the word in capitals into the right form.",
   "Choose the word that fits.",
-  "Your answer"
+  "Your answer",
+  "Show as a list",
+  "Show as cards",
+  "Order",
+  "By level",
+  "Jump to letter",
+  "Flashcards",
+  "Flip, remember, repeat",
+  "Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.",
+  "Turn the card",
+  "Tap the card to see the meaning",
+  "I didn't know",
+  "I knew it"
  ],
  "p": [
   "{0} word has no example sentence.",

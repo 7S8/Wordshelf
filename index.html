@@ -271,6 +271,25 @@ html.i18n-wait body{visibility:hidden}
 .pmode{display:grid;gap:1px;text-align:left;border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer;min-width:0}
 .pmode:hover{border-color:var(--accent)}.pmode b{font-size:15px}.pmode small{color:var(--muted);font-size:12px}
 @media (max-width:640px){.practice-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.pmode{padding:8px 10px}.pmode small{display:none}}
+.fc{perspective:1200px;margin:6px 0 18px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fc-in{position:relative;min-height:300px;transition:transform .45s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;justify-content:center;gap:10px;overflow:auto}
+.fc-front{align-items:center;text-align:center;border-top:5px solid var(--lv,var(--accent))}
+.fc-back{transform:rotateY(180deg)}
+.fc-word{font-family:var(--display);font-size:40px;font-weight:700;line-height:1.1;overflow-wrap:anywhere}
+.fc-meta{font-family:var(--mono);font-size:14px;color:var(--muted)}
+.fc-hint{color:var(--muted);font-size:14px;margin-top:8px}
+.fc-back .tr{font-size:22px;font-weight:700}
+.fc-back .d{font-size:18px;line-height:1.45}
+.fc-back .x{color:var(--muted);font-style:italic;line-height:1.45;border-left:3px solid var(--line);padding-left:10px}
+.fc-back .nt{color:var(--muted);font-size:14px}
+.fc-back mark{background:none;color:var(--accent);font-weight:700;font-style:normal}
+.fc-say{display:flex;gap:8px;justify-content:center}
+.fc-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fc-btns .btn{padding:14px 10px;font-size:16px}
+.fc-btns .no{border-color:var(--danger);color:var(--danger)}
+@media (prefers-reduced-motion:reduce){.fc-in{transition:none}}
 .q-base{display:inline-block;font-family:var(--mono);font-weight:500;font-size:15px;letter-spacing:.04em;border:1px solid var(--line);border-radius:8px;padding:4px 10px;margin:0 0 14px;background:var(--surface)}
 .q-type{display:flex;gap:8px;flex-wrap:wrap}.q-type input{flex:1 1 220px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:18px}
 .q-type input.ok{border-color:var(--a1);color:var(--a1)}.q-type input.no{border-color:var(--danger);color:var(--danger)}
@@ -331,6 +350,27 @@ html.stuck body::before{opacity:1}
 .search input{flex:1;min-width:0;border:0;background:transparent;padding:8px 0;outline:none;color:var(--ink)}
 .search:focus-within{outline:2px solid var(--focus);outline-offset:2px}
 .tools .pick select{max-width:170px}
+.vbtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.vbtn:hover{border-color:var(--accent)}
+/* list view: word and short meaning per row, like a dictionary; tap a row for the full card */
+.lst{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 6px;align-items:start}
+.lst-sort{justify-self:start;width:max-content;display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0 0 6px;background:var(--surface)}
+.lst-sort button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;font-weight:600;padding:6px 14px;cursor:pointer}
+.lst-sort button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.lst-letter{font-family:var(--mono);font-size:13px;color:var(--muted);padding:14px 4px 4px;border-bottom:1px solid var(--line);scroll-margin-top:150px}
+.lst-row{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);padding:12px 4px;color:var(--ink);cursor:pointer;font:inherit}
+.lst-row:hover{background:var(--surface)}
+.lst-row .w{display:flex;align-items:baseline;gap:8px}
+.lst-row .w b{font-size:21px;font-weight:600;overflow-wrap:anywhere}
+.lst-row .w .lv{font-family:var(--mono);font-size:11px;color:var(--lv);border:1px solid color-mix(in srgb,var(--lv) 45%,transparent);border-radius:6px;padding:0 5px}
+.lst-row .w .t{color:var(--muted);font-size:15px;margin-left:auto;text-align:right}
+.lst-row p{margin:3px 0 0;color:var(--muted);font-size:15px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lst-open{padding:10px 0;border-bottom:1px solid var(--line)}
+.lst .level{margin-top:10px}
+.lst .level .lst-row .lv{display:none}
+.az{position:sticky;top:150px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0;font-family:var(--body);font-size:12px;user-select:none;touch-action:none}
+.az a{color:var(--accent);text-decoration:none;padding:1px 4px;line-height:1.25}
+.az span{color:var(--line);padding:1px 4px;line-height:1.25}
 .menu{position:relative}
 .menu summary{list-style:none;cursor:pointer;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
 .menu summary::-webkit-details-marker{display:none}
@@ -538,6 +578,7 @@ footer p{margin:8px 0 0}
   <section class="practice" aria-label="Test yourself">
     <div class="practice-text"><b>Test yourself</b><span>Questions made from the words on your shelf.</span></div>
     <div class="practice-modes">
+      <button type="button" class="pmode" data-quiz="cards"><b>Flashcards</b><small>Flip, remember, repeat</small></button>
       <button type="button" class="pmode" data-quiz="learn"><b>Learn</b><small>Meanings, gaps, translations</small></button>
       <button type="button" class="pmode" data-quiz="ielts"><b>IELTS</b><small>Synonyms and paraphrase</small></button>
       <button type="button" class="pmode" data-quiz="gre"><b>GRE</b><small>Text completion, sentence equivalence</small></button>
@@ -553,6 +594,7 @@ footer p{margin:8px 0 0}
         <input id="search" type="search" placeholder="Find a word" aria-label="Find a word"></label>
       <div class="pick" title="Translate words to"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
         <select id="lang" aria-label="Translate words to"></select></div>
+      <button type="button" class="vbtn" id="viewBtn"></button>
       <details class="menu" id="moreMenu">
         <summary aria-label="More actions"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></summary>
         <div class="menu-pop">
@@ -619,6 +661,9 @@ const $=s=>document.querySelector(s);
 const store={get(){try{return JSON.parse(localStorage.getItem("wordshelf.v1"))}catch{return null}},set(v){try{localStorage.setItem("wordshelf.v1",JSON.stringify(v))}catch{}}};
 let words=store.get()||EXAMPLES;
 let filter="all", query="", pending=[];
+var view=(()=>{try{return localStorage.getItem("wordshelf.view")==="list"?"list":"cards"}catch{return "cards"}})();
+var listSort=(()=>{try{return localStorage.getItem("wordshelf.listSort")==="level"?"level":"az"}catch{return "az"}})();
+const openRows=new Set();
 const PROVIDERS={
   gemini:{name:"Gemini",keyName:"Google AI Studio key",storage:"wordshelf.key.gemini",
     help:'<p>Gemini is free. Get a key in about a minute, no card needed:</p><ol><li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and sign in with Google.</li><li>Click <b>Create API key</b> and copy it.</li><li>Paste it below. It stays in this browser and is sent only to Google.</li></ol>'},
@@ -688,6 +733,8 @@ function render(){
   const shown=words.map((w,i)=>({w,i})).filter(({w})=>(filter==="all"||(w.level||"")===filter)&&(!q||w.word.toLowerCase().includes(q)||(w.note||"").toLowerCase().includes(q)||(w.myNote||"").toLowerCase().includes(q)));
   if(!words.length){$("#shelf").innerHTML=`<div class="empty">Your shelf is empty. Upload a screenshot of your vocabulary or type a few words above.</div>`;return}
   if(!shown.length){$("#shelf").innerHTML=`<div class="empty">No words match this filter.</div>`;return}
+  drawViewBtn();
+  if(view==="list"){ $("#shelf").innerHTML=listView(shown); return }
   $("#shelf").innerHTML=GROUPS.map(l=>{
     const g=shown.filter(({w})=>(w.level||"")===l.id).sort((a,b)=>a.w.word.localeCompare(b.w.word));
     if(!g.length) return "";
@@ -696,6 +743,30 @@ function render(){
   }).join("");
 }
 
+const gridIcon='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>';
+const listIcon='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>';
+function drawViewBtn(){ const b=$("#viewBtn"); if(!b) return; const toList=view==="cards";
+  b.innerHTML=toList?listIcon:gridIcon; const t=toList?"Show as a list":"Show as cards"; b.title=t; b.setAttribute("aria-label",t) }
+function listRow(w,i){
+  const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED;
+  if(openRows.has(i)) return `<div class="lst-open">${card(w,i)}</div>`;
+  const tr=lang&&w.tr?.[lang];
+  return `<button type="button" class="lst-row" data-row="${i}" style="--lv:var(${lv.v})"><span class="w"><b>${esc(w.word)}</b><span class="lv">${lv.label||lv.id}</span>${tr?`<span class="t" lang="${lang}">${esc(tr)}</span>`:""}</span>${w.definition?`<p>${esc(w.definition)}</p>`:""}</button>`;
+}
+function listView(shown){
+  const sort=`<div class="lst-sort" role="group" aria-label="Order"><button type="button" data-sort="az" aria-pressed="${listSort==="az"}">A–Z</button><button type="button" data-sort="level" aria-pressed="${listSort==="level"}">By level</button></div>`;
+  if(listSort==="level"){
+    return sort+`<div class="lst"><div>`+GROUPS.map(l=>{ const g=shown.filter(({w})=>(w.level||"")===l.id).sort((a,b)=>a.w.word.localeCompare(b.w.word)); if(!g.length) return "";
+      return `<section class="level" style="--lv:var(${l.v})"><div class="level-head"><span class="tag">${l.label||l.id}</span><h2>${l.name}</h2><span class="n">${g.length} word${g.length>1?"s":""}</span></div><div>${g.map(({w,i})=>listRow(w,i)).join("")}</div></section>` }).join("")+`</div></div>`;
+  }
+  const sorted=shown.slice().sort((a,b)=>a.w.word.localeCompare(b.w.word,"en",{sensitivity:"base"}));
+  const letterOf=w=>{const c=w.word.trim()[0]?.toUpperCase()||"#"; return /[A-Z]/.test(c)?c:"#"};
+  const groups={}; for(const x of sorted)(groups[letterOf(x.w)]=groups[letterOf(x.w)]||[]).push(x);
+  const letters=[..."ABCDEFGHIJKLMNOPQRSTUVWXYZ#"];
+  const body=letters.filter(c=>groups[c]).map(c=>`<div class="lst-letter" id="L-${c==="#"?"num":c}">${c}</div>`+groups[c].map(({w,i})=>listRow(w,i)).join("")).join("");
+  const az=`<nav class="az" aria-label="Jump to letter">${letters.map(c=>groups[c]?`<a href="#L-${c==="#"?"num":c}" data-jump="${c==="#"?"num":c}">${c}</a>`:`<span>${c}</span>`).join("")}</nav>`;
+  return sort+`<div class="lst"><div>${body}</div>${az}</div>`;
+}
 function setStatus(html,err){const s=$("#status");s.innerHTML=html;s.classList.toggle("err",!!err)}
 const spin=t=>`<span class="spin" aria-hidden="true"></span>${esc(t)}`;
 
@@ -1740,6 +1811,16 @@ function speak(text,lang){
 try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch{}
 
 /* Shelf interactions */
+$("#viewBtn").addEventListener("click",()=>{ view=view==="cards"?"list":"cards"; try{localStorage.setItem("wordshelf.view",view)}catch{}; openRows.clear(); render(); track("view-"+view,"View: "+view) });
+$("#shelf").addEventListener("click",e=>{
+  const s=e.target.closest("[data-sort]"); if(s){ listSort=s.dataset.sort; try{localStorage.setItem("wordshelf.listSort",listSort)}catch{}; render(); return }
+  const j=e.target.closest("[data-jump]"); if(j){ e.preventDefault(); document.getElementById("L-"+j.dataset.jump)?.scrollIntoView({behavior:"smooth",block:"start"}); return }
+  const r=e.target.closest("[data-row]"); if(r){ openRows.add(+r.dataset.row); render(); return }
+});
+// drag a finger down the A–Z strip to scroll through the letters, like a phone's contacts
+$("#shelf").addEventListener("touchmove",e=>{ const az=e.target.closest(".az"); if(!az) return; e.preventDefault();
+  const t=e.touches[0], el=document.elementFromPoint(t.clientX,t.clientY), a=el?.closest?.("[data-jump]");
+  if(a) document.getElementById("L-"+a.dataset.jump)?.scrollIntoView({block:"start"}) },{passive:false});
 $("#chips").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;filter=b.dataset.f;render()});
 $("#search").addEventListener("input",e=>{query=e.target.value;render()});
 /* My notes: a small editor on each card; saved as you type */
@@ -1760,7 +1841,7 @@ $("#shelf").addEventListener("click",e=>{
   if(fx){const old=words[fx.dataset.fix];words.splice(+fx.dataset.fix,1);store.set(words);render();
     $("#manual").value=old.suggest;$("#manualForm").requestSubmit();return}
   const d=e.target.closest("[data-del]");
-  if(d){words.splice(+d.dataset.del,1);store.set(words);render()}
+  if(d){words.splice(+d.dataset.del,1);openRows.clear();store.set(words);render()}
 });
 /* Print: all levels or chosen ones, with or without definitions, sentences, pronunciation and notes */
 function ppSelected(){ return $("#ppAll").checked?GROUPS.map(g=>g.id):[...document.querySelectorAll("[data-pp]:checked")].map(c=>c.dataset.pp) }
@@ -1965,7 +2046,7 @@ function qCache(){try{return JSON.parse(localStorage.getItem(QUIZ_KEY)||"{}")}ca
 function qCacheSet(c){try{localStorage.setItem(QUIZ_KEY,JSON.stringify(c))}catch{}}
 function qStats(){try{return JSON.parse(localStorage.getItem("wordshelf.stats")||"{}")}catch{return {}}}
 function qStat(word,ok){const s=qStats(),k=word.toLowerCase();s[k]=s[k]||{r:0,w:0};ok?s[k].r++:s[k].w++;s[k].t=Date.now();try{localStorage.setItem("wordshelf.stats",JSON.stringify(s))}catch{}}
-const QUIZ_NAMES={learn:"Learn",ielts:"IELTS",gre:"GRE",ege:"ЕГЭ",oge:"ОГЭ"};
+const QUIZ_NAMES={cards:"Flashcards",learn:"Learn",ielts:"IELTS",gre:"GRE",ege:"ЕГЭ",oge:"ОГЭ"};
 let quiz={mode:"learn",level:"all",count:10,deck:[],i:0,score:0,missed:[],locked:false,picks:[]};
 
 function quizWords(){
@@ -2087,7 +2168,8 @@ function quizSetup(){
   const m=$("#quizMain"); m.innerHTML=""; $("#quizTicks").innerHTML=""; $("#quizCount").textContent="";
   $("#quizTitle").textContent=QUIZ_NAMES[quiz.mode];
   const box=qEl("div","q-setup");
-  box.append(qEl("p","q-lede",{learn:"Practise the words on your shelf: pick the word for a meaning, fill the gap in your example sentences, and match translations. Works without a key.",
+  box.append(qEl("p","q-lede",{cards:"Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.",
+    learn:"Practise the words on your shelf: pick the word for a meaning, fill the gap in your example sentences, and match translations. Works without a key.",
     ielts:"IELTS Reading and Writing reward paraphrase: questions on synonyms in context and gap-fill sentences in an academic style. Written by AI for your words, once, then kept.",
     gre:"The three GRE Verbal formats: one-blank and two-blank text completion, and sentence equivalence (pick the two words that give the same meaning). Written by AI for your words, once, then kept.",
     ege:"The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.",
@@ -2100,7 +2182,7 @@ function quizSetup(){
   [10,20,0].forEach(n=>{ const c=qEl("button","q-chip",n?String(n):"All"); c.type="button"; c.setAttribute("aria-pressed",String(quiz.count===n)); c.onclick=()=>{quiz.count=n;quizSetup()}; ct.append(c) });
   box.append(lv,ct);
   const avail=quizWords().length;
-  const needAi=quiz.mode!=="learn"&&!["gemini","qwen","claude"].some(p=>getKey(p));
+  const needAi=!["learn","cards"].includes(quiz.mode)&&!["gemini","qwen","claude"].some(p=>getKey(p));
   const bar=qEl("div","q-bar");
   const go=qEl("button","btn primary","Start"); go.type="button"; go.disabled=avail<1||needAi; go.onclick=()=>quizStart();
   bar.append(go); box.append(bar);
@@ -2114,6 +2196,9 @@ async function quizStart(retry){
   const pool=quizWords();
   const chosen=retry||quizPick(pool,quiz.count||pool.length);
   let items;
+  if(quiz.mode==="cards"){ quiz.deck=chosen.map(w=>({type:"card",w,word:w.word,gloss:{word:w.word,def:w.definition||"",tr:(lang&&w.tr?.[lang])||""}}));
+    quiz.chosen=chosen; quiz.i=0; quiz.score=0; quiz.missed=[];
+    if(!quiz.deck.length) return; return cardRender() }
   if(quiz.mode==="learn") { const real=words.filter(w=>!w.example); items=learnItems(chosen,real.length>=4?real:words) }
   else{
     const m=$("#quizMain"); m.innerHTML=""; const p=qEl("p","q-lede"); p.innerHTML=spin("Writing questions for your words…"); m.append(p);
@@ -2132,6 +2217,36 @@ async function quizStart(retry){
   quiz.chosen=chosen; quiz.i=0; quiz.score=0; quiz.missed=[];
   if(!quiz.deck.length){ $("#quizMain").innerHTML=""; $("#quizMain").append(qEl("p","q-lede","These words need a definition or an example sentence first.")); return }
   quizRender();
+}
+function cardRender(){
+  const q=quiz.deck[quiz.i], w=q.w, m=$("#quizMain"); m.innerHTML=""; quiz.locked=false;
+  $("#quizCount").textContent=(quiz.i+1)+" / "+quiz.deck.length; quizTicks();
+  const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED, i=words.indexOf(w);
+  const fc=qEl("div","fc"); fc.style.setProperty("--lv",`var(${lv.v})`); fc.setAttribute("role","button"); fc.tabIndex=0; fc.setAttribute("aria-label","Turn the card");
+  const inner=qEl("div","fc-in"), front=qEl("div","fc-face fc-front"), back=qEl("div","fc-face fc-back");
+  back.dataset.q="";   // the word's own content is never run through the interface translation
+  const meta=qEl("div","fc-meta",[lv.label||lv.id,w.pos].filter(Boolean).join(" · ")), big=qEl("div","fc-word",w.word); meta.dataset.q=""; big.dataset.q="";
+  front.append(meta,big);
+  if(w.ipa){ const ipa=qEl("div","fc-meta",w.ipa); ipa.dataset.q=""; front.append(ipa) }
+  const say=qEl("div","fc-say"); say.innerHTML=`<button class="say-btn" type="button" data-fcsay="en-GB">${speakIcon}UK</button><button class="say-btn" type="button" data-fcsay="en-US">${speakIcon}US</button>`;
+  front.append(say,qEl("div","fc-hint","Tap the card to see the meaning"));
+  const tr=lang&&w.tr?.[lang]; if(tr){ const t=qEl("div","tr",tr); t.lang=lang; back.append(t) }
+  if(w.definition) back.append(qEl("div","d",w.definition));
+  const dt=lang&&w.defTr?.[lang]; if(dt) back.append(qEl("div","nt",dt));
+  const ex=(w.examples||[])[0]; if(ex){ const x=qEl("div","x"); x.innerHTML=highlight(ex,w.word); back.append(x) }
+  if(w.myNote) back.append(qEl("div","nt","✎ "+w.myNote));
+  if(!tr&&!w.definition&&!ex) back.append(qEl("div","d","—"));
+  inner.append(front,back); fc.append(inner); m.append(fc);
+  const flip=()=>{ fc.classList.toggle("flip"); btns.hidden=false };
+  fc.onclick=e=>{ const s=e.target.closest("[data-fcsay]"); if(s){ e.stopPropagation(); speak(w.word,s.dataset.fcsay); return } flip() };
+  fc.onkeydown=e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); flip() } };
+  const btns=qEl("div","fc-btns"); btns.hidden=true;
+  const no=qEl("button","btn no","I didn't know"); no.type="button"; const yes=qEl("button","btn primary","I knew it"); yes.type="button";
+  const answer=ok=>{ if(quiz.locked) return; quiz.locked=true; q.got=ok; ok?quiz.score++:quiz.missed.push(q); qStat(w.word,ok); quiz.i++; quiz.i<quiz.deck.length?cardRender():quizResults() };
+  no.onclick=()=>answer(false); yes.onclick=()=>answer(true);
+  btns.append(no,yes); m.append(btns);
+  const bar=qEl("div","q-bar"); const end=qEl("button","btn","End test"); end.type="button"; end.onclick=quizResults; bar.append(end); m.append(bar);
+  $("#quiz").scrollTop=0;
 }
 function quizTicks(){
   const t=$("#quizTicks"); t.innerHTML="";
