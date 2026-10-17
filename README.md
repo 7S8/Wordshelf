@@ -32,7 +32,7 @@ The button next to the ⋯ menu switches between **cards** (full word cards grou
 
 ## Test yourself
 
-Under the add-words panel: **Flashcards** (flip to check the meaning, translation and example; mark what you knew), **Learn** (word for a meaning, gaps in your example sentences, translations; works without a key), **IELTS** (synonyms in context, paraphrase and gap-fill) **GRE** (one- and two-blank text completion, sentence equivalence), and **ЕГЭ / ОГЭ** (the English part of the Russian state exams: grammar and word formation with typed answers, plus vocabulary choice for ЕГЭ). Exam questions are written by your AI (Gemini, Qwen, Claude) once per word and kept in your browser. Weak words come up first, and you can drill the ones you missed.
+Under the add-words panel: **Flashcards** (flip to check the meaning, translation and example; mark what you knew), **Learn** (word for a meaning, gaps in your example sentences, translations; works without a key), **IELTS** (synonyms in context, paraphrase and gap-fill, and an Academic Reading passage with True / False / Not Given, multiple choice and sentence completion) **GRE** (text completion with one, two or three blanks, sentence equivalence, and a reading passage with real exam questions), and **ЕГЭ / ОГЭ** (the English part of the Russian state exams: grammar and word formation with typed answers, plus vocabulary choice for ЕГЭ). Exam questions are written by your AI (Gemini, Qwen, Claude) once per word and kept in your browser. Weak words come up first, and you can drill the ones you missed.
 
 ## Languages
 

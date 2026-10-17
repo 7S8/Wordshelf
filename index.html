@@ -290,6 +290,26 @@ html.i18n-wait body{visibility:hidden}
 .fc-btns .btn{padding:14px 10px;font-size:16px}
 .fc-btns .no{border-color:var(--danger);color:var(--danger)}
 @media (prefers-reduced-motion:reduce){.fc-in{transition:none}}
+.q-passage{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 16px;max-height:46vh;overflow:auto;line-height:1.6;font-size:16px}
+.q-passage h3{font-size:16px;margin:0 0 8px}.q-passage p{margin:0 0 10px}.q-passage p:last-child{margin:0}
+.q-passage.pickable .q-sent{cursor:pointer;border-radius:4px}.q-passage.pickable .q-sent:hover{background:var(--accent-soft)}
+.q-sent.picked{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent)}.q-sent.is-right{background:color-mix(in srgb,var(--a1) 22%,transparent)}.q-sent.is-wrong{background:color-mix(in srgb,var(--danger) 18%,transparent)}
+.q-question{font-size:19px;font-weight:600}
+.q-para{margin-right:4px}
+/* GRE look: answer choices in a bordered table, sentence equivalence and select-all with check boxes */
+.gre .q-opts:not(.two){gap:0;border:1.5px solid var(--ink);border-radius:2px}
+.gre .q-opts:not(.two) .q-opt{border:0;border-radius:0;border-top:1.5px solid var(--ink);justify-content:center;text-align:center;padding:10px 14px;box-shadow:none}
+.gre .q-opts:not(.two) .q-opt:first-child{border-top:0}
+.gre .q-opts:not(.two) .q-opt .mark{display:none}
+.gre .q-opts .q-opt.picked{background:var(--accent-soft)}
+.gre .q-opts .q-opt.is-right{background:color-mix(in srgb,var(--a1) 16%,var(--surface));text-decoration:none}
+.gre .q-opts .q-opt.is-wrong{background:color-mix(in srgb,var(--danger) 14%,var(--surface))}
+.gre .q-group>p{text-align:center;color:var(--ink);font-size:16px}
+.gre .q-opts.two{grid-template-columns:1fr;gap:2px}
+.gre .q-opts.two .q-opt{border:0;background:transparent;box-shadow:none;padding:9px 4px}
+.gre .q-opts.two .q-opt .mark{display:grid;place-items:center;width:22px;height:22px;border:1.5px solid var(--ink);border-radius:3px;font-size:0}
+.gre .q-opts.two .q-opt.picked .mark{background:var(--accent);border-color:var(--accent)}
+.gre .q-opts.two .q-opt.is-right .mark,.gre .q-opts.two .q-opt.is-wrong .mark{font-size:14px;border-color:currentColor}
 .q-base{display:inline-block;font-family:var(--mono);font-weight:500;font-size:15px;letter-spacing:.04em;border:1px solid var(--line);border-radius:8px;padding:4px 10px;margin:0 0 14px;background:var(--surface)}
 .q-type{display:flex;gap:8px;flex-wrap:wrap}.q-type input{flex:1 1 220px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:18px}
 .q-type input.ok{border-color:var(--a1);color:var(--a1)}.q-type input.no{border-color:var(--danger);color:var(--danger)}
@@ -2107,10 +2127,11 @@ Reply with only JSON: {"items":[{"word":"…","type":"synonym","sentence":"…",
 
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n"),
 gre:list=>`You write GRE Verbal practice in the official formats. Use the words below.
-1. For EACH word, one "single" text-completion question: a demanding sentence with one blank ___ that only this word fits; "options": 4 words (the word in the form that fits, plus 3 GRE-level distractors of the same part of speech); "answer"; "explain": "word — short definition".
+1. For EACH word, one "single" text-completion question (GRE "TC 1 blank"): a demanding sentence with one blank ___ that only this word fits; "options": 5 words or short phrases (the word in the form that fits, plus 4 GRE-level distractors of the same part of speech); "answer"; "explain": "word — short definition".
 2. For EACH word, one "equiv" sentence-equivalence question: a sentence with one blank ___; "options": 6 words, exactly two of which (the word and a true synonym) give the sentence the same meaning; "answers": those two; "explain": why, naming the opposites.
-3. If there are 2 or more words, also up to ${Math.floor(list.length/2)} "double" questions that each use two of the words: a sentence with two blanks ___ and ___; "blanks": [{"options":[3 words],"answer":"…"},{"options":[3 words],"answer":"…"}]; "words": the two words; "explain".
-Reply with only JSON: {"items":[{"type":"single","word":"…","sentence":"…","options":["…"],"answer":"…","explain":"…"},{"type":"equiv","word":"…","sentence":"…","options":["…"],"answers":["…","…"],"explain":"…"},{"type":"double","words":["…","…"],"sentence":"… ___ … ___ …","blanks":[{"options":["…"],"answer":"…"},{"options":["…"],"answer":"…"}],"explain":"…"}]}
+3. If there are 2 or more words, also up to ${Math.floor(list.length/2)} "double" questions (GRE "TC 2 blank") that each use two of the words: one or two demanding sentences with two blanks ___ and ___; "blanks": [{"options":[3 words],"answer":"…"},{"options":[3 words],"answer":"…"}]; "words": the two words; "explain".
+4. If there are 3 or more words, also up to ${Math.floor(list.length/3)} "triple" questions (GRE "TC 3 blank"): a short passage of 2–3 sentences with three blanks ___, ___ and ___ whose logic depends on each other (signal words like although, thus, far from); "blanks": three objects like above, 3 options each; "words": the words used (at least one from the list); "explain".
+Reply with only JSON: {"items":[{"type":"single","word":"…","sentence":"…","options":["…"],"answer":"…","explain":"…"},{"type":"equiv","word":"…","sentence":"…","options":["…"],"answers":["…","…"],"explain":"…"},{"type":"double","words":["…","…"],"sentence":"… ___ … ___ …","blanks":[{"options":["…"],"answer":"…"},{"options":["…"],"answer":"…"}],"explain":"…"},{"type":"triple","words":["…"],"sentence":"… ___ … ___ … ___ …","blanks":[{"options":["…"],"answer":"…"},{"options":["…"],"answer":"…"},{"options":["…"],"answer":"…"}],"explain":"…"}]}
 
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n")};
 const EXAM_TASKS=(level,withChoice)=>`1. "form" — word formation (the exam's word-building task): a sentence with one gap ___ that needs a word built from a root word; "base": that root word in CAPITALS as printed in the exam (if the word below can be built from a simpler root, use the root as "base" and the word below, in the right form, as "answer"; otherwise use the word below as "base" and a word built from it as "answer"); "answer": the correct word; "alts": other correct spellings (often []).
@@ -2128,10 +2149,61 @@ oge:list=>`You write practice for the English part of the Russian Basic State Ex
 Reply with only JSON: {"items":[{"word":"…","type":"form","sentence":"… ___ …","base":"HAPPY","answer":"happiness","alts":[],"explain":"…"},{"word":"…","type":"grammar","sentence":"…","base":"BE","answer":"was","alts":[],"explain":"…"}]}
 
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n")});
+const READING_PROMPT={
+gre:list=>`Write one GRE Verbal Reading Comprehension set, exactly like the real exam.
+"title": a short neutral title. "passage": one academic paragraph of 170–230 words (science, history, art criticism, social science or literature), dense and argumentative, naturally using as many of these words as fit: ${list.map(w=>w.word).join(", ")}.
+"questions": 4 questions about the passage:
+- 2 of type "mc": a question (main idea, inference, author's attitude, function of a sentence, meaning in context); "options": 5 answer choices; "answer": the correct one (copied exactly);
+- 1 of type "multi": "Consider each of the three choices separately and select all that apply." style question; "options": exactly 3 statements; "answers": the correct ones (1, 2 or all 3);
+- 1 of type "select": "Select the sentence in the passage that …"; "sentence": the correct sentence copied EXACTLY from the passage.
+Each question has "explain": one or two sentences on why the answer is right.
+Reply with only JSON: {"title":"…","passage":"…","questions":[{"type":"mc","q":"…","options":["…"],"answer":"…","explain":"…"},{"type":"multi","q":"…","options":["…","…","…"],"answers":["…"],"explain":"…"},{"type":"select","q":"…","sentence":"…","explain":"…"}]}`,
+ielts:list=>`Write one IELTS Academic Reading practice set, exactly like the real exam.
+"title": a short title. "passage": 4 paragraphs labelled A–D (start each with "A ", "B ", … and separate paragraphs with a blank line), 330–420 words in total, an academic topic for a general reader, naturally using as many of these words as fit: ${list.map(w=>w.word).join(", ")}.
+"questions": 8 questions:
+- 3 of type "tfng": a statement; "answer": "TRUE", "FALSE" or "NOT GIVEN" (use each at least once across the set);
+- 2 of type "mc": a question; "options": 4 choices; "answer": the correct one copied exactly;
+- 2 of type "complete": a sentence with one gap ___ that paraphrases the passage; "answer": NO MORE THAN TWO WORDS taken exactly from the passage; "alts": other accepted answers;
+- 1 of type "synonym": "The word '<word>' in paragraph <letter> is closest in meaning to"; "options": 4; "answer".
+Each question has "explain": where in the passage the answer is (paragraph letter) and why.
+Reply with only JSON: {"title":"…","passage":"…","questions":[{"type":"tfng","q":"…","answer":"TRUE","explain":"…"},{"type":"mc","q":"…","options":["…"],"answer":"…","explain":"…"},{"type":"complete","q":"… ___ …","answer":"…","alts":[],"explain":"…"},{"type":"synonym","q":"…","options":["…"],"answer":"…","explain":"…"}]}`};
+const splitSentences=t=>(t.match(/[^.!?…]+(?:[.!?…]+["”’)]?|$)/g)||[t]).map(x=>x.trim()).filter(Boolean);
+async function readingSet(mode,chosen){
+  const provider=["gemini","qwen","claude"].find(p=>getKey(p)); if(!provider) return null;
+  const key=getKey(provider), prompt=READING_PROMPT[mode](chosen.slice(0,8));
+  const res=provider==="gemini"?await askGemini(key,prompt,[],""):provider==="qwen"?await askQwen(key,prompt,[],""):await askClaudeText(key,prompt);
+  if(!res||typeof res.passage!=="string"||!Array.isArray(res.questions)) return null;
+  const paras=res.passage.split(/\n\s*\n|\n(?=[A-H]\s)/).map(x=>x.trim()).filter(Boolean);
+  const sents=paras.map(splitSentences);
+  const passage={title:String(res.title||""),paras,sents};
+  const flat=sents.flat(), norm=x=>String(x).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  const items=[];
+  for(const q of res.questions){
+    const gloss={word:"",def:"",tr:"",explain:String(q.explain||"")};
+    if(q.type==="tfng"&&/^(TRUE|FALSE|NOT GIVEN)$/i.test(q.answer||"")) items.push({type:"single",fixed:true,ask:"Do the following statements agree with the information in the passage?",text:q.q,o:["TRUE","FALSE","NOT GIVEN"],a:String(q.answer).toUpperCase(),passage,gloss});
+    else if((q.type==="mc"||q.type==="synonym")&&Array.isArray(q.options)&&q.options.includes(q.answer)) items.push({type:"single",ask:mode==="gre"?"Select ONE answer choice.":"Choose the correct letter.",text:q.q,o:q.options,a:q.answer,passage,gloss});
+    else if(q.type==="multi"&&Array.isArray(q.options)&&Array.isArray(q.answers)&&q.answers.length&&q.answers.every(a=>q.options.includes(a))) items.push({type:"multi",ask:"Consider each of the choices separately and select all that apply.",text:q.q,o:q.options,a:q.answers,passage,gloss});
+    else if(q.type==="select"&&q.sentence){ const k=flat.findIndex(x=>norm(x)===norm(q.sentence))>=0?flat.findIndex(x=>norm(x)===norm(q.sentence)):flat.findIndex(x=>norm(x).includes(norm(q.sentence).slice(0,60)));
+      if(k>=0) items.push({type:"pick",ask:"Tap the sentence in the passage that answers the question.",text:q.q,a:k,passage,gloss:{...gloss,explain:"“"+flat[k]+"” "+gloss.explain}}) }
+    else if(q.type==="complete"&&typeof q.q==="string"&&(q.q.match(/___/g)||[]).length===1&&q.answer) items.push({type:"type",ask:"Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.",s:q.q,a:[q.answer,...(Array.isArray(q.alts)?q.alts:[])].map(String),passage,gloss:{...gloss,explain:"→ "+q.answer+". "+gloss.explain}});
+  }
+  return items;
+}
+function passageNode(q){
+  const box=qEl("section","q-passage"); box.dataset.q="";
+  if(q.passage.title) box.append(qEl("h3",null,q.passage.title));
+  let k=0;
+  q.passage.sents.forEach(ss=>{ const p=qEl("p");
+    ss.forEach((x,j)=>{ const m=j===0&&x.match(/^([A-H])\s+(.*)$/s); // IELTS paragraph letters in bold
+      if(m) p.append(qEl("b","q-para",m[1]+" "));
+      const s=qEl("span","q-sent",(m?m[2]:x)+" "); s.dataset.k=k++; p.append(s) }); box.append(p) });
+  if(q.type==="pick") box.classList.add("pickable");
+  return box;
+}
 function okItem(it){
   if(!it||typeof it.sentence!=="string") return false;
   const n=(it.sentence.match(/___/g)||[]).length;
-  if(it.type==="double") return n===2&&Array.isArray(it.blanks)&&it.blanks.length===2&&it.blanks.every(b=>Array.isArray(b.options)&&b.options.includes(b.answer));
+  if(it.type==="double"||it.type==="triple") return n===(it.type==="double"?2:3)&&Array.isArray(it.blanks)&&it.blanks.length===n&&it.blanks.every(b=>Array.isArray(b.options)&&b.options.includes(b.answer));
   if(it.type==="equiv") return n===1&&Array.isArray(it.options)&&it.options.length>=4&&Array.isArray(it.answers)&&it.answers.length===2&&it.answers.every(a=>it.options.includes(a));
   if(it.type==="synonym") return Array.isArray(it.options)&&it.options.includes(it.answer);
   if(it.type==="form"||it.type==="grammar") return n===1&&typeof it.base==="string"&&it.base.trim()&&typeof it.answer==="string"&&it.answer.trim();
@@ -2147,15 +2219,15 @@ async function aiQuizItems(mode,chosen,onProgress){
     const res=provider==="gemini"?await askGemini(key,prompt,[],""):provider==="qwen"?await askQwen(key,prompt,[],""):await askClaudeText(key,prompt);
     if(!res?.items) break;
     for(const it of res.items){ if(!okItem(it)) continue;
-      const ws=it.type==="double"?(it.words||[]):[it.word];
+      const ws=it.type==="double"||it.type==="triple"?(it.words||[]):[it.word];
       for(const wd of ws){ const k=String(wd||"").toLowerCase(); if(!k) continue; (cache[mode][k]=cache[mode][k]||[]).push(it) } }
     for(const w of batch) cache[mode][w.word.toLowerCase()]=cache[mode][w.word.toLowerCase()]||[];   // tried, even if nothing usable came back
     qCacheSet(cache);
   }
   const seen=new Set(), out=[];
   for(const w of chosen) for(const it of cache[mode][w.word.toLowerCase()]||[]){ const id=JSON.stringify(it); if(seen.has(id)) continue; seen.add(id);
-    const gloss={word:it.type==="double"?(it.words||[]).join(", "):it.word,def:"",tr:"",explain:it.explain||""};
-    if(it.type==="double") out.push({type:"double",s:it.sentence,b:it.blanks.map(b=>({o:b.options,a:b.answer})),words:it.words||[],gloss});
+    const gloss={word:it.type==="double"||it.type==="triple"?(it.words||[]).join(", "):it.word,def:"",tr:"",explain:it.explain||""};
+    if(it.type==="double"||it.type==="triple") out.push({type:"double",s:it.sentence,b:it.blanks.map(b=>({o:b.options,a:b.answer})),words:it.words||[],gloss});
     else if(it.type==="equiv") out.push({type:"equiv",ask:"Pick the two words that give the sentence the same meaning.",s:it.sentence,o:it.options,a:it.answers,word:it.word,gloss});
     else if(it.type==="form"||it.type==="grammar") out.push({type:"type",ask:it.type==="form"?"Make a word from the one in capitals that fits the gap.":"Put the word in capitals into the right form.",
       s:it.sentence,base:it.base.trim().toUpperCase(),a:[it.answer,...(Array.isArray(it.alts)?it.alts:[])].map(String),word:it.word,gloss:{...gloss,explain:"→ "+it.answer+(it.explain?". "+it.explain:"")}});
@@ -2181,8 +2253,8 @@ function quizSetup(){
   const box=qEl("div","q-setup");
   box.append(qEl("p","q-lede",{cards:"Flashcards: see the word, try to remember it, then tap the card to check the meaning, translation and example. Words you didn't know come back more often. Works without a key.",
     learn:"Practise the words on your shelf: pick the word for a meaning, fill the gap in your example sentences, and match translations. Works without a key.",
-    ielts:"IELTS Reading and Writing reward paraphrase: questions on synonyms in context and gap-fill sentences in an academic style. Written by AI for your words, once, then kept.",
-    gre:"The three GRE Verbal formats: one-blank and two-blank text completion, and sentence equivalence (pick the two words that give the same meaning). Written by AI for your words, once, then kept.",
+    ielts:"IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).",
+    gre:"GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).",
     ege:"The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.",
     oge:"The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept."}[quiz.mode]));
   const counts=Object.fromEntries(GROUPS.map(g=>[g.id,words.filter(w=>(w.level||"")===g.id).length]));
@@ -2191,6 +2263,12 @@ function quizSetup(){
     const c=qEl("button","q-chip",label); c.type="button"; c.setAttribute("aria-pressed",String(quiz.level===id)); c.onclick=()=>{quiz.level=id;quizSetup()}; lv.append(c) });
   const ct=qEl("div","q-row"); ct.append(qEl("b",null,"How many words?"));
   [10,20,0].forEach(n=>{ const c=qEl("button","q-chip",n?String(n):"All"); c.type="button"; c.setAttribute("aria-pressed",String(quiz.count===n)); c.onclick=()=>{quiz.count=n;quizSetup()}; ct.append(c) });
+  if(quiz.mode==="gre"||quiz.mode==="ielts"){
+    const kd=qEl("div","q-row"); kd.append(qEl("b",null,"What to practise?"));
+    [["vocab","Vocabulary questions"],["reading","Reading passage"]].forEach(([id,label])=>{ const c=qEl("button","q-chip",label); c.type="button"; c.setAttribute("aria-pressed",String((quiz.kind||"vocab")===id)); c.onclick=()=>{quiz.kind=id;quizSetup()}; kd.append(c) });
+    box.append(kd);
+    if(quiz.kind==="reading") ct.hidden=true;
+  }
   box.append(lv,ct);
   const avail=quizWords().length;
   const needAi=!["learn","cards"].includes(quiz.mode)&&!["gemini","qwen","claude"].some(p=>getKey(p));
@@ -2205,12 +2283,21 @@ function quizSetup(){
 }
 async function quizStart(retry){
   const pool=quizWords();
-  const chosen=retry||quizPick(pool,quiz.count||pool.length);
+  const chosen=Array.isArray(retry)?retry:quizPick(pool,quiz.count||pool.length);
   let items;
   if(quiz.mode==="cards"){ quiz.deck=chosen.map(w=>({type:"card",w,word:w.word,gloss:{word:w.word,def:w.definition||"",tr:(lang&&w.tr?.[lang])||""}}));
     quiz.chosen=chosen; quiz.i=0; quiz.score=0; quiz.missed=[];
     if(!quiz.deck.length) return; return cardRender() }
   if(quiz.mode==="learn") { const real=words.filter(w=>!w.example); items=learnItems(chosen,real.length>=4?real:words) }
+  else if((quiz.mode==="gre"||quiz.mode==="ielts")&&quiz.kind==="reading"){
+    if(retry==="same"&&quiz.readingItems) items=quiz.readingItems.map(q=>({...q,got:undefined}));
+    else{
+      const m=$("#quizMain"); m.innerHTML=""; const p=qEl("p","q-lede"); p.innerHTML=spin("Writing a passage for your words…"); m.append(p);
+      items=await readingSet(quiz.mode,quizPick(pool,8));
+      if(!items||!items.length){ m.innerHTML=""; m.append(qEl("p","q-lede",$("#status").textContent||"No questions came back. Try again.")); const b=qEl("button","btn","Back"); b.onclick=quizSetup; m.append(b); return }
+      quiz.readingItems=items;
+    }
+  }
   else{
     const m=$("#quizMain"); m.innerHTML=""; const p=qEl("p","q-lede"); p.innerHTML=spin("Writing questions for your words…"); m.append(p);
     items=await aiQuizItems(quiz.mode,chosen,(a,b)=>{p.innerHTML=spin(`Writing questions for your words… ${a} of ${b}`)});
@@ -2224,7 +2311,7 @@ async function quizStart(retry){
     } else items=qShuffle(items).slice(0,Math.max(chosen.length*2,10));
   }
   quiz.deck=quiz.mode==="learn"?qShuffle(items):items;
-  quiz.deck=quiz.deck.map(q=>({...q,opts:q.type==="double"?q.b.map(b=>qShuffle(b.o)):q.type==="type"?[]:qShuffle(q.o)}));
+  quiz.deck=quiz.deck.map(q=>({...q,opts:q.type==="double"?q.b.map(b=>qShuffle(b.o)):q.type==="type"||q.type==="pick"?[]:q.fixed?q.o:qShuffle(q.o)}));
   quiz.chosen=chosen; quiz.i=0; quiz.score=0; quiz.missed=[];
   if(!quiz.deck.length){ $("#quizMain").innerHTML=""; $("#quizMain").append(qEl("p","q-lede","These words need a definition or an example sentence first.")); return }
   quizRender();
@@ -2267,23 +2354,28 @@ function stemNode(q){
   const p=qEl("p","q-stem"); p.dataset.q="";
   if(q.big){ const w=qEl("p","q-word",q.big); w.dataset.q=""; return w }
   if(q.quote){ p.textContent="“"+q.quote+"”"; return p }
+  if(q.text&&!q.s){ p.classList.add("q-question"); p.textContent=q.text; return p }
   if(q.hl){ const re=new RegExp("(\\b"+reEsc(q.hl.w)+"\\w*)","i"); const parts=q.hl.s.split(re);
     parts.forEach((x,n)=>{ if(n%2) p.append(qEl("span","q-hl",x)); else p.append(document.createTextNode(x)) }); return p }
   const parts=q.s.split("___");
   parts.forEach((x,n)=>{ p.append(document.createTextNode(x));
-    if(n<parts.length-1){ const b=qEl("span","q-blank"); b.id="qb"+n; if(q.type==="double") b.append(qEl("span","tag",n?"ii":"i")); b.append(document.createTextNode("?")); p.append(b) } });
+    if(n<parts.length-1){ const b=qEl("span","q-blank"); b.id="qb"+n; if(q.type==="double") b.append(qEl("span","tag",["i","ii","iii"][n])); b.append(document.createTextNode("?")); p.append(b) } });
   return p;
 }
 function quizRender(){
   const q=quiz.deck[quiz.i], m=$("#quizMain"); m.innerHTML=""; quiz.locked=false; quiz.picks=[];
+  m.classList.toggle("gre",quiz.mode==="gre");
   $("#quizCount").textContent=(quiz.i+1)+" / "+quiz.deck.length; quizTicks();
+  if(q.passage) m.append(passageNode(q));
   if(q.ask) m.append(qEl("p","q-ask",q.ask));
   if(q.type==="double") m.append(qEl("p","q-ask","Choose one word for each blank."));
   m.append(stemNode(q));
   const optBtn=(word,n,g)=>{ const b=qEl("button","q-opt"); b.type="button"; b.dataset.q=""; b.dataset.v=word; if(g!=null)b.dataset.g=g;
     b.append(qEl("span","mark",LETTERS[n]),document.createTextNode(word)); return b };
-  if(q.type==="type"){
-    const base=qEl("div","q-base",q.base); base.dataset.q=""; m.append(base);
+  if(q.type==="pick"){
+    m.querySelectorAll(".q-passage .q-sent").forEach(sn=>sn.onclick=()=>{ if(quiz.locked) return; m.querySelectorAll(".q-sent.picked").forEach(x=>x.classList.remove("picked")); sn.classList.add("picked"); quiz.picks=[+sn.dataset.k]; $("#qCheck").disabled=false });
+  } else if(q.type==="type"){
+    if(q.base){ const base=qEl("div","q-base",q.base); base.dataset.q=""; m.append(base) }
     const row=qEl("form","q-type"); const inp=qEl("input"); inp.id="qInput"; inp.autocomplete="off"; inp.setAttribute("autocapitalize","off"); inp.spellcheck=false;
     inp.placeholder="Your answer"; inp.setAttribute("aria-label","Your answer");
     inp.oninput=()=>{ $("#qCheck").disabled=!inp.value.trim(); qFill(0,inp.value.trim()||"?") };
@@ -2291,13 +2383,13 @@ function quizRender(){
     row.append(inp); m.append(row); setTimeout(()=>inp.focus({preventScroll:true}),50);
   } else if(q.type==="double"){
     const gs=qEl("div","q-groups");
-    q.opts.forEach((set,gi)=>{ const g=qEl("div","q-group"); g.append(qEl("p",null,gi?"Blank (ii)":"Blank (i)")); const row=qEl("div","q-opts");
-      set.forEach((w,n)=>{ const b=optBtn(w,n,gi); b.onclick=()=>{ if(quiz.locked)return; row.querySelectorAll(".q-opt").forEach(x=>x.classList.remove("picked")); b.classList.add("picked"); quiz.picks[gi]=w; qFill(gi,w); $("#qCheck").disabled=!(quiz.picks[0]&&quiz.picks[1]) }; row.append(b) });
+    q.opts.forEach((set,gi)=>{ const g=qEl("div","q-group"); g.append(qEl("p",null,["Blank (i)","Blank (ii)","Blank (iii)"][gi])); const row=qEl("div","q-opts");
+      set.forEach((w,n)=>{ const b=optBtn(w,n,gi); b.onclick=()=>{ if(quiz.locked)return; row.querySelectorAll(".q-opt").forEach(x=>x.classList.remove("picked")); b.classList.add("picked"); quiz.picks[gi]=w; qFill(gi,w); $("#qCheck").disabled=!q.b.every((_,k)=>quiz.picks[k]) }; row.append(b) });
       g.append(row); gs.append(g) });
     m.append(gs);
   } else {
-    const row=qEl("div","q-opts"+(q.type==="equiv"?" two":""));
-    q.opts.forEach((w,n)=>{ const b=optBtn(w,n); b.onclick=()=>q.type==="equiv"?qToggle(b,w):qSingle(b,w,q); row.append(b) });
+    const row=qEl("div","q-opts"+(q.type==="equiv"||q.type==="multi"?" two":""));
+    q.opts.forEach((w,n)=>{ const b=optBtn(w,n); b.onclick=()=>q.type==="equiv"?qToggle(b,w):q.type==="multi"?qMulti(b,w):qSingle(b,w,q); row.append(b) });
     m.append(row);
   }
   const gl=qEl("div","q-gloss"); gl.id="qGloss"; gl.hidden=true; gl.dataset.q=""; m.append(gl);
@@ -2314,6 +2406,11 @@ function qToggle(btn,w){
   if(at>-1){quiz.picks.splice(at,1);btn.classList.remove("picked")} else if(quiz.picks.length<2){quiz.picks.push(w);btn.classList.add("picked")}
   if(quiz.picks.length) qFill(0,quiz.picks.join(" / ")); $("#qCheck").disabled=quiz.picks.length!==2;
 }
+function qMulti(btn,w){
+  if(quiz.locked) return; const at=quiz.picks.indexOf(w);
+  if(at>-1){quiz.picks.splice(at,1);btn.classList.remove("picked")} else {quiz.picks.push(w);btn.classList.add("picked")}
+  $("#qCheck").disabled=!quiz.picks.length;
+}
 function qMark(isRight,picked){
   document.querySelectorAll("#quizMain .q-opt").forEach(b=>{ b.disabled=true; const r=isRight(b), p=picked(b); b.classList.remove("picked");
     if(r){b.classList.add("is-right");b.querySelector(".mark").textContent="✓"} else if(p){b.classList.add("is-wrong");b.querySelector(".mark").textContent="✕"} else b.classList.add("dim") });
@@ -2322,8 +2419,8 @@ function qDone(q,ok){
   q.got=ok; ok?quiz.score++:quiz.missed.push(q);
   for(const w of (q.type==="double"?q.words:[q.word])) if(w) qStat(w,ok);
   const g=$("#qGloss"), x=q.gloss; g.innerHTML="";
-  const b=qEl("b",null,x.word); g.append(b);
-  const txt=[x.def,x.tr,x.explain].filter(Boolean).join(" · "); if(txt) g.append(document.createTextNode(" — "+txt));
+  if(x.word) g.append(qEl("b",null,x.word));
+  const txt=[x.def,x.tr,x.explain].filter(Boolean).join(" · "); if(txt) g.append(document.createTextNode((x.word?" — ":"")+txt));
   g.hidden=false; $("#qNext").hidden=false; $("#qNext").focus({preventScroll:true}); quizTicks();
 }
 function qSingle(btn,w,q){
@@ -2336,8 +2433,13 @@ function qGrade(q){
   if(quiz.locked) return; quiz.locked=true;
   if(q.type==="type"){ const inp=$("#qInput"), v=inp.value.trim(), ok=q.a.some(a=>qNorm(a)===qNorm(v));
     qFill(0,ok?v:q.a[0],ok?"ok":"no"); inp.disabled=true; inp.classList.add(ok?"ok":"no"); $("#qCheck").hidden=true; qDone(q,ok); return }
-  if(q.type==="double"){ const right=q.b.map(b=>b.a); const ok=quiz.picks[0]===right[0]&&quiz.picks[1]===right[1];
-    [0,1].forEach(n=>qFill(n,quiz.picks[n],quiz.picks[n]===right[n]?"ok":"no"));
+  if(q.type==="pick"){ const ok=quiz.picks[0]===q.a; const ss=document.querySelectorAll("#quizMain .q-sent");
+    ss.forEach(x=>{ x.classList.remove("picked"); if(+x.dataset.k===q.a) x.classList.add("is-right"); else if(+x.dataset.k===quiz.picks[0]) x.classList.add("is-wrong") });
+    ss[q.a]?.scrollIntoView({block:"center",behavior:"smooth"}); $("#qCheck").hidden=true; qDone(q,ok); return }
+  if(q.type==="multi"){ const ok=q.a.length===quiz.picks.length&&q.a.every(a=>quiz.picks.includes(a));
+    qMark(b=>q.a.includes(b.dataset.v),b=>quiz.picks.includes(b.dataset.v)); $("#qCheck").hidden=true; qDone(q,ok); return }
+  if(q.type==="double"){ const right=q.b.map(b=>b.a); const ok=right.every((r,k)=>quiz.picks[k]===r);
+    right.forEach((r,n)=>qFill(n,quiz.picks[n],quiz.picks[n]===r?"ok":"no"));
     qMark(b=>b.dataset.v===right[+b.dataset.g],b=>quiz.picks[+b.dataset.g]===b.dataset.v); $("#qCheck").hidden=true; qDone(q,ok);
   } else { const ok=q.a.every(a=>quiz.picks.includes(a));
     qFill(0,q.a.join(" / "),ok?"ok":"no"); qMark(b=>q.a.includes(b.dataset.v),b=>quiz.picks.includes(b.dataset.v)); $("#qCheck").hidden=true; qDone(q,ok) }
@@ -2350,10 +2452,12 @@ function quizResults(){
   const pct=answered?quiz.score/answered:0;
   m.append(qEl("p","q-lede",!answered?"No answers yet.":pct>=.9?"Excellent. Come back in two days to check they stuck.":pct>=.7?"Most are holding. The words below are where to spend the next session.":"Worth another pass today, then again tomorrow."));
   const bar=qEl("div","q-bar");
-  const again=qEl("button","btn primary","Try again"); again.type="button"; again.onclick=()=>quizStart();
+  const reading=(quiz.mode==="gre"||quiz.mode==="ielts")&&quiz.kind==="reading";
+  const again=qEl("button","btn primary","Try again"); again.type="button"; again.onclick=()=>quizStart(reading?"same":undefined);
   bar.append(again);
   const missedWords=[...new Set(quiz.missed.flatMap(q=>q.type==="double"?q.words:[q.word]))].map(x=>words.find(w=>w.word.toLowerCase()===String(x).toLowerCase())).filter(Boolean);
-  if(missedWords.length){ const d=qEl("button","btn",missedWords.length===1?"Practise the word I missed":"Practise the "+missedWords.length+" words I missed"); d.type="button"; d.onclick=()=>quizStart(missedWords); bar.append(d) }
+  if(reading){ const np=qEl("button","btn","New passage"); np.type="button"; np.onclick=()=>quizStart(); bar.append(np) }
+  if(missedWords.length&&!reading){ const d=qEl("button","btn",missedWords.length===1?"Practise the word I missed":"Practise the "+missedWords.length+" words I missed"); d.type="button"; d.onclick=()=>quizStart(missedWords); bar.append(d) }
   const close=qEl("button","btn","Close"); close.type="button"; close.onclick=closeQuiz; bar.append(close);
   m.append(bar);
   if(quiz.missed.length){ const ul=qEl("ul","q-missed"); ul.dataset.q="";
