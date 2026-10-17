@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "معظمها ثابت. ركّز في الجلسة القادمة على الكلمات أدناه.",
   "Worth another pass today, then again tomorrow.": "تستحق مراجعة أخرى اليوم، ثم مرة أخرى غدًا.",
   "Try again": "حاول مرة أخرى",
-  "Practise the word I missed": "تدرّب على الكلمة التي أخطأت فيها"
+  "Practise the word I missed": "تدرّب على الكلمة التي أخطأت فيها",
+  "Grammar, word formation, vocabulary": "القواعد، اشتقاق الكلمات، المفردات",
+  "Grammar and word formation": "القواعد واشتقاق الكلمات",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "جزء اللغة الإنجليزية من الامتحان الحكومي الروسي للصف الحادي عشر: القواعد (ضع الكلمة المكتوبة بالأحرف الكبيرة في الصيغة الصحيحة)، واشتقاق الكلمات (اشتق منها كلمة جديدة)، والمفردات (اختر الكلمة المناسبة). تكتب الإجابات بنفسك كما في الامتحان. يكتبه الذكاء الاصطناعي لكلماتك مرة واحدة، ثم يُحفظ.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "جزء اللغة الإنجليزية من الامتحان الحكومي الروسي للصف التاسع: القواعد واشتقاق الكلمات. اكتب الصيغة الصحيحة للكلمة المكتوبة بالأحرف الكبيرة كما في الامتحان. يكتبه الذكاء الاصطناعي لكلماتك مرة واحدة، ثم يُحفظ.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "يكتب الذكاء الاصطناعي أسئلة الامتحان. أضف أولًا مفتاح Gemini مجانيًا في «القراءة بواسطة» (أو استخدم «تعلّم» الذي لا يحتاج إلى مفتاح).",
+  "Make a word from the one in capitals that fits the gap.": "اشتق من الكلمة المكتوبة بالأحرف الكبيرة كلمة تناسب الفراغ.",
+  "Put the word in capitals into the right form.": "ضع الكلمة المكتوبة بالأحرف الكبيرة في الصيغة الصحيحة.",
+  "Choose the word that fits.": "اختر الكلمة المناسبة.",
+  "Your answer": "إجابتك"
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:zero=كلمة;one=كلمة;two=كلمتان;few=كلمات;many=كلمة;other=كلمة} بلا جملة مثال.",

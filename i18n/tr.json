@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "Çoğu akılda kalmış. Bir sonraki çalışmada aşağıdaki kelimelere odaklanın.",
   "Worth another pass today, then again tomorrow.": "Bugün bir kez daha, yarın da tekrar gözden geçirmeye değer.",
   "Try again": "Tekrar dene",
-  "Practise the word I missed": "Yanlış yaptığım kelimeyi çalış"
+  "Practise the word I missed": "Yanlış yaptığım kelimeyi çalış",
+  "Grammar, word formation, vocabulary": "Dil bilgisi, sözcük türetme, kelime bilgisi",
+  "Grammar and word formation": "Dil bilgisi ve sözcük türetme",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "Rusya 11. sınıf devlet sınavının İngilizce bölümü: dil bilgisi (büyük harfle yazılan kelimeyi doğru biçime sokun), sözcük türetme (ondan yeni bir kelime türetin) ve kelime bilgisi (uyan kelimeyi seçin). Cevapları sınavdaki gibi siz yazarsınız. Sorular kelimelerinize göre yapay zekâ tarafından bir kez yazılır, sonra saklanır.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "Rusya 9. sınıf devlet sınavının İngilizce bölümü: dil bilgisi ve sözcük türetme. Büyük harfle yazılan kelimenin doğru biçimini sınavdaki gibi yazın. Sorular kelimelerinize göre yapay zekâ tarafından bir kez yazılır, sonra saklanır.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "Sınav sorularını yapay zekâ yazar. Önce \"Okuma yöntemi\" bölümüne ücretsiz bir Gemini anahtarı ekleyin (ya da anahtar gerektirmeyen \"Öğren\"i kullanın).",
+  "Make a word from the one in capitals that fits the gap.": "Büyük harfle yazılan kelimeden boşluğa uyan bir kelime türetin.",
+  "Put the word in capitals into the right form.": "Büyük harfle yazılan kelimeyi doğru biçime sokun.",
+  "Choose the word that fits.": "Uyan kelimeyi seçin.",
+  "Your answer": "Cevabınız"
  },
  "p": {
   "{0} word has no example sentence.": "{0} kelimenin örnek cümlesi yok.",

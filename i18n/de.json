@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "Die meisten sitzen. Die Wörter unten sind das Ziel für die nächste Runde.",
   "Worth another pass today, then again tomorrow.": "Heute lohnt sich noch eine Runde, morgen dann wieder.",
   "Try again": "Noch einmal",
-  "Practise the word I missed": "Mein verpasstes Wort üben"
+  "Practise the word I missed": "Mein verpasstes Wort üben",
+  "Grammar, word formation, vocabulary": "Grammatik, Wortbildung, Wortschatz",
+  "Grammar and word formation": "Grammatik und Wortbildung",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "Der Englischteil der russischen staatlichen Abschlussprüfung der 11. Klasse: Grammatik (setze das großgeschriebene Wort in die richtige Form), Wortbildung (bilde daraus ein neues Wort) und Wortschatz (wähle das passende Wort). Du tippst die Antworten selbst, wie in der Prüfung. Von KI für deine Wörter geschrieben, einmal, dann gespeichert.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "Der Englischteil der russischen staatlichen Prüfung der 9. Klasse: Grammatik und Wortbildung. Tippe die richtige Form des großgeschriebenen Worts, wie in der Prüfung. Von KI für deine Wörter geschrieben, einmal, dann gespeichert.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "Die Prüfungsaufgaben schreibt eine KI. Füge zuerst unter „Lesen mit“ einen kostenlosen Gemini-Schlüssel hinzu (oder nutze „Lernen“, dafür brauchst du keinen Schlüssel).",
+  "Make a word from the one in capitals that fits the gap.": "Bilde aus dem großgeschriebenen Wort ein Wort, das in die Lücke passt.",
+  "Put the word in capitals into the right form.": "Setze das großgeschriebene Wort in die richtige Form.",
+  "Choose the word that fits.": "Wähle das passende Wort.",
+  "Your answer": "Deine Antwort"
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:one=Wort hat;other=Wörter haben} keinen Beispielsatz.",

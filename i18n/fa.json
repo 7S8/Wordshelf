@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "بیشترشان مانده‌اند. واژه‌های زیر همان‌هایی هستند که جلسهٔ بعد باید رویشان کار کنید.",
   "Worth another pass today, then again tomorrow.": "امروز یک بار دیگر ارزشش را دارد، و فردا هم دوباره.",
   "Try again": "دوباره تلاش کنید",
-  "Practise the word I missed": "تمرین واژه‌ای که اشتباه کردم"
+  "Practise the word I missed": "تمرین واژه‌ای که اشتباه کردم",
+  "Grammar, word formation, vocabulary": "دستور زبان، واژه‌سازی، واژگان",
+  "Grammar and word formation": "دستور زبان و واژه‌سازی",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "بخش انگلیسی آزمون دولتی پایهٔ یازدهم روسیه: دستور زبان (واژهٔ با حروف بزرگ را به شکل درست درآورید)، واژه‌سازی (از آن واژهٔ تازه‌ای بسازید) و واژگان (واژهٔ مناسب را انتخاب کنید). پاسخ‌ها را مثل آزمون خودتان تایپ می‌کنید. هوش مصنوعی آن را برای واژه‌های شما یک بار می‌نویسد و سپس نگه داشته می‌شود.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "بخش انگلیسی آزمون دولتی پایهٔ نهم روسیه: دستور زبان و واژه‌سازی. شکل درست واژهٔ با حروف بزرگ را مثل آزمون تایپ کنید. هوش مصنوعی آن را برای واژه‌های شما یک بار می‌نویسد و سپس نگه داشته می‌شود.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "پرسش‌های آزمون را هوش مصنوعی می‌نویسد. ابتدا در «خواندن با» یک کلید رایگان Gemini اضافه کنید (یا از «یادگیری» استفاده کنید که کلید لازم ندارد).",
+  "Make a word from the one in capitals that fits the gap.": "از واژهٔ با حروف بزرگ واژه‌ای بسازید که با جای خالی جور باشد.",
+  "Put the word in capitals into the right form.": "واژهٔ با حروف بزرگ را به شکل درست درآورید.",
+  "Choose the word that fits.": "واژهٔ مناسب را انتخاب کنید.",
+  "Your answer": "پاسخ شما"
  },
  "p": {
   "{0} word has no example sentence.": "{0} واژه جملهٔ نمونه ندارد.",

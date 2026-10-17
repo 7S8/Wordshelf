@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "ज़्यादातर याद हैं। अगली बार नीचे दिए शब्दों पर ध्यान दें।",
   "Worth another pass today, then again tomorrow.": "आज एक बार और दोहराएँ, फिर कल दोबारा।",
   "Try again": "फिर से कोशिश करें",
-  "Practise the word I missed": "जो शब्द ग़लत हुआ, उसका अभ्यास करें"
+  "Practise the word I missed": "जो शब्द ग़लत हुआ, उसका अभ्यास करें",
+  "Grammar, word formation, vocabulary": "व्याकरण, शब्द निर्माण, शब्दावली",
+  "Grammar and word formation": "व्याकरण और शब्द निर्माण",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "रूस की 11वीं कक्षा की राज्य परीक्षा का अंग्रेज़ी भाग: व्याकरण (कैपिटल अक्षरों वाले शब्द को सही रूप में रखें), शब्द निर्माण (उससे नया शब्द बनाएँ) और शब्दावली (फ़िट होने वाला शब्द चुनें)। परीक्षा की तरह जवाब आप ख़ुद टाइप करते हैं। AI आपके शब्दों के लिए इसे एक बार लिखता है, फिर यह सहेज लिया जाता है।",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "रूस की 9वीं कक्षा की राज्य परीक्षा का अंग्रेज़ी भाग: व्याकरण और शब्द निर्माण। परीक्षा की तरह कैपिटल अक्षरों वाले शब्द का सही रूप टाइप करें। AI आपके शब्दों के लिए इसे एक बार लिखता है, फिर यह सहेज लिया जाता है।",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "परीक्षा के सवाल AI लिखता है। पहले \"इससे पढ़ें\" में मुफ़्त Gemini कुंजी जोड़ें (या \"सीखें\" इस्तेमाल करें, जिसमें कुंजी की ज़रूरत नहीं)।",
+  "Make a word from the one in capitals that fits the gap.": "कैपिटल अक्षरों वाले शब्द से ऐसा शब्द बनाएँ जो ख़ाली जगह में फ़िट हो।",
+  "Put the word in capitals into the right form.": "कैपिटल अक्षरों वाले शब्द को सही रूप में रखें।",
+  "Choose the word that fits.": "फ़िट होने वाला शब्द चुनें।",
+  "Your answer": "आपका जवाब"
  },
  "p": {
   "{0} word has no example sentence.": "{0} शब्द का कोई उदाहरण वाक्य नहीं है।",

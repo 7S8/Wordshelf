@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "Көбі есте қалды. Келесі сабақта төмендегі сөздерге көңіл бөліңіз.",
   "Worth another pass today, then again tomorrow.": "Бүгін тағы бір рет, ертең тағы қайталаған жөн.",
   "Try again": "Қайта көру",
-  "Practise the word I missed": "Қате жіберген сөзді қайталау"
+  "Practise the word I missed": "Қате жіберген сөзді қайталау",
+  "Grammar, word formation, vocabulary": "Грамматика, сөзжасам, лексика",
+  "Grammar and word formation": "Грамматика және сөзжасам",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "Ресейдің 11-сынып мемлекеттік емтиханының (ЕГЭ) ағылшын тілі бөлімі: грамматика (бас әріппен жазылған сөзді керекті формаға қойыңыз), сөзжасам (одан жаңа сөз жасаңыз) және лексика (сәйкес сөзді таңдаңыз). Жауаптарды емтихандағыдай өзіңіз жазасыз. Тапсырмаларды ЖИ сіздің сөздеріңіз бойынша бір рет жазады, содан кейін сақталады.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "Ресейдің 9-сынып мемлекеттік емтиханының (ОГЭ) ағылшын тілі бөлімі: грамматика және сөзжасам. Бас әріппен жазылған сөздің керекті формасын емтихандағыдай жазыңыз. Тапсырмаларды ЖИ сіздің сөздеріңіз бойынша бір рет жазады, содан кейін сақталады.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "Емтихан тапсырмаларын ЖИ жазады. Алдымен «Режим» бөлімінде тегін Gemini кілтін қосыңыз (немесе кілт қажет емес «Үйрену» режимін таңдаңыз).",
+  "Make a word from the one in capitals that fits the gap.": "Бас әріппен жазылған сөзден бос орынға сәйкес келетін сөз жасаңыз.",
+  "Put the word in capitals into the right form.": "Бас әріппен жазылған сөзді керекті формаға қойыңыз.",
+  "Choose the word that fits.": "Сәйкес сөзді таңдаңыз.",
+  "Your answer": "Сіздің жауабыңыз"
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөзде мысал сөйлем жоқ.",

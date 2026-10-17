@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "Көбү эсте калды. Кийинки сабакта төмөнкү сөздөргө көңүл буруңуз.",
   "Worth another pass today, then again tomorrow.": "Бүгүн дагы бир жолу, эртең дагы кайталап коюңуз.",
   "Try again": "Кайра аракет кылуу",
-  "Practise the word I missed": "Ката кетирген сөздү кайталоо"
+  "Practise the word I missed": "Ката кетирген сөздү кайталоо",
+  "Grammar, word formation, vocabulary": "Грамматика, сөз жасоо, лексика",
+  "Grammar and word formation": "Грамматика жана сөз жасоо",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "Россиянын 11-класс мамлекеттик экзаменинин (ЕГЭ) англис тили бөлүгү: грамматика (баш тамга менен жазылган сөздү керектүү формага коюңуз), сөз жасоо (андан жаңы сөз жасаңыз) жана лексика (туура келген сөздү тандаңыз). Жоопторду экзамендегидей өзүңүз жазасыз. Тапшырмаларды ЖИ сиздин сөздөрүңүз боюнча бир жолу жазат, анан алар сакталат.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "Россиянын 9-класс мамлекеттик экзаменинин (ОГЭ) англис тили бөлүгү: грамматика жана сөз жасоо. Баш тамга менен жазылган сөздүн керектүү формасын экзамендегидей жазыңыз. Тапшырмаларды ЖИ сиздин сөздөрүңүз боюнча бир жолу жазат, анан алар сакталат.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "Экзамен тапшырмаларын ЖИ жазат. Адегенде «Режим» бөлүмүнө акысыз Gemini ачкычын кошуңуз (же ачкыч керек эмес «Үйрөнүү» режимин тандаңыз).",
+  "Make a word from the one in capitals that fits the gap.": "Баш тамга менен жазылган сөздөн боштукка туура келген сөз жасаңыз.",
+  "Put the word in capitals into the right form.": "Баш тамга менен жазылган сөздү керектүү формага коюңуз.",
+  "Choose the word that fits.": "Туура келген сөздү тандаңыз.",
+  "Your answer": "Сиздин жообуңуз"
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөздө мисал сүйлөм жок.",

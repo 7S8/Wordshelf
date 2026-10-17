@@ -255,7 +255,16 @@
   "Most are holding. The words below are where to spend the next session.": "La mayoría se mantienen. Las palabras de abajo son en las que centrarte la próxima vez.",
   "Worth another pass today, then again tomorrow.": "Vale la pena repasar otra vez hoy y de nuevo mañana.",
   "Try again": "Intentar de nuevo",
-  "Practise the word I missed": "Practicar la palabra que fallé"
+  "Practise the word I missed": "Practicar la palabra que fallé",
+  "Grammar, word formation, vocabulary": "Gramática, formación de palabras, vocabulario",
+  "Grammar and word formation": "Gramática y formación de palabras",
+  "The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.": "La parte de inglés del examen estatal ruso de 11.º curso: gramática (pon la palabra en mayúsculas en la forma correcta), formación de palabras (forma una palabra nueva a partir de ella) y vocabulario (elige la palabra que encaja). Escribes las respuestas, como en el examen. Lo escribe la IA para tus palabras, una vez, y se guarda.",
+  "The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept.": "La parte de inglés del examen estatal ruso de 9.º curso: gramática y formación de palabras. Escribe la forma correcta de la palabra en mayúsculas, como en el examen. Lo escribe la IA para tus palabras, una vez, y se guarda.",
+  "Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).": "Las preguntas del examen las escribe la IA. Primero añade una clave gratuita de Gemini en «Leer con» (o usa «Aprender», que no necesita clave).",
+  "Make a word from the one in capitals that fits the gap.": "Forma a partir de la palabra en mayúsculas una palabra que encaje en el hueco.",
+  "Put the word in capitals into the right form.": "Pon la palabra en mayúsculas en la forma correcta.",
+  "Choose the word that fits.": "Elige la palabra que encaja.",
+  "Your answer": "Tu respuesta"
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:one=palabra no tiene;many=palabras no tienen;other=palabras no tienen} frase de ejemplo.",
