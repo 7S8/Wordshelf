@@ -271,6 +271,9 @@ html.i18n-wait body{visibility:hidden}
 .pmode{display:grid;gap:1px;text-align:left;border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer;min-width:0}
 .pmode:hover{border-color:var(--accent)}.pmode b{font-size:15px}.pmode small{color:var(--muted);font-size:12px}
 @media (max-width:640px){.practice-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.pmode{padding:8px 10px}.pmode small{display:none}}
+.q-base{display:inline-block;font-family:var(--mono);font-weight:500;font-size:15px;letter-spacing:.04em;border:1px solid var(--line);border-radius:8px;padding:4px 10px;margin:0 0 14px;background:var(--surface)}
+.q-type{display:flex;gap:8px;flex-wrap:wrap}.q-type input{flex:1 1 220px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:18px}
+.q-type input.ok{border-color:var(--a1);color:var(--a1)}.q-type input.no{border-color:var(--danger);color:var(--danger)}
 .quiz{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
 .quiz-inner{max-width:720px;margin:0 auto;padding:max(14px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .quiz-top{display:flex;align-items:center;gap:12px}.quiz-top h2{font-size:18px;font-weight:700;margin:0;flex:1;min-width:0}
@@ -538,6 +541,8 @@ footer p{margin:8px 0 0}
       <button type="button" class="pmode" data-quiz="learn"><b>Learn</b><small>Meanings, gaps, translations</small></button>
       <button type="button" class="pmode" data-quiz="ielts"><b>IELTS</b><small>Synonyms and paraphrase</small></button>
       <button type="button" class="pmode" data-quiz="gre"><b>GRE</b><small>Text completion, sentence equivalence</small></button>
+      <button type="button" class="pmode" data-quiz="ege"><b>ЕГЭ</b><small>Grammar, word formation, vocabulary</small></button>
+      <button type="button" class="pmode" data-quiz="oge"><b>ОГЭ</b><small>Grammar and word formation</small></button>
     </div>
   </section>
 
@@ -1960,7 +1965,7 @@ function qCache(){try{return JSON.parse(localStorage.getItem(QUIZ_KEY)||"{}")}ca
 function qCacheSet(c){try{localStorage.setItem(QUIZ_KEY,JSON.stringify(c))}catch{}}
 function qStats(){try{return JSON.parse(localStorage.getItem("wordshelf.stats")||"{}")}catch{return {}}}
 function qStat(word,ok){const s=qStats(),k=word.toLowerCase();s[k]=s[k]||{r:0,w:0};ok?s[k].r++:s[k].w++;s[k].t=Date.now();try{localStorage.setItem("wordshelf.stats",JSON.stringify(s))}catch{}}
-const QUIZ_NAMES={learn:"Learn",ielts:"IELTS",gre:"GRE"};
+const QUIZ_NAMES={learn:"Learn",ielts:"IELTS",gre:"GRE",ege:"ЕГЭ",oge:"ОГЭ"};
 let quiz={mode:"learn",level:"all",count:10,deck:[],i:0,score:0,missed:[],locked:false,picks:[]};
 
 function quizWords(){
@@ -2016,12 +2021,28 @@ gre:list=>`You write GRE Verbal practice in the official formats. Use the words 
 Reply with only JSON: {"items":[{"type":"single","word":"…","sentence":"…","options":["…"],"answer":"…","explain":"…"},{"type":"equiv","word":"…","sentence":"…","options":["…"],"answers":["…","…"],"explain":"…"},{"type":"double","words":["…","…"],"sentence":"… ___ … ___ …","blanks":[{"options":["…"],"answer":"…"},{"options":["…"],"answer":"…"}],"explain":"…"}]}
 
 `+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n")};
+const EXAM_TASKS=(level,withChoice)=>`1. "form" — word formation (the exam's word-building task): a sentence with one gap ___ that needs a word built from a root word; "base": that root word in CAPITALS as printed in the exam (if the word below can be built from a simpler root, use the root as "base" and the word below, in the right form, as "answer"; otherwise use the word below as "base" and a word built from it as "answer"); "answer": the correct word; "alts": other correct spellings (often []).
+2. "grammar" — the exam's grammar task: a sentence with one gap ___; "base": the word below in its dictionary form in CAPITALS; "answer": the form that fits (tense, passive, plural, comparative, -ing, etc.; can be two or three words, e.g. "had been invited"); "alts": other correct answers. Skip it for words that never change form.${withChoice?`
+3. "choice" — the exam's vocabulary task: a sentence with one gap ___; "options": 4 words that are close in meaning or form (collocations, confusable words, phrasal verbs, prepositions), the word below (in the form that fits) is the only correct one; "answer".`:""}
+Sentences should sound like the exam: ${level}. Add "explain": one short line in English on why (the rule, or the meaning).`;
+Object.assign(AI_QUIZ_PROMPT,{
+ege:list=>`You write practice for the English part of the Russian Unified State Exam (ЕГЭ, 11th grade). For EACH word below write these tasks:
+`+EXAM_TASKS("B1–B2, a short text-like sentence about everyday life, school, travel, science or culture",true)+`
+Reply with only JSON: {"items":[{"word":"…","type":"form","sentence":"… ___ …","base":"NATION","answer":"national","alts":[],"explain":"…"},{"word":"…","type":"grammar","sentence":"…","base":"GO","answer":"went","alts":[],"explain":"…"},{"word":"…","type":"choice","sentence":"…","options":["…","…","…","…"],"answer":"…","explain":"…"}]}
+
+`+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n"),
+oge:list=>`You write practice for the English part of the Russian Basic State Exam (ОГЭ, 9th grade). For EACH word below write these tasks:
+`+EXAM_TASKS("A2–B1, simple sentences about school, family, hobbies, travel and towns",false)+`
+Reply with only JSON: {"items":[{"word":"…","type":"form","sentence":"… ___ …","base":"HAPPY","answer":"happiness","alts":[],"explain":"…"},{"word":"…","type":"grammar","sentence":"…","base":"BE","answer":"was","alts":[],"explain":"…"}]}
+
+`+list.map(w=>`- ${w.word}${w.definition?` (${w.definition})`:""}`).join("\n")});
 function okItem(it){
   if(!it||typeof it.sentence!=="string") return false;
   const n=(it.sentence.match(/___/g)||[]).length;
   if(it.type==="double") return n===2&&Array.isArray(it.blanks)&&it.blanks.length===2&&it.blanks.every(b=>Array.isArray(b.options)&&b.options.includes(b.answer));
   if(it.type==="equiv") return n===1&&Array.isArray(it.options)&&it.options.length>=4&&Array.isArray(it.answers)&&it.answers.length===2&&it.answers.every(a=>it.options.includes(a));
   if(it.type==="synonym") return Array.isArray(it.options)&&it.options.includes(it.answer);
+  if(it.type==="form"||it.type==="grammar") return n===1&&typeof it.base==="string"&&it.base.trim()&&typeof it.answer==="string"&&it.answer.trim();
   return n===1&&Array.isArray(it.options)&&it.options.includes(it.answer);
 }
 async function aiQuizItems(mode,chosen,onProgress){
@@ -2044,8 +2065,10 @@ async function aiQuizItems(mode,chosen,onProgress){
     const gloss={word:it.type==="double"?(it.words||[]).join(", "):it.word,def:"",tr:"",explain:it.explain||""};
     if(it.type==="double") out.push({type:"double",s:it.sentence,b:it.blanks.map(b=>({o:b.options,a:b.answer})),words:it.words||[],gloss});
     else if(it.type==="equiv") out.push({type:"equiv",ask:"Pick the two words that give the sentence the same meaning.",s:it.sentence,o:it.options,a:it.answers,word:it.word,gloss});
+    else if(it.type==="form"||it.type==="grammar") out.push({type:"type",ask:it.type==="form"?"Make a word from the one in capitals that fits the gap.":"Put the word in capitals into the right form.",
+      s:it.sentence,base:it.base.trim().toUpperCase(),a:[it.answer,...(Array.isArray(it.alts)?it.alts:[])].map(String),word:it.word,gloss:{...gloss,explain:"→ "+it.answer+(it.explain?". "+it.explain:"")}});
     else if(it.type==="synonym") out.push({type:"single",ask:"Which is closest in meaning to the highlighted word?",hl:{s:it.sentence,w:it.word},o:it.options,a:it.answer,word:it.word,gloss});
-    else out.push({type:"single",ask:mode==="gre"?"Choose the word that best completes the sentence.":"Complete the sentence.",s:it.sentence,o:it.options,a:it.answer,word:it.word,gloss});
+    else out.push({type:"single",ask:mode==="gre"?"Choose the word that best completes the sentence.":mode==="ielts"?"Complete the sentence.":"Choose the word that fits.",s:it.sentence,o:it.options,a:it.answer,word:it.word,gloss});
   }
   return out;
 }
@@ -2066,7 +2089,9 @@ function quizSetup(){
   const box=qEl("div","q-setup");
   box.append(qEl("p","q-lede",{learn:"Practise the words on your shelf: pick the word for a meaning, fill the gap in your example sentences, and match translations. Works without a key.",
     ielts:"IELTS Reading and Writing reward paraphrase: questions on synonyms in context and gap-fill sentences in an academic style. Written by AI for your words, once, then kept.",
-    gre:"The three GRE Verbal formats: one-blank and two-blank text completion, and sentence equivalence (pick the two words that give the same meaning). Written by AI for your words, once, then kept."}[quiz.mode]));
+    gre:"The three GRE Verbal formats: one-blank and two-blank text completion, and sentence equivalence (pick the two words that give the same meaning). Written by AI for your words, once, then kept.",
+    ege:"The English part of the 11th-grade state exam: grammar (put the word in capitals into the right form), word formation (make a new word from it) and vocabulary (choose the word that fits). You type the answers, as in the exam. Written by AI for your words, once, then kept.",
+    oge:"The English part of the 9th-grade state exam: grammar and word formation. Type the right form of the word in capitals, as in the exam. Written by AI for your words, once, then kept."}[quiz.mode]));
   const counts=Object.fromEntries(GROUPS.map(g=>[g.id,words.filter(w=>(w.level||"")===g.id).length]));
   const lv=qEl("div","q-row"); lv.append(qEl("b",null,"Which words?"));
   [["all","All levels"],...GROUPS.filter(g=>counts[g.id]).map(g=>[g.id,(g.label||g.id)])].forEach(([id,label])=>{
@@ -2080,7 +2105,7 @@ function quizSetup(){
   const go=qEl("button","btn primary","Start"); go.type="button"; go.disabled=avail<1||needAi; go.onclick=()=>quizStart();
   bar.append(go); box.append(bar);
   if(avail<1) box.append(qEl("p","q-lede","There are no words at this level yet."));
-  if(needAi){ const p=qEl("p","q-lede","IELTS and GRE questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).");
+  if(needAi){ const p=qEl("p","q-lede","Exam questions are written by AI. Add a free Gemini key in \"Read with\" first (or use Learn, which needs no key).");
     const k=qEl("button","btn small","Add a free Gemini key"); k.type="button"; k.onclick=()=>{closeQuiz();setMode("gemini");$("#keybox").open=true;$("#keybox").scrollIntoView({behavior:"smooth",block:"center"})};
     box.append(p,k) }
   m.append(box);
@@ -2096,14 +2121,14 @@ async function quizStart(retry){
     if(!items){ quizSetup(); return }
     if(!items.length){ m.innerHTML=""; m.append(qEl("p","q-lede",$("#status").textContent||"No questions came back. Try again."));
       const b=qEl("button","btn","Back"); b.onclick=quizSetup; m.append(b); return }
-    if(quiz.mode==="gre"){ // mix the three formats rather than all of one kind
-      const by=t=>qShuffle(items.filter(x=>x.type===t)); const a=by("single"),d=by("double"),e=by("equiv"); items=[];
-      while(a.length||d.length||e.length){ if(a.length)items.push(a.pop()); if(e.length)items.push(e.pop()); if(d.length)items.push(d.pop()) }
+    if(quiz.mode!=="ielts"){ // mix the formats rather than all of one kind
+      const kinds=[...new Set(items.map(x=>x.type+(x.ask||"")))], piles=kinds.map(k=>qShuffle(items.filter(x=>x.type+(x.ask||"")===k))); items=[];
+      while(piles.some(p=>p.length)) for(const p of piles) if(p.length) items.push(p.pop());
       items=items.slice(0,Math.max(chosen.length*2,10));
     } else items=qShuffle(items).slice(0,Math.max(chosen.length*2,10));
   }
   quiz.deck=quiz.mode==="learn"?qShuffle(items):items;
-  quiz.deck=quiz.deck.map(q=>({...q,opts:q.type==="double"?q.b.map(b=>qShuffle(b.o)):qShuffle(q.o)}));
+  quiz.deck=quiz.deck.map(q=>({...q,opts:q.type==="double"?q.b.map(b=>qShuffle(b.o)):q.type==="type"?[]:qShuffle(q.o)}));
   quiz.chosen=chosen; quiz.i=0; quiz.score=0; quiz.missed=[];
   if(!quiz.deck.length){ $("#quizMain").innerHTML=""; $("#quizMain").append(qEl("p","q-lede","These words need a definition or an example sentence first.")); return }
   quizRender();
@@ -2131,7 +2156,14 @@ function quizRender(){
   m.append(stemNode(q));
   const optBtn=(word,n,g)=>{ const b=qEl("button","q-opt"); b.type="button"; b.dataset.q=""; b.dataset.v=word; if(g!=null)b.dataset.g=g;
     b.append(qEl("span","mark",LETTERS[n]),document.createTextNode(word)); return b };
-  if(q.type==="double"){
+  if(q.type==="type"){
+    const base=qEl("div","q-base",q.base); base.dataset.q=""; m.append(base);
+    const row=qEl("form","q-type"); const inp=qEl("input"); inp.id="qInput"; inp.autocomplete="off"; inp.setAttribute("autocapitalize","off"); inp.spellcheck=false;
+    inp.placeholder="Your answer"; inp.setAttribute("aria-label","Your answer");
+    inp.oninput=()=>{ $("#qCheck").disabled=!inp.value.trim(); qFill(0,inp.value.trim()||"?") };
+    row.onsubmit=e=>{e.preventDefault(); if(inp.value.trim()&&!quiz.locked) qGrade(q)};
+    row.append(inp); m.append(row); setTimeout(()=>inp.focus({preventScroll:true}),50);
+  } else if(q.type==="double"){
     const gs=qEl("div","q-groups");
     q.opts.forEach((set,gi)=>{ const g=qEl("div","q-group"); g.append(qEl("p",null,gi?"Blank (ii)":"Blank (i)")); const row=qEl("div","q-opts");
       set.forEach((w,n)=>{ const b=optBtn(w,n,gi); b.onclick=()=>{ if(quiz.locked)return; row.querySelectorAll(".q-opt").forEach(x=>x.classList.remove("picked")); b.classList.add("picked"); quiz.picks[gi]=w; qFill(gi,w); $("#qCheck").disabled=!(quiz.picks[0]&&quiz.picks[1]) }; row.append(b) });
@@ -2173,8 +2205,11 @@ function qSingle(btn,w,q){
   if(document.getElementById("qb0")) qFill(0,w,ok?"ok":"no");
   qMark(b=>b.dataset.v===q.a,b=>b===btn); qDone(q,ok);
 }
+const qNorm=x=>String(x||"").toLowerCase().replace(/[’`]/g,"'").replace(/[^a-z' -]/g,"").replace(/\s+/g," ").trim();
 function qGrade(q){
   if(quiz.locked) return; quiz.locked=true;
+  if(q.type==="type"){ const inp=$("#qInput"), v=inp.value.trim(), ok=q.a.some(a=>qNorm(a)===qNorm(v));
+    qFill(0,ok?v:q.a[0],ok?"ok":"no"); inp.disabled=true; inp.classList.add(ok?"ok":"no"); $("#qCheck").hidden=true; qDone(q,ok); return }
   if(q.type==="double"){ const right=q.b.map(b=>b.a); const ok=quiz.picks[0]===right[0]&&quiz.picks[1]===right[1];
     [0,1].forEach(n=>qFill(n,quiz.picks[n],quiz.picks[n]===right[n]?"ok":"no"));
     qMark(b=>b.dataset.v===right[+b.dataset.g],b=>quiz.picks[+b.dataset.g]===b.dataset.v); $("#qCheck").hidden=true; qDone(q,ok);
