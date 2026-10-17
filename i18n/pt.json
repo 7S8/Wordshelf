@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "Toque no cartão para ver o significado",
   "I didn't know": "Não sabia",
   "I knew it": "Eu sabia",
-  "Hide": "Recolher"
+  "Hide": "Recolher",
+  "What to practise?": "O que praticar?",
+  "Vocabulary questions": "Questões de vocabulário",
+  "Reading passage": "Texto de leitura",
+  "Blank (iii)": "Lacuna (iii)",
+  "Writing a passage for your words…": "Escrevendo um texto para as suas palavras…",
+  "Select ONE answer choice.": "Selecione UMA alternativa.",
+  "Choose the correct letter.": "Escolha a letra correta.",
+  "Consider each of the choices separately and select all that apply.": "Considere cada alternativa separadamente e selecione todas as que se aplicam.",
+  "Tap the sentence in the passage that answers the question.": "Toque na frase do texto que responde à pergunta.",
+  "Do the following statements agree with the information in the passage?": "As afirmações a seguir estão de acordo com as informações do texto?",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "Complete a frase. Escreva NO MÁXIMO DUAS PALAVRAS do texto.",
+  "New passage": "Novo texto",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic, escrito pela IA para as suas palavras. Questões de vocabulário: sinônimos no contexto e frases para completar. Texto de leitura: um texto com parágrafos A–D e tarefas reais do exame (True / False / Not Given, múltipla escolha, completar frases, sentido no contexto).",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal, escrito pela IA para as suas palavras. Questões de vocabulário: completar textos com uma, duas ou três lacunas e equivalência de frases. Texto de leitura: um parágrafo acadêmico com questões reais do exame (uma resposta, selecionar todas as que se aplicam, selecionar a frase)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} palavra está sem frase de exemplo.",

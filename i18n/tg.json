@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "Барои дидани маъно кортро пахш кунед",
   "I didn't know": "Намедонистам",
   "I knew it": "Медонистам",
-  "Hide": "Пинҳон кардан"
+  "Hide": "Пинҳон кардан",
+  "What to practise?": "Чиро машқ мекунем?",
+  "Vocabulary questions": "Саволҳои луғавӣ",
+  "Reading passage": "Матн барои хондан",
+  "Blank (iii)": "Ҷойи холӣ (iii)",
+  "Writing a passage for your words…": "Барои калимаҳои шумо матн навишта мешавад…",
+  "Select ONE answer choice.": "Танҳо ЯК ҷавобро интихоб кунед.",
+  "Choose the correct letter.": "Ҳарфи дурустро интихоб кунед.",
+  "Consider each of the choices separately and select all that apply.": "Ҳар як вариантро алоҳида баррасӣ кунед ва ҳамаи мувофиқҳоро интихоб кунед.",
+  "Tap the sentence in the passage that answers the question.": "Ҷумлаеро дар матн пахш кунед, ки ба савол ҷавоб медиҳад.",
+  "Do the following statements agree with the information in the passage?": "Оё изҳороти зерин ба маълумоти матн мувофиқанд?",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "Ҷумларо пурра кунед. Аз матн НА ЗИЁДА АЗ ДУ КАЛИМА нависед.",
+  "New passage": "Матни нав",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic, супоришҳоро ЗС барои калимаҳои шумо менависад. Саволҳои луғавӣ: муродифҳо дар матн ва пур кардани ҷойи холӣ. Матн барои хондан: матн бо сархатҳои A–D ва супоришҳои воқеии имтиҳон (True / False / Not Given, интихоби ҷавоб, пурра кардани ҷумла, маъно дар матн).",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal, супоришҳоро ЗС барои калимаҳои шумо менависад. Саволҳои луғавӣ: пуркунии матн бо як, ду ё се ҷойи холӣ ва баробарии ҷумлаҳо. Матн барои хондан: сархати илмӣ бо саволҳои воқеии имтиҳон (як ҷавоб, интихоби ҳамаи мувофиқҳо, интихоби ҷумла)."
  },
  "p": {
   "{0} word has no example sentence.": "Барои {0} калима ҷумлаи намунавӣ нест.",

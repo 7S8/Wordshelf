@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "点按卡片查看释义",
   "I didn't know": "不认识",
   "I knew it": "认识",
-  "Hide": "收起"
+  "Hide": "收起",
+  "What to practise?": "练习什么？",
+  "Vocabulary questions": "词汇题",
+  "Reading passage": "阅读文章",
+  "Blank (iii)": "空格 (iii)",
+  "Writing a passage for your words…": "正在为你的单词写文章…",
+  "Select ONE answer choice.": "只选一个答案。",
+  "Choose the correct letter.": "选出正确的字母。",
+  "Consider each of the choices separately and select all that apply.": "逐一考虑每个选项，选出所有正确的选项。",
+  "Tap the sentence in the passage that answers the question.": "点击文章中回答该问题的句子。",
+  "Do the following statements agree with the information in the passage?": "下列陈述是否与文章中的信息一致？",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "完成句子。从文章中选取不超过两个单词（NO MORE THAN TWO WORDS）。",
+  "New passage": "换一篇文章",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic，由 AI 为你的单词出题。词汇题：语境中的同义词和填空。阅读文章：一篇含 A–D 段落的文章，配真实考试题型（True / False / Not Given、选择题、句子填空、语境中的词义）。",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal，由 AI 为你的单词出题。词汇题：单空、双空或三空的文本填空，以及句子等价。阅读文章：一段学术文章，配真实考试题型（单选题、不定项选择题、选句题）。"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 个单词没有例句。",

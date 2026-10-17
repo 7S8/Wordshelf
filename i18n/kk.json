@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "Мағынасын көру үшін карточканы басыңыз",
   "I didn't know": "Білмедім",
   "I knew it": "Білдім",
-  "Hide": "Жасыру"
+  "Hide": "Жасыру",
+  "What to practise?": "Нені жаттықтырамыз?",
+  "Vocabulary questions": "Лексика сұрақтары",
+  "Reading passage": "Оқу мәтіні",
+  "Blank (iii)": "Бос орын (iii)",
+  "Writing a passage for your words…": "Сөздеріңізге мәтін жазылуда…",
+  "Select ONE answer choice.": "БІР жауап нұсқасын таңдаңыз.",
+  "Choose the correct letter.": "Дұрыс әріпті таңдаңыз.",
+  "Consider each of the choices separately and select all that apply.": "Әр нұсқаны жеке қарастырып, сәйкес келетіннің бәрін таңдаңыз.",
+  "Tap the sentence in the passage that answers the question.": "Мәтіннен сұраққа жауап беретін сөйлемді басыңыз.",
+  "Do the following statements agree with the information in the passage?": "Төмендегі тұжырымдар мәтіндегі ақпаратқа сәйкес келе ме?",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "Сөйлемді толықтырыңыз. Мәтіннен ЕКІ СӨЗДЕН АСПАЙТЫН жауап жазыңыз.",
+  "New passage": "Жаңа мәтін",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic, тапсырмаларды ЖИ сөздеріңізге жазады. Лексика сұрақтары: контекстегі синонимдер және бос орынды толтыру. Оқу мәтіні: A–D абзацтары бар мәтін және нақты емтихан тапсырмалары (True / False / Not Given, жауапты таңдау, сөйлемді толықтыру, контекстегі мағына).",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal, тапсырмаларды ЖИ сөздеріңізге жазады. Лексика сұрақтары: бір, екі немесе үш бос орынды мәтінді толықтыру және сөйлем баламалылығы. Оқу мәтіні: нақты емтихан сұрақтары бар академиялық абзац (бір жауап, сәйкес келетіннің бәрін таңдау, сөйлемді таңдау)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөзде мысал сөйлем жоқ.",

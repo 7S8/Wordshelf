@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "カードをタップして意味を表示",
   "I didn't know": "わからなかった",
   "I knew it": "わかった",
-  "Hide": "閉じる"
+  "Hide": "閉じる",
+  "What to practise?": "何を練習しますか？",
+  "Vocabulary questions": "語彙問題",
+  "Reading passage": "長文読解",
+  "Blank (iii)": "空欄 (iii)",
+  "Writing a passage for your words…": "あなたの単語で長文を作成しています…",
+  "Select ONE answer choice.": "答えを 1 つ選んでください。",
+  "Choose the correct letter.": "正しい記号を選んでください。",
+  "Consider each of the choices separately and select all that apply.": "各選択肢を個別に検討し、当てはまるものをすべて選んでください。",
+  "Tap the sentence in the passage that answers the question.": "問いの答えとなる文を本文中からタップしてください。",
+  "Do the following statements agree with the information in the passage?": "次の記述は本文の内容と一致していますか？",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "文を完成させてください。本文から 2 語以内（NO MORE THAN TWO WORDS）で書いてください。",
+  "New passage": "別の長文",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic、AI があなたの単語用に作成します。語彙問題：文脈の中での類義語と穴埋め。長文読解：段落 A–D からなる文章と本番形式の問題（True / False / Not Given、多肢選択、文完成、文脈上の意味）。",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal、AI があなたの単語用に作成します。語彙問題：空欄 1 つ・2 つ・3 つの文章完成問題と文の同義問題。長文読解：本番形式の問題がついたアカデミックな段落（単一解答、当てはまるものをすべて選ぶ問題、文を選ぶ問題）。"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 語に例文がありません。",

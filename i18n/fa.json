@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "برای دیدن معنی روی کارت بزنید",
   "I didn't know": "نمی‌دانستم",
   "I knew it": "می‌دانستم",
-  "Hide": "بستن"
+  "Hide": "بستن",
+  "What to practise?": "چه چیزی را تمرین کنیم؟",
+  "Vocabulary questions": "پرسش‌های واژگان",
+  "Reading passage": "متن خواندن",
+  "Blank (iii)": "جای خالی (iii)",
+  "Writing a passage for your words…": "در حال نوشتن متن برای واژه‌های شما…",
+  "Select ONE answer choice.": "فقط یک گزینه را انتخاب کنید.",
+  "Choose the correct letter.": "حرف درست را انتخاب کنید.",
+  "Consider each of the choices separately and select all that apply.": "هر گزینه را جداگانه بررسی کنید و همهٔ گزینه‌های درست را انتخاب کنید.",
+  "Tap the sentence in the passage that answers the question.": "روی جمله‌ای از متن بزنید که به پرسش پاسخ می‌دهد.",
+  "Do the following statements agree with the information in the passage?": "آیا جمله‌های زیر با اطلاعات متن مطابقت دارند؟",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "جمله را کامل کنید. حداکثر دو واژه از متن بنویسید (NO MORE THAN TWO WORDS).",
+  "New passage": "متن جدید",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic، نوشته‌شده با هوش مصنوعی برای واژه‌های شما. پرسش‌های واژگان: مترادف‌ها در بافت و جای خالی. متن خواندن: متنی با بندهای A–D و تمرین‌های واقعی آزمون (True / False / Not Given، چندگزینه‌ای، تکمیل جمله، معنی در بافت).",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal، نوشته‌شده با هوش مصنوعی برای واژه‌های شما. پرسش‌های واژگان: تکمیل متن با یک، دو یا سه جای خالی و هم‌ارزی جمله. متن خواندن: یک بند دانشگاهی با پرسش‌های واقعی آزمون (یک پاسخ، انتخاب همهٔ گزینه‌های درست، انتخاب جمله)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} واژه جملهٔ نمونه ندارد.",

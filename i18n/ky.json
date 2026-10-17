@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "Маанисин көрүү үчүн карточканы басыңыз",
   "I didn't know": "Билген жокмун",
   "I knew it": "Билчүмүн",
-  "Hide": "Жыйноо"
+  "Hide": "Жыйноо",
+  "What to practise?": "Эмнени машыктырабыз?",
+  "Vocabulary questions": "Лексика суроолору",
+  "Reading passage": "Окуу тексти",
+  "Blank (iii)": "Боштук (iii)",
+  "Writing a passage for your words…": "Сөздөрүңүз үчүн текст жазылууда…",
+  "Select ONE answer choice.": "БИР жооп вариантын тандаңыз.",
+  "Choose the correct letter.": "Туура тамганы тандаңыз.",
+  "Consider each of the choices separately and select all that apply.": "Ар бир вариантты өзүнчө карап, туура келгендердин баарын тандаңыз.",
+  "Tap the sentence in the passage that answers the question.": "Тексттен суроого жооп берген сүйлөмдү басыңыз.",
+  "Do the following statements agree with the information in the passage?": "Төмөнкү ырастоолор тексттеги маалыматка туура келеби?",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "Сүйлөмдү толуктаңыз. Тексттен ЭКИ СӨЗДӨН АШПАГАН жооп жазыңыз.",
+  "New passage": "Жаңы текст",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic, тапшырмаларды ЖИ сөздөрүңүз үчүн жазат. Лексика суроолору: контексттеги синонимдер жана боштукту толтуруу. Окуу тексти: A–D абзацтары бар текст жана чыныгы экзамен тапшырмалары (True / False / Not Given, жоопту тандоо, сүйлөмдү толуктоо, контексттеги маани).",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal, тапшырмаларды ЖИ сөздөрүңүз үчүн жазат. Лексика суроолору: бир, эки же үч боштуктуу текстти толуктоо жана сүйлөмдөрдүн эквиваленттүүлүгү. Окуу тексти: чыныгы экзамен суроолору бар академиялык абзац (бир жооп, туура келгендердин баарын тандоо, сүйлөмдү тандоо)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} сөздө мисал сүйлөм жок.",

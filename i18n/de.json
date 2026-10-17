@@ -277,7 +277,21 @@
   "Tap the card to see the meaning": "Tippe auf die Karte, um die Bedeutung zu sehen",
   "I didn't know": "Wusste ich nicht",
   "I knew it": "Wusste ich",
-  "Hide": "Einklappen"
+  "Hide": "Einklappen",
+  "What to practise?": "Was möchtest du üben?",
+  "Vocabulary questions": "Wortschatzfragen",
+  "Reading passage": "Lesetext",
+  "Blank (iii)": "Lücke (iii)",
+  "Writing a passage for your words…": "Ein Text zu deinen Wörtern wird geschrieben…",
+  "Select ONE answer choice.": "Wähle EINE Antwort.",
+  "Choose the correct letter.": "Wähle den richtigen Buchstaben.",
+  "Consider each of the choices separately and select all that apply.": "Betrachte jede Antwortmöglichkeit einzeln und wähle alle zutreffenden aus.",
+  "Tap the sentence in the passage that answers the question.": "Tippe auf den Satz im Text, der die Frage beantwortet.",
+  "Do the following statements agree with the information in the passage?": "Stimmen die folgenden Aussagen mit den Informationen im Text überein?",
+  "Complete the sentence. Write NO MORE THAN TWO WORDS from the passage.": "Vervollständige den Satz. Schreibe NICHT MEHR ALS ZWEI WÖRTER aus dem Text.",
+  "New passage": "Neuer Text",
+  "IELTS Academic, written by AI for your words. Vocabulary questions: synonyms in context and gap-fill. Reading passage: a text with paragraphs A–D and real exam tasks (True / False / Not Given, multiple choice, sentence completion, meaning in context).": "IELTS Academic, von KI für deine Wörter geschrieben. Wortschatzfragen: Synonyme im Kontext und Lückensätze. Lesetext: ein Text mit den Absätzen A–D und echten Prüfungsaufgaben (True / False / Not Given, Multiple Choice, Satzergänzung, Bedeutung im Kontext).",
+  "GRE Verbal, written by AI for your words. Vocabulary questions: text completion with one, two or three blanks, and sentence equivalence. Reading passage: an academic paragraph with real exam questions (one answer, select all that apply, select the sentence).": "GRE Verbal, von KI für deine Wörter geschrieben. Wortschatzfragen: Textergänzung mit einer, zwei oder drei Lücken und Satzäquivalenz. Lesetext: ein akademischer Absatz mit echten Prüfungsfragen (eine Antwort, alle zutreffenden auswählen, den Satz auswählen)."
  },
  "p": {
   "{0} word has no example sentence.": "{0} {0:one=Wort hat;other=Wörter haben} keinen Beispielsatz.",
