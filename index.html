@@ -368,7 +368,11 @@ html.stuck body::before{opacity:1}
 .lst-row .w .lv{font-family:var(--mono);font-size:11px;color:var(--lv);border:1px solid color-mix(in srgb,var(--lv) 45%,transparent);border-radius:6px;padding:0 5px}
 .lst-row .w .t{color:var(--muted);font-size:15px;margin-left:auto;text-align:right}
 .lst-row p{margin:3px 0 0;color:var(--muted);font-size:15px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.lst-open{padding:10px 0;border-bottom:1px solid var(--line)}
+.lst-open{padding:10px 0;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.lst-open .card h3{cursor:pointer}
+.lst-close{justify-self:center;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:6px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.lst-close:hover{color:var(--ink);border-color:var(--accent)}
+.lst-close svg.i{width:16px;height:16px}
 .lst .level{margin-top:10px}
 .lst .level .lst-row .lv{display:none}
 .az{position:sticky;top:150px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0;font-family:var(--body);font-size:12px;user-select:none;touch-action:none}
@@ -752,7 +756,7 @@ function drawViewBtn(){ const b=$("#viewBtn"); if(!b) return; const toList=view=
   b.innerHTML=toList?listIcon:gridIcon; const t=toList?"Show as a list":"Show as cards"; b.title=t; b.setAttribute("aria-label",t) }
 function listRow(w,i){
   const lv=GROUPS.find(l=>l.id===(w.level||""))||UNRATED;
-  if(openRows.has(i)) return `<div class="lst-open">${card(w,i)}</div>`;
+  if(openRows.has(i)) return `<div class="lst-open" data-open="${i}">${card(w,i)}<button type="button" class="lst-close" data-close="${i}"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>Hide</button></div>`;
   const tr=lang&&w.tr?.[lang];
   return `<button type="button" class="lst-row" data-row="${i}" style="--lv:var(${lv.v})"><span class="w"><b>${esc(w.word)}</b><span class="lv">${lv.label||lv.id}</span>${tr?`<span class="t" lang="${lang}">${esc(tr)}</span>`:""}</span>${w.definition?`<p>${esc(w.definition)}</p>`:""}</button>`;
 }
@@ -1819,6 +1823,10 @@ $("#shelf").addEventListener("click",e=>{
   const s=e.target.closest("[data-sort]"); if(s){ listSort=s.dataset.sort; try{localStorage.setItem("wordshelf.listSort",listSort)}catch{}; render(); return }
   const j=e.target.closest("[data-jump]"); if(j){ e.preventDefault(); document.getElementById("L-"+j.dataset.jump)?.scrollIntoView({behavior:"smooth",block:"start"}); return }
   const r=e.target.closest("[data-row]"); if(r){ openRows.add(+r.dataset.row); render(); return }
+  // fold an open card back into its row: the Hide button, or a tap on the word
+  const c=e.target.closest("[data-close]")||(e.target.closest(".lst-open .card h3")&&e.target.closest("[data-open]"));
+  if(c){ const i=+(c.dataset.close??c.dataset.open); openRows.delete(i); render();
+    document.querySelector(`[data-row="${i}"]`)?.scrollIntoView({block:"nearest"}); return }
 });
 // drag a finger down the A–Z strip to scroll through the letters, like a phone's contacts
 $("#shelf").addEventListener("touchmove",e=>{ const az=e.target.closest(".az"); if(!az) return; e.preventDefault();

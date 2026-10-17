@@ -276,7 +276,8 @@
   "Turn the card": "카드 뒤집기",
   "Tap the card to see the meaning": "카드를 탭하면 뜻이 보여요",
   "I didn't know": "몰랐어요",
-  "I knew it": "알았어요"
+  "I knew it": "알았어요",
+  "Hide": "접기"
  },
  "p": {
   "{0} word has no example sentence.": "단어 {0}개에 예문이 없어요.",

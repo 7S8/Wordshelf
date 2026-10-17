@@ -276,7 +276,8 @@
   "Turn the card": "Перевернути картку",
   "Tap the card to see the meaning": "Натисніть на картку, щоб побачити значення",
   "I didn't know": "Не знав(ла)",
-  "I knew it": "Знав(ла)"
+  "I knew it": "Знав(ла)",
+  "Hide": "Згорнути"
  },
  "p": {
   "{0} word has no example sentence.": "Без прикладу речення: {0} {0:one=слово;few=слова;many=слів;other=слова}.",

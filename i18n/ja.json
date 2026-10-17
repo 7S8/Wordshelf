@@ -276,7 +276,8 @@
   "Turn the card": "カードをめくる",
   "Tap the card to see the meaning": "カードをタップして意味を表示",
   "I didn't know": "わからなかった",
-  "I knew it": "わかった"
+  "I knew it": "わかった",
+  "Hide": "閉じる"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 語に例文がありません。",

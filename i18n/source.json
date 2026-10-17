@@ -277,7 +277,8 @@
   "Turn the card",
   "Tap the card to see the meaning",
   "I didn't know",
-  "I knew it"
+  "I knew it",
+  "Hide"
  ],
  "p": [
   "{0} word has no example sentence.",

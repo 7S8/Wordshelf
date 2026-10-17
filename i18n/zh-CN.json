@@ -276,7 +276,8 @@
   "Turn the card": "翻转卡片",
   "Tap the card to see the meaning": "点按卡片查看释义",
   "I didn't know": "不认识",
-  "I knew it": "认识"
+  "I knew it": "认识",
+  "Hide": "收起"
  },
  "p": {
   "{0} word has no example sentence.": "{0} 个单词没有例句。",
