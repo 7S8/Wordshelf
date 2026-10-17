@@ -354,9 +354,12 @@ html.stuck body::before{opacity:1}
 .vbtn:hover{border-color:var(--accent)}
 /* list view: word and short meaning per row, like a dictionary; tap a row for the full card */
 .lst{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 6px;align-items:start}
-.lst-sort{justify-self:start;width:max-content;display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0 0 6px;background:var(--surface)}
+.lst-sort{justify-self:start;width:max-content;display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0;background:var(--surface)}
 .lst-sort button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;font-weight:600;padding:6px 14px;cursor:pointer}
 .lst-sort button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.lst-sort+.lst{margin-top:-20px}
+.lst>div>.lst-letter:first-child{padding-top:2px}
+.lst>div>.level:first-child{margin-top:0}
 .lst-letter{font-family:var(--mono);font-size:13px;color:var(--muted);padding:14px 4px 4px;border-bottom:1px solid var(--line);scroll-margin-top:150px}
 .lst-row{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);padding:12px 4px;color:var(--ink);cursor:pointer;font:inherit}
 .lst-row:hover{background:var(--surface)}
